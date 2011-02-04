@@ -158,7 +158,7 @@ def get_all_iids(all_spike, as_string=False):
     iids = []
     for elec_id in all_spike:
         iids.extend(all_spike[elec_id].keys())
-    iids = list(set(iids))    # return unique image_ids
+    iids = list(set(iids) - get_all_iids.exclude)    # return unique image_ids
     
     if type(iids[0]) is tuple:
         if get_all_iids.num_sort:
@@ -197,6 +197,7 @@ def get_all_iids(all_spike, as_string=False):
     return iids
 get_all_iids.l_pref = 4
 get_all_iids.num_sort = True
+get_all_iids.exclude = set([])
 
 
 # ----------------------------------------------------------------------------
@@ -221,19 +222,22 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
     prange = None
 
     blanks = [all_iids[-1]]
-    if opts.has_key('bootstrap'):
+    if 'bootstrap' in opts:   # DEPRECATED!!!!!
         bsiter = int(opts['bootstrap'])
         bootstrap = True
         print '* bootstrap:', bsiter
-    if opts.has_key('blanks'):
+    if 'blanks' in opts:
         excl_start = int(opts['blanks'].split(',')[0])
         excl_end = int(opts['blanks'].split(',')[1])
         blanks = all_iids[excl_start:excl_end + 1]
-    if opts.has_key('prange'):
+    if 'blanks_patt' in opts:
+        patt = opts['blanks_patt']
+        blanks = [iid for iid in all_iids if patt in iid]
+    if 'prange' in opts: 
         p_begin = float(opts['prange'].split(',')[0])
         p_end = float(opts['prange'].split(',')[1])
         prange = (p_begin, p_end)
-    if opts.has_key('extbsinfo'):
+    if 'extbsinfo' in opts:
         fn_pk = opts['extbsinfo']
         # Too big: outpk = open(fn_pk, 'wb')
         extbsinfo = True
@@ -541,6 +545,10 @@ def main():
     if 'off_num_sort' in opts:
         get_all_iids.num_sort = False
         print '* No num_sort'
+
+    if 'exclude_img' in opts:
+        get_all_iids.exclude = set(opts['exclude_img'].split(','))
+        print '* Exclude =', get_all_iids.exclude
 
     # load input pickle file
     data = pk.load(open(fn_pk))

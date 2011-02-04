@@ -26,12 +26,18 @@ for fn in `'ls' -1r ${dirpp}/*.psf.pk`; do
 	# if it's nicole's data
 	elif [[ $bname == *Nicole* ]]; then
 		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks=100,106 bootstrap=200 suffix=_bstrp extbsinfo=${dirpp}/${bname}.dp_extbsinfo.csv extfirinfo"
-	# if it's var00'
+	# if it's var00
 	elif [[ $bname == *Var00* ]]; then
 		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks=640,650 bootstrap=200 suffix=_bstrp extfirinfo"
-	# if it's var03'
+	# if it's new var03
+	elif [[ $bname == *Var03a* ]]; then
+		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks_patt=zz_blank extfirinfo exclude_img=circ_mask off_num_sort"
+	# if it's var03
 	elif [[ $bname == *Var03* ]]; then
 		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks=2560,2570 bootstrap=200 suffix=_bstrp extfirinfo"
+	# if it's new var06
+	elif [[ $bname == *Var06a* ]]; then
+		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks_patt=zz_blank extfirinfo exclude_img=circ_mask off_num_sort"
 	# if it's nuo's data
 	elif [[ $bname == *Nuo* ]]; then
 		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} bootstrap=200 suffix=_bstrp extbsinfo=${dirpp}/${bname}.dp_extbsinfo.csv extfirinfo"
