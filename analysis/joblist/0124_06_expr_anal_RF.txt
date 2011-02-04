@@ -1,0 +1,4 @@
+bin/expr_anal.py dp data_postproc/Chabo_20110124_RF_P_001.psf.pk data_postproc/Chabo_20110124_RF_P_001 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110124_RF_M_001.psf.pk data_postproc/Chabo_20110124_RF_M_001 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110124_RF_A_002.psf.pk data_postproc/Chabo_20110124_RF_A_002 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110124_RF_A_001.psf.pk data_postproc/Chabo_20110124_RF_A_001 extfirinfo

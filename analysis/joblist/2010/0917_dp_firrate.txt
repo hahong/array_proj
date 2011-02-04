@@ -1,0 +1,2 @@
+bin/expr_anal.py dp data_postproc/Chabo_20100917_RSVP_POS_A_002.psf.pk data_postproc/Chabo_20100917_RSVP_POS_A_002 blanks=15,18 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100917_RSVP_POS_A_002.dp_extbsinfo.csv
+bin/expr_anal.py dp data_postproc/Chabo_20100917_RSVP_POS_A_001.psf.pk data_postproc/Chabo_20100917_RSVP_POS_A_001 blanks=15,18 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100917_RSVP_POS_A_001.dp_extbsinfo.csv

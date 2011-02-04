@@ -1,0 +1,3 @@
+./cluster.py data_postproc/z_repr/Pogo_L32_9-30-09_file_1_w10d,Pogo_L32_9-30-09_file_2_w10d,Pogo_L32_9-30-09_file_3_w10d  nsample=4000
+./cluster.py data_postproc/z_repr/Pogo_M32_9-30-09_file_1_w10d,Pogo_M32_9-30-09_file_2_w10d  nsample=4000
+./cluster.py data_postproc/z_repr/Pogo_R32_9-30-09_file_1_w10d,Pogo_R32_9-30-09_file_2_w10d  nsample=4000

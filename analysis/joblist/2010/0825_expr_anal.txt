@@ -1,0 +1,132 @@
+bin/expr_anal.py dp data_postproc/Chabo_20100822_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100822_RSVPNicole_A_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100822_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100822_RSVPNicole_A_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100821_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100821_RSVPNuo_P_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100821_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100821_RSVPNuo_P_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100821_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100821_RSVPNuo_M_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100821_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100821_RSVPNicole_P_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100821_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100821_RSVPNicole_P_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100821_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100821_RSVPNicole_M_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100820_RSVPNuo_P_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100820_RSVPNuo_P_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100820_RSVPNuo_M_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100820_RSVPNuo_M_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100820_RSVPNuo_A_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100820_RSVPNuo_A_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100820_RSVPNicole_P_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100820_RSVPNicole_P_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNicole_M_002.psf.pk data_postproc/Chabo_20100820_RSVPNicole_M_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100820_RSVPNicole_M_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100820_RSVPNicole_A_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100820_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100820_RSVPNicole_A_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100819_RSVPNuo_P_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100819_RSVPNuo_P_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100819_RSVPNuo_M_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100819_RSVPNuo_M_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100819_RSVPNuo_A_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100819_RSVPNuo_A_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100819_RSVPNicole_P_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100819_RSVPNicole_P_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100819_RSVPNicole_M_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100819_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100819_RSVPNicole_A_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100818_RSVPNuo_P_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100818_RSVPNuo_P_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100818_RSVPNuo_M_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100818_RSVPNuo_M_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100818_RSVPNuo_A_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100818_RSVPNuo_A_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100818_RSVPNicole_P_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100818_RSVPNicole_P_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNicole_M_002.psf.pk data_postproc/Chabo_20100818_RSVPNicole_M_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100818_RSVPNicole_M_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100818_RSVPNicole_A_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100818_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100818_RSVPNicole_A_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100815_RSVPNuo_P_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100815_RSVPNuo_P_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100815_RSVPNuo_M_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100815_RSVPNuo_M_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100815_RSVPNuo_A_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100815_RSVPNuo_A_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100815_RSVPNicole_P_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100815_RSVPNicole_P_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNicole_M_002.psf.pk data_postproc/Chabo_20100815_RSVPNicole_M_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100815_RSVPNicole_M_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100815_RSVPNicole_A_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100815_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100815_RSVPNicole_A_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100814_RSVPNuo_P_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100814_RSVPNuo_P_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100814_RSVPNuo_M_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100814_RSVPNuo_A_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100814_RSVPNuo_A_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100814_RSVPNicole_P_002 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100814_RSVPNicole_P_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100814_RSVPNicole_M_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100814_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100814_RSVPNicole_A_001 blanks=100,106 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100813_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100813_RSVPNuo_M_001 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100813_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100813_RSVPNuo_A_002 corr
+bin/expr_anal.py dp data_postproc/Chabo_20100813_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100813_RSVPNuo_A_001 corr
+bin/expr_anal.py ps data_postproc/Chabo_20100822_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100822_RSVPNicole_A_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100822_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100822_RSVPNicole_A_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100821_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100821_RSVPNuo_P_002
+bin/expr_anal.py ps data_postproc/Chabo_20100821_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100821_RSVPNuo_P_001
+bin/expr_anal.py ps data_postproc/Chabo_20100821_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100821_RSVPNuo_M_001
+bin/expr_anal.py ps data_postproc/Chabo_20100821_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100821_RSVPNicole_P_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100821_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100821_RSVPNicole_P_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100821_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100821_RSVPNicole_M_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100820_RSVPNuo_P_002
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100820_RSVPNuo_P_001
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100820_RSVPNuo_M_002
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100820_RSVPNuo_M_001
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100820_RSVPNuo_A_002
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100820_RSVPNuo_A_001
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100820_RSVPNicole_P_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100820_RSVPNicole_P_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNicole_M_002.psf.pk data_postproc/Chabo_20100820_RSVPNicole_M_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100820_RSVPNicole_M_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100820_RSVPNicole_A_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100820_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100820_RSVPNicole_A_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100819_RSVPNuo_P_002
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100819_RSVPNuo_P_001
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100819_RSVPNuo_M_002
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100819_RSVPNuo_M_001
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100819_RSVPNuo_A_002
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100819_RSVPNuo_A_001
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100819_RSVPNicole_P_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100819_RSVPNicole_P_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100819_RSVPNicole_M_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100819_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100819_RSVPNicole_A_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100818_RSVPNuo_P_002
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100818_RSVPNuo_P_001
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100818_RSVPNuo_M_002
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100818_RSVPNuo_M_001
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100818_RSVPNuo_A_002
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100818_RSVPNuo_A_001
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100818_RSVPNicole_P_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100818_RSVPNicole_P_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNicole_M_002.psf.pk data_postproc/Chabo_20100818_RSVPNicole_M_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100818_RSVPNicole_M_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100818_RSVPNicole_A_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100818_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100818_RSVPNicole_A_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100815_RSVPNuo_P_002
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100815_RSVPNuo_P_001
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100815_RSVPNuo_M_002
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100815_RSVPNuo_M_001
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100815_RSVPNuo_A_002
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100815_RSVPNuo_A_001
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100815_RSVPNicole_P_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100815_RSVPNicole_P_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNicole_M_002.psf.pk data_postproc/Chabo_20100815_RSVPNicole_M_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100815_RSVPNicole_M_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNicole_A_002.psf.pk data_postproc/Chabo_20100815_RSVPNicole_A_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100815_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100815_RSVPNicole_A_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100814_RSVPNuo_P_002
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100814_RSVPNuo_P_001
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100814_RSVPNuo_M_001
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100814_RSVPNuo_A_002
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100814_RSVPNuo_A_001
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNicole_P_002.psf.pk data_postproc/Chabo_20100814_RSVPNicole_P_002 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNicole_P_001.psf.pk data_postproc/Chabo_20100814_RSVPNicole_P_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNicole_M_001.psf.pk data_postproc/Chabo_20100814_RSVPNicole_M_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100814_RSVPNicole_A_001.psf.pk data_postproc/Chabo_20100814_RSVPNicole_A_001 blanks=100,106
+bin/expr_anal.py ps data_postproc/Chabo_20100813_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100813_RSVPNuo_M_001
+bin/expr_anal.py ps data_postproc/Chabo_20100813_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100813_RSVPNuo_A_002
+bin/expr_anal.py ps data_postproc/Chabo_20100813_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100813_RSVPNuo_A_001

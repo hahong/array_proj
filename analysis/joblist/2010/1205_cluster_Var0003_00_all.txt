@@ -1,0 +1,6 @@
+./cluster.py data_postproc/z_repr/Chabo_20100903_RSVPVar00_A_001_w10,Chabo_20100903_RSVPVar00_A_002_w10  nsample=4000
+./cluster.py data_postproc/z_repr/Chabo_20100903_RSVPVar00_M_001_w10  nsample=4000
+./cluster.py data_postproc/z_repr/Chabo_20100903_RSVPVar00_P_001_w10,Chabo_20100903_RSVPVar00_P_002_w10  nsample=4000
+./cluster.py data_postproc/z_repr/Chabo_20100910_RSVPVar03_A_001_w10,Chabo_20100910_RSVPVar03_A_002_w10,Chabo_20100910_RSVPVar03_A_003_w10  nsample=4000
+./cluster.py data_postproc/z_repr/Chabo_20100911_RSVPVar03_M_001_w10,Chabo_20100911_RSVPVar03_M_002_w10,Chabo_20100911_RSVPVar03_M_003_w10,Chabo_20100911_RSVPVar03_M_004_w10 nsample=4000
+./cluster.py data_postproc/z_repr/Chabo_20100912_RSVPVar03_P_001_w10,Chabo_20100912_RSVPVar03_P_002_w10,Chabo_20100912_RSVPVar03_P_003_w10  nsample=4000

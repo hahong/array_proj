@@ -1,0 +1,27 @@
+bin/collect_PS_firing.py data_merged/Chabo_20101008_RSVP_POS_A_001.mwk data_postproc/Chabo_20101008_RSVP_POS_A_001.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101008_RSVP_POS_A_002.mwk data_postproc/Chabo_20101008_RSVP_POS_A_002.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101008_RSVP_POS_A_003.mwk data_postproc/Chabo_20101008_RSVP_POS_A_003.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101008_RSVP_POS_A_004.mwk data_postproc/Chabo_20101008_RSVP_POS_A_004.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101009_RSVPVar03_A_001.mwk data_postproc/Chabo_20101009_RSVPVar03_A_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101009_RSVP_POS_A_001.mwk data_postproc/Chabo_20101009_RSVP_POS_A_001.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101009_RSVP_POS_A_002.mwk data_postproc/Chabo_20101009_RSVP_POS_A_002.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101009_RSVP_POS_A_003.mwk data_postproc/Chabo_20101009_RSVP_POS_A_003.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101009_RSVP_POS_A_004.mwk data_postproc/Chabo_20101009_RSVP_POS_A_004.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101010_RSVP_POS_A_001.mwk data_postproc/Chabo_20101010_RSVP_POS_A_001.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101010_RSVP_POS_A_002.mwk data_postproc/Chabo_20101010_RSVP_POS_A_002.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101010_RSVP_POS_A_003.mwk data_postproc/Chabo_20101010_RSVP_POS_A_003.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101010_RSVP_POS_A_004.mwk data_postproc/Chabo_20101010_RSVP_POS_A_004.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNicole10x6_A_001.mwk data_postproc/Chabo_20101011_RSVPNicole10x6_A_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNicole10x6_A_002.mwk data_postproc/Chabo_20101011_RSVPNicole10x6_A_002.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNicole10x6_M_001.mwk data_postproc/Chabo_20101011_RSVPNicole10x6_M_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNicole10x6_M_002.mwk data_postproc/Chabo_20101011_RSVPNicole10x6_M_002.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNicole10x6_P_001.mwk data_postproc/Chabo_20101011_RSVPNicole10x6_P_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNuo_A_001.mwk data_postproc/Chabo_20101011_RSVPNuo_A_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNuo_A_002.mwk data_postproc/Chabo_20101011_RSVPNuo_A_002.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNuo_M_001.mwk data_postproc/Chabo_20101011_RSVPNuo_M_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNuo_M_002.mwk data_postproc/Chabo_20101011_RSVPNuo_M_002.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNuo_P_001.mwk data_postproc/Chabo_20101011_RSVPNuo_P_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPNuo_P_002.mwk data_postproc/Chabo_20101011_RSVPNuo_P_002.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPVar03_A_001.mwk data_postproc/Chabo_20101011_RSVPVar03_A_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPVar03_M_001.mwk data_postproc/Chabo_20101011_RSVPVar03_M_001.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Chabo_20101011_RSVPVar03_P_001.mwk data_postproc/Chabo_20101011_RSVPVar03_P_001.psf.pk 300 96

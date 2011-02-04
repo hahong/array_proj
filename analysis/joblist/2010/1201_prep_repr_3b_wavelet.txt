@@ -1,0 +1,15 @@
+./prep_sorting.py data_merged/Mojo_L32_17Apr_2.mwk        data_nev/Mojo_L32_17Apr_2.plx           data_postproc/z_repr/Mojo_L32_17Apr_2_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Mojo_L32_17Apr_3.mwk        data_nev/Mojo_L32_17Apr_3.plx           data_postproc/z_repr/Mojo_L32_17Apr_3_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Mojo_M32_15Apr_1.mwk        data_nev/Mojo_M32_15Apr_1.plx           data_postproc/z_repr/Mojo_M32_15Apr_1_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Mojo_M32_15Apr_2.mwk        data_nev/Mojo_M32_15Apr_2.plx           data_postproc/z_repr/Mojo_M32_15Apr_2_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Mojo_M32_15Apr_3.mwk        data_nev/Mojo_M32_15Apr_3.plx           data_postproc/z_repr/Mojo_M32_15Apr_3_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Mojo_R32_16Apr_1.mwk        data_nev/Mojo_R32_16Apr_1.plx           data_postproc/z_repr/Mojo_R32_16Apr_1_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Mojo_R32_16Apr_2.mwk        data_nev/Mojo_R32_16Apr_2.plx           data_postproc/z_repr/Mojo_R32_16Apr_2_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Mojo_R32_16Apr_3.mwk        data_nev/Mojo_R32_16Apr_3.plx           data_postproc/z_repr/Mojo_R32_16Apr_3_w10        featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Pogo_L32_9-30-09_file_1.mwk data_nev/Pogo_L32_9-30-09_file_1-01.plx data_postproc/z_repr/Pogo_L32_9-30-09_file_1_w10 featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Pogo_L32_9-30-09_file_2.mwk data_nev/Pogo_L32_9-30-09_file_2-01.plx data_postproc/z_repr/Pogo_L32_9-30-09_file_2_w10 featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Pogo_L32_9-30-09_file_3.mwk data_nev/Pogo_L32_9-30-09_file_3-01.plx data_postproc/z_repr/Pogo_L32_9-30-09_file_3_w10 featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Pogo_M32_9-30-09_file_1.mwk data_nev/Pogo_M32_9-30-09_file_1-01.plx data_postproc/z_repr/Pogo_M32_9-30-09_file_1_w10 featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Pogo_M32_9-30-09_file_2.mwk data_nev/Pogo_M32_9-30-09_file_2-01.plx data_postproc/z_repr/Pogo_M32_9-30-09_file_2_w10 featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Pogo_R32_9-30-09_file_1.mwk data_nev/Pogo_R32_9-30-09_file_1-01.plx data_postproc/z_repr/Pogo_R32_9-30-09_file_1_w10 featdim=10 reject=noadj nmax=4
+./prep_sorting.py data_merged/Pogo_R32_9-30-09_file_2.mwk data_nev/Pogo_R32_9-30-09_file_2-01.plx data_postproc/z_repr/Pogo_R32_9-30-09_file_2_w10 featdim=10 reject=noadj nmax=4

@@ -1,0 +1,9 @@
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_P_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_P_001 blanks=60,62 suffix=_200 extfirinfo on_range=75000,200000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_M_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_M_001 blanks=60,62 suffix=_200 extfirinfo on_range=75000,200000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_A_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_A_001 blanks=60,62 suffix=_200 extfirinfo on_range=75000,200000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_P_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_P_001 blanks=60,62 suffix=_225 extfirinfo on_range=75000,225000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_M_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_M_001 blanks=60,62 suffix=_225 extfirinfo on_range=75000,225000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_A_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_A_001 blanks=60,62 suffix=_225 extfirinfo on_range=75000,225000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_P_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_P_001 blanks=60,62 suffix=_250 extfirinfo on_range=75000,250000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_M_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_M_001 blanks=60,62 suffix=_250 extfirinfo on_range=75000,250000
+bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_A_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_A_001 blanks=60,62 suffix=_250 extfirinfo on_range=75000,250000

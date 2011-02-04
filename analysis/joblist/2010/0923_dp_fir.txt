@@ -1,0 +1,6 @@
+bin/expr_anal.py dp data_postproc/Chabo_20100923_RSVPNuo_P_002.psf.pk data_postproc/Chabo_20100923_RSVPNuo_P_002 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100923_RSVPNuo_P_002.dp_extbsinfo.csv extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20100923_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20100923_RSVPNuo_P_001 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100923_RSVPNuo_P_001.dp_extbsinfo.csv extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20100923_RSVPNuo_M_002.psf.pk data_postproc/Chabo_20100923_RSVPNuo_M_002 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100923_RSVPNuo_M_002.dp_extbsinfo.csv extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20100923_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20100923_RSVPNuo_M_001 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100923_RSVPNuo_M_001.dp_extbsinfo.csv extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20100923_RSVPNuo_A_002.psf.pk data_postproc/Chabo_20100923_RSVPNuo_A_002 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100923_RSVPNuo_A_002.dp_extbsinfo.csv extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20100923_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20100923_RSVPNuo_A_001 bootstrap=200 suffix=_bstrp extbsinfo=data_postproc/Chabo_20100923_RSVPNuo_A_001.dp_extbsinfo.csv extfirinfo

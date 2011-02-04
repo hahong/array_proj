@@ -1,0 +1,15 @@
+./cluster.py data_postproc/z_repr/Mojo_L32_17Apr_1_w10        
+./cluster.py data_postproc/z_repr/Mojo_L32_17Apr_2_w10        
+./cluster.py data_postproc/z_repr/Mojo_L32_17Apr_3_w10        
+./cluster.py data_postproc/z_repr/Mojo_M32_15Apr_1_w10        
+./cluster.py data_postproc/z_repr/Mojo_M32_15Apr_2_w10        
+./cluster.py data_postproc/z_repr/Mojo_M32_15Apr_3_w10        
+./cluster.py data_postproc/z_repr/Mojo_R32_16Apr_1_w10        
+./cluster.py data_postproc/z_repr/Mojo_R32_16Apr_2_w10        
+./cluster.py data_postproc/z_repr/Mojo_R32_16Apr_3_w10        
+./cluster.py data_postproc/z_repr/Pogo_L32_9-30-09_file_2_w10 
+./cluster.py data_postproc/z_repr/Pogo_L32_9-30-09_file_3_w10 
+./cluster.py data_postproc/z_repr/Pogo_M32_9-30-09_file_1_w10 
+./cluster.py data_postproc/z_repr/Pogo_M32_9-30-09_file_2_w10 
+./cluster.py data_postproc/z_repr/Pogo_R32_9-30-09_file_1_w10 
+./cluster.py data_postproc/z_repr/Pogo_R32_9-30-09_file_2_w10 

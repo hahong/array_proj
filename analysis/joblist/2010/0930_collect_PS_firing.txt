@@ -1,0 +1,3 @@
+bin/collect_PS_firing.py data_merged/Chabo_20100930_RSVP_POS_A_001.mwk data_postproc/Chabo_20100930_RSVP_POS_A_001.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20100930_RSVP_POS_A_003.mwk data_postproc/Chabo_20100930_RSVP_POS_A_003.psf.pk 300 96 extinfo c_success=images_shown
+bin/collect_PS_firing.py data_merged/Chabo_20100930_RSVP_POS_A_004.mwk data_postproc/Chabo_20100930_RSVP_POS_A_004.psf.pk 300 96 extinfo c_success=images_shown
