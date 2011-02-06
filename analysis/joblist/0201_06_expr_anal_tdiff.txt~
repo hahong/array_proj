@@ -1,3 +1,0 @@
-bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_P_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_P_001 blanks=60,62 extfirinfo on_range=75000,175000
-bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_M_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_M_001 blanks=60,62 extfirinfo
-bin/expr_anal.py dp data_postproc/Chabo_20100909_RSVPNicole10x6_A_001.psf.pk data_postproc/Chabo_20100909_RSVPNicole10x6_A_001 blanks=60,62 extfirinfo
