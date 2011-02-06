@@ -116,21 +116,28 @@ def prepare(sel, rh=RI_HIGHER, rl=RI_LOWER, nmax=N_MAXOUT):
             nm = min(int(np.round(n_excess/float(nleft))), nhalf - nl)
             sh = sorted(elh)   # sorted w.r.t pin#
             high = sh[:-nm]
-            low = ell + sh[-nm:]
+            low = ell 
+            mvhl = sh[-nm:]    # things to move from high to low
+            mvlh = []
             n_excess -= nm
         elif n_excess < 0:
             # number of items to move to higher
             nm = min(int(np.round(-n_excess/float(nleft))), nhalf - nh)
             sl = sorted(ell)   # sorted w.r.t pin#
             low = sl[:-nm]
-            high = elh + sl[-nm:]
+            high = elh 
+            mvlh = sl[-nm:]    # things to move from low to high
+            mvhl = []
             n_excess += nm
         else:
             low = ell
             high = elh
+            mvlh = mvhl = []
         data[arr] = {}
         data[arr]['high'] = high
         data[arr]['low'] = low
+        data[arr]['mvlh'] = mvlh
+        data[arr]['mvhl'] = mvhl
 
     if n_excess != 0:
         raise ValueError, 'cannot realize wiring network!'
@@ -150,13 +157,13 @@ def makenet(data, rl=RO_LOWER, rh=RO_HIGHER):
         net = []
 
         # do lower output pins first ------
-        a = sorted(d['low'], reverse=True)  # sorted w.r.t pin#
+        a = sorted(d['mvhl'], reverse=True) + sorted(d['low'], reverse=True)  # sorted w.r.t pin#
         for ch in a:
             outpin = ll.pop(0)
             net.append((ch, outpin))
 
         # do higher pins ------------------
-        a = sorted(d['high'], reverse=True) # sorted w.r.t pin#
+        a = sorted(d['mvlh'], reverse=True) + sorted(d['high'], reverse=True) # sorted w.r.t pin#
         for ch in a:
             outpin = lh.pop(0)
             net.append((ch, outpin))
