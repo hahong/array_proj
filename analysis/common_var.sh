@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #patt="Chabo_????????_RSVP*.mwk"
-patt="*.mwk"
+patt="Chabo*.mwk"
 dirmwk="data_mwk"
 dirnev="data_nev"
 dirmg="data_merged"
