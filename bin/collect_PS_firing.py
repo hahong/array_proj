@@ -25,7 +25,7 @@ MAX_CLUS = 5                        # number of clusters per channel
 REJECT_SLOPPY = False                # by default, do not reject sloppy (time to present > 2 frames) stimuli
 
 # ----------------------------------------------------------------------------
-def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose=1, \
+def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose=2, \
         extinfo=False, c_success=C_SUCCESS, proc_cluster=PROC_CLUSTER, max_clus=MAX_CLUS, \
         t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, \
         reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE):
