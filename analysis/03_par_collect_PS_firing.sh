@@ -31,7 +31,7 @@ for fn in `'ls' -1d ${dirmg}/*.mwk`; do
 	elif [[ $bname == *RF* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec} extinfo" >> $fntmp
 	elif [[ $bname == *on*off* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec} extinfo reject_sloppy" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec} reject_sloppy" >> $fntmp
 	else
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec}" >> $fntmp
 	fi
