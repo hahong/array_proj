@@ -26,6 +26,9 @@ for fn in `'ls' -1r ${dirpp}/*.psf.pk`; do
 	# if it's nicole's data
 	elif [[ $bname == *Nicole* ]]; then
 		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks=100,106 bootstrap=200 suffix=_bstrp extbsinfo=${dirpp}/${bname}.dp_extbsinfo.csv extfirinfo"
+	# if it's new var00
+	elif [[ $bname == *Var00a* ]]; then
+		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks_patt=zz_blank extfirinfo exclude_img=circ_mask off_num_sort"
 	# if it's var00
 	elif [[ $bname == *Var00* ]]; then
 		echo "${bin}/expr_anal.py dp ${fn} ${dirpp}/${bname} blanks=640,650 bootstrap=200 suffix=_bstrp extfirinfo"
