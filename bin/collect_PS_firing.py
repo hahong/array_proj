@@ -22,12 +22,13 @@ C_SUCCESS = 'number_of_stm_shown'   # one visual stimulus should have one "succe
 T_SUCCESS = 250000                  # 250ms time window in order to be considered as valid one.
 PROC_CLUSTER = False
 MAX_CLUS = 5                        # number of clusters per channel
-REJECT_SLOPPY = False                # by default, do not reject sloppy (time to present > 2 frames) stimuli
+REJECT_SLOPPY = False               # by default, do not reject sloppy (time to present > 2 frames) stimuli
+EXCLUDE_IMG = None                  # exclude image by its name
 
 # ----------------------------------------------------------------------------
 def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose=2, \
         extinfo=False, c_success=C_SUCCESS, proc_cluster=PROC_CLUSTER, max_clus=MAX_CLUS, \
-        t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, \
+        t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, exclude_img=EXCLUDE_IMG, \
         reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE):
     mf = MWKFile(fn_mwk)
     mf.open()
@@ -45,7 +46,7 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     else: actvelecs = override_elecs               # e.g, range(1, 97)
     n_actvelec = len(actvelecs)                    # number of active spike electrodes
 
-    img_onset, img_id = get_stim_info(mf, extinfo=extinfo)
+    img_onset, img_id = get_stim_info(mf, extinfo=extinfo, exclude_img=exclude_img)
 
     # if requested, remove all sloppy (time spent during update main window > 2 frames)
     if reject_sloppy:
@@ -245,10 +246,15 @@ def main():
         reject_sloppy = True
         print '* Rejecting sloppy stimuli'
 
+    exclude_img = EXCLUDE_IMG
+    if 'exclude_img' in opts:
+        exclude_img = opts['exclude_img'].split(',')
+        print '* Exclude unwanted images:', exclude_img
+
     # go go go
     firrate(fn_mwk, fn_out, override_delay_us=override_delay_us, override_elecs=override_elecs, \
             extinfo=extinfo, c_success=c_success, proc_cluster=proc_cluster, max_clus=max_clus, \
-            t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy) 
+            t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy, exclude_img=exclude_img) 
     print 'Done.                                '
 
 

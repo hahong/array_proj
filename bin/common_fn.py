@@ -42,11 +42,28 @@ def xget_events(mf, **kwargs):
     return [Event(*ev) for ev in evs]
 
 # ----------------------------------------------------------------------------
-def get_stim_info(mf, c_stim=C_STIM, extinfo=False, dynstim='ds_9999', rotrmn=180, blank='zb_99999'):
-    stims = xget_events(mf, codes=[c_stim])
-    stims = [x for x in stims if type(x.value) != int and \
-            (x.value['type'] == 'image' or x.value['type'] == 'dynamic_stimulus' or\
-            x.value['type'] == 'blankscreen')]
+def get_stim_info(mf, c_stim=C_STIM, extinfo=False, \
+        dynstim='ds_9999', rotrmn=180, blank='zb_99999',\
+        exclude_img=None):
+    stims0 = xget_events(mf, codes=[c_stim])
+    stims = []
+    for x in stims0:
+        if type(x.value) == int:
+            continue
+        if x.value['type'] == 'image':
+            if exclude_img != None:
+                ignore = False
+                for patt in exclude_img:
+                    # if it's in the excluded list, don't put that one!!
+                    if patt in x.value['name']: 
+                        ignore = True
+                        break
+                if ignore: continue
+            stims.append(x)
+        if x.value['type'] == 'dynamic_stimulus' or x.value['type'] == 'blankscreen':
+            stims.append(x)
+        # otherwise, ignore
+
     # when the stimulus was shown? (in us).
     img_onset = [x.time for x in stims]
     # ..and each corresponding image id
