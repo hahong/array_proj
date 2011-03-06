@@ -5,7 +5,6 @@ import numpy as np
 
 ELECS = range(1, 97)
 
-
 def load_impedance(fi, elecs=ELECS):
     im = np.zeros(len(elecs))    # XXX: kludge...
 
@@ -32,33 +31,79 @@ def cmp_impedance(fi1, fi2):
     return ratio
 
 
-def cmp_impedance_all(files):
+def cmp_impedance_all(files, plot=None):
     fi1s = files[0::2]
     fi2s = files[1::2]
     res = []
     
     for fi1, fi2 in zip(fi1s, fi2s):
         ratio = cmp_impedance(fi1, fi2)
-        res.append(sorted(ratio))
+        si = np.argsort(ratio)    # sorted index
+        res.append([(r, ch+1) for r, ch in zip(ratio[si], si)])
     n_ch = len(res[0])
 
-    for ch in range(n_ch):
+    for i_rank in range(n_ch):
         row = []
         for col in range(len(res)):
-            row.append(res[col][ch])
+            row.append(res[col][i_rank])
 
-        fmt = '%3d' + '\t%1.3f' * len(row)
-        print fmt % ((ch + 1,) + tuple(row))
+        fmt = '%3d' + '\t%1.3f (Ch %2d)' * len(row)
+        print fmt % ((i_rank + 1,) + tuple(np.ravel(row)))
+
+    if plot != None:
+        from matplotlib import use
+        use('pdf')
+        import pylab as pl
+
+        pl.figure()
+        for i, dat0 in enumerate(res):
+            dat = [d for d, _ in dat0]
+            y, x0 = np.histogram(dat, range=(0, 1), bins=20)
+            x = (x0[1:] + x0[:-1]) / 2.
+            lbl = 'Pair %d' % (i+1)
+            pl.plot(x, y, label=lbl)
+        pl.legend()
+        pl.xlabel('Ratio')
+        pl.ylabel('Count')
+        pl.title('Comparison of impedance values visualized in histogram')
+        pl.savefig(plot)
+
 
 
 def main():
     if len(sys.argv) < 3:
-        print 'cmp_impedance.py <impedance log 1a.txt> <impedance log 1b.txt> [<log 2a.txt> <log 2b.txt>] ...'
-        print 'cmp_impedance.py: compare two impedance log files.'
+        print 'cmp_impedance.py [opts] <impedance log 1a.txt> <impedance log 1b.txt> [<log 2a.txt> <log 2b.txt>] ...'
+        print 'cmp_impedance.py: compare pairs of impedance log files.'
+        print 'Options:'
+        print '   --plot=<filename.pdf>'
         return
 
-    files = sys.argv[1:]
-    cmp_impedance_all(files)
+    # -- parse options and arguments
+    opts0 = []
+    args = []
+    opts = {}
+
+    for token in sys.argv[1:]:
+        if token[:2] == '--': opts0.append(token[2:])
+        else: args.append(token)
+
+    for opt in opts0:
+        parsed = opt.split('=')
+        key = parsed[0].strip()
+        if len(parsed) > 1:
+            cmd = parsed[1].strip()
+        else:
+            cmd = ''
+        opts[key] = cmd
+
+    plot=None
+    if 'plot' in opts:
+        plot = opts['plot']
+        print '* Plotting into', plot
+
+    # -- do the work
+    files = args
+    cmp_impedance_all(files, plot=plot)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,26 @@
+bin/expr_anal.py dp data_postproc/Chabo_20110202_RSVPVar06a_A_003.psf.pk data_postproc/Chabo_20110202_RSVPVar06a_A_003 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110202_RSVPVar06a_A_002.psf.pk data_postproc/Chabo_20110202_RSVPVar06a_A_002 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110202_RSVPVar06a_A_001.psf.pk data_postproc/Chabo_20110202_RSVPVar06a_A_001 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110202_RSVPNicole305_A_001.psf.pk data_postproc/Chabo_20110202_RSVPNicole305_A_001 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110202_RSVPNicole10x6_A_001.psf.pk data_postproc/Chabo_20110202_RSVPNicole10x6_A_001 blanks=60,62 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110201_RSVPVar06a_P_003.psf.pk data_postproc/Chabo_20110201_RSVPVar06a_P_003 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110201_RSVPVar06a_P_002.psf.pk data_postproc/Chabo_20110201_RSVPVar06a_P_002 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110201_RSVPVar06a_P_001.psf.pk data_postproc/Chabo_20110201_RSVPVar06a_P_001 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110201_RSVPVar06a_M_003.psf.pk data_postproc/Chabo_20110201_RSVPVar06a_M_003 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110201_RSVPVar06a_M_002.psf.pk data_postproc/Chabo_20110201_RSVPVar06a_M_002 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110201_RSVPVar06a_M_001.psf.pk data_postproc/Chabo_20110201_RSVPVar06a_M_001 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110131_RSVPVar06a_A_003.psf.pk data_postproc/Chabo_20110131_RSVPVar06a_A_003 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110131_RSVPVar06a_A_002.psf.pk data_postproc/Chabo_20110131_RSVPVar06a_A_002 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110131_RSVPVar06a_A_001.psf.pk data_postproc/Chabo_20110131_RSVPVar06a_A_001 blanks=2560,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110130_RSVPVar03a_P_003.psf.pk data_postproc/Chabo_20110130_RSVPVar03a_P_003 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110130_RSVPVar03a_P_002.psf.pk data_postproc/Chabo_20110130_RSVPVar03a_P_002 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110130_RSVPVar03a_P_001.psf.pk data_postproc/Chabo_20110130_RSVPVar03a_P_001 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110130_RSVPVar03a_M_003.psf.pk data_postproc/Chabo_20110130_RSVPVar03a_M_003 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110130_RSVPVar03a_M_002.psf.pk data_postproc/Chabo_20110130_RSVPVar03a_M_002 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110130_RSVPVar03a_M_001.psf.pk data_postproc/Chabo_20110130_RSVPVar03a_M_001 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110130_RSVPVar03a_A_001.psf.pk data_postproc/Chabo_20110130_RSVPVar03a_A_001 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110129_RSVPVar03a_A_003.psf.pk data_postproc/Chabo_20110129_RSVPVar03a_A_003 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110129_RSVPVar03a_A_002.psf.pk data_postproc/Chabo_20110129_RSVPVar03a_A_002 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110129_RSVPVar03a_A_001.psf.pk data_postproc/Chabo_20110129_RSVPVar03a_A_001 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110128_RSVPVar03a_M_002.psf.pk data_postproc/Chabo_20110128_RSVPVar03a_M_002 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data_postproc/Chabo_20110128_RSVPVar03a_M_001.psf.pk data_postproc/Chabo_20110128_RSVPVar03a_M_001 blanks=2559,2570 extfirinfo exclude_img=circ_mask off_num_sort

@@ -1,0 +1,10 @@
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNuo_P_001.psf.pk data_postproc/Chabo_20110214_RSVPNuo_P_001 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNuo_M_001.psf.pk data_postproc/Chabo_20110214_RSVPNuo_M_001 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNuo_A_001.psf.pk data_postproc/Chabo_20110214_RSVPNuo_A_001 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNicole305_P_001.psf.pk data_postproc/Chabo_20110214_RSVPNicole305_P_001 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNicole305_M_002.psf.pk data_postproc/Chabo_20110214_RSVPNicole305_M_002 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNicole305_M_001.psf.pk data_postproc/Chabo_20110214_RSVPNicole305_M_001 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNicole305_A_001.psf.pk data_postproc/Chabo_20110214_RSVPNicole305_A_001 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNicole10x6_P_001.psf.pk data_postproc/Chabo_20110214_RSVPNicole10x6_P_001 blanks=60,62 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNicole10x6_M_001.psf.pk data_postproc/Chabo_20110214_RSVPNicole10x6_M_001 blanks=60,62 extfirinfo
+bin/expr_anal.py dp data_postproc/Chabo_20110214_RSVPNicole10x6_A_001.psf.pk data_postproc/Chabo_20110214_RSVPNicole10x6_A_001 blanks=60,62 extfirinfo

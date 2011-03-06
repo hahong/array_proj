@@ -1,0 +1,16 @@
+bin/expr_anal.py dp data_postproc/Pogo_R32_9-30-09_file_2.psf.pk data_postproc/Pogo_R32_9-30-09_file_2 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Pogo_R32_9-30-09_file_1.psf.pk data_postproc/Pogo_R32_9-30-09_file_1 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Pogo_M32_9-30-09_file_2.psf.pk data_postproc/Pogo_M32_9-30-09_file_2 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Pogo_M32_9-30-09_file_1.psf.pk data_postproc/Pogo_M32_9-30-09_file_1 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Pogo_L32_9-30-09_file_3.psf.pk data_postproc/Pogo_L32_9-30-09_file_3 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Pogo_L32_9-30-09_file_2.psf.pk data_postproc/Pogo_L32_9-30-09_file_2 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Pogo_L32_9-30-09_file_1.psf.pk data_postproc/Pogo_L32_9-30-09_file_1 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_R32_16Apr_3.psf.pk data_postproc/Mojo_R32_16Apr_3 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_R32_16Apr_2.psf.pk data_postproc/Mojo_R32_16Apr_2 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_R32_16Apr_1.psf.pk data_postproc/Mojo_R32_16Apr_1 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_M32_15Apr_3.psf.pk data_postproc/Mojo_M32_15Apr_3 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_M32_15Apr_2.psf.pk data_postproc/Mojo_M32_15Apr_2 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_M32_15Apr_1.psf.pk data_postproc/Mojo_M32_15Apr_1 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_L32_17Apr_3.psf.pk data_postproc/Mojo_L32_17Apr_3 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_L32_17Apr_2.psf.pk data_postproc/Mojo_L32_17Apr_2 blanks=100,106 extfirinfo proc_cluster
+bin/expr_anal.py dp data_postproc/Mojo_L32_17Apr_1.psf.pk data_postproc/Mojo_L32_17Apr_1 blanks=100,106 extfirinfo proc_cluster

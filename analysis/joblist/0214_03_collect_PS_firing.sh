@@ -1,0 +1,16 @@
+bin/collect_PS_firing.py data_merged/Mojo_L32_17Apr_1.mwk data_postproc/Mojo_L32_17Apr_1.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_L32_17Apr_2.mwk data_postproc/Mojo_L32_17Apr_2.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_L32_17Apr_3.mwk data_postproc/Mojo_L32_17Apr_3.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_M32_15Apr_1.mwk data_postproc/Mojo_M32_15Apr_1.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_M32_15Apr_2.mwk data_postproc/Mojo_M32_15Apr_2.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_M32_15Apr_3.mwk data_postproc/Mojo_M32_15Apr_3.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_R32_16Apr_1.mwk data_postproc/Mojo_R32_16Apr_1.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_R32_16Apr_2.mwk data_postproc/Mojo_R32_16Apr_2.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Mojo_R32_16Apr_3.mwk data_postproc/Mojo_R32_16Apr_3.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Pogo_L32_9-30-09_file_1.mwk data_postproc/Pogo_L32_9-30-09_file_1.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Pogo_L32_9-30-09_file_2.mwk data_postproc/Pogo_L32_9-30-09_file_2.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Pogo_L32_9-30-09_file_3.mwk data_postproc/Pogo_L32_9-30-09_file_3.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Pogo_M32_9-30-09_file_1.mwk data_postproc/Pogo_M32_9-30-09_file_1.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Pogo_M32_9-30-09_file_2.mwk data_postproc/Pogo_M32_9-30-09_file_2.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Pogo_R32_9-30-09_file_1.mwk data_postproc/Pogo_R32_9-30-09_file_1.psf.pk 300 96
+bin/collect_PS_firing.py data_merged/Pogo_R32_9-30-09_file_2.mwk data_postproc/Pogo_R32_9-30-09_file_2.psf.pk 300 96
