@@ -11,3 +11,4 @@ bin="bin"
 
 defdelay=300   # default delay
 defnelec=96    # default number of electrodes active
+allnelec=128   # all electrodes

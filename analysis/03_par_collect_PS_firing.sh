@@ -24,16 +24,26 @@ for fn in `'ls' -1d ${dirmg}/*.mwk`; do
 		continue
 	fi
 
+	# Main loop -------------------------------------------------------------------------
+
+	nelec=${defnelec}
+	# if using all 128-channels (i.e., using sw-box, then set the #channels
+	if [[ $bname == *S110204* ]]; then
+		nelec=${allnelec}
+	fi
+
+
+	# some tidbits for image set types
 	if [[ $bname == *pos* || $bname == *POS* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec} extinfo c_success=images_shown" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} extinfo c_success=images_shown" >> $fntmp
 	elif [[ $bname == *Chou* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec} extinfo" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} extinfo" >> $fntmp
 	elif [[ $bname == *RF* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec} extinfo" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} extinfo" >> $fntmp
 	elif [[ $bname == *on*off* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
 	else
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${defnelec}" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} exclude_img=circ_mask" >> $fntmp
 	fi
 done
 

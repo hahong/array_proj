@@ -41,7 +41,20 @@ class IidIdx(tables.IsDescription):
     idx      = tables.UInt32Col()         # index to the iid
 
 
-def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, 
+
+def is_excluded(iid, exclude_img=None):
+    if exclude_img == None:
+        return False
+
+    for patt in exclude_img:
+        # if it's in the excluded list, don't put that one!!
+        if patt in iid: 
+            return True
+
+    return False
+
+
+def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, exclude_img=None, 
         n_bins=N_BINS, t_min=T_MIN, verbose=1, n_slack=N_SLACK, multi=False, fkey=FKEY):
     n_files = len(files)
     n_bytes = int(np.ceil(n_bins / 8.))    # number of bytes required to store one trial
@@ -113,6 +126,8 @@ def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None,
 
             for iid in dat['all_spike'][el]:
                 # -- main computation
+                if is_excluded(iid, exclude_img): continue
+
                 # some preps
                 if iid not in iid2idx:
                     iid2idx[iid] = ii = len(iid2idx)   # index to the image, 0-based
@@ -226,13 +241,14 @@ def main():
         print 'The output file is in the hdf5 format.'
         print
         print 'Options:'
-        print '   --n_elec=#          Number of electrodes/channels/units/sites'
-        print '   --n_max_trial=#     Hard maximum of the number of trials'
-        print '   --n_img=#           Hard maximum of the number of images/stimuli'
-        print '   --n_bins=#          Number of 1ms-bins'
-        print '   --t_min=#           Low-bound of the spike time for stimuli'
-        print '   --multi             Merge multiple array data (A, M, P) into one output'
-        print '   --key=string        Comma separated keys for each array (only w/ --multi)'
+        print '   --n_elec=#            Number of electrodes/channels/units/sites'
+        print '   --n_max_trial=#       Hard maximum of the number of trials'
+        print '   --n_img=#             Hard maximum of the number of images/stimuli'
+        print '   --n_bins=#            Number of 1ms-bins'
+        print '   --t_min=#             Low-bound of the spike time for stimuli'
+        print '   --multi               Merge multiple array data (A, M, P) into one output'
+        print '   --key=string          Comma separated keys for each array (only w/ --multi)'
+        print '   --exclude_img=string  Comma separated image names to be excluded'
         return
 
     # -- parse options and arguments
@@ -283,11 +299,17 @@ def main():
             print '** Error occured!'
             return
 
+    exclude_img = None
+    if 'exclude_img' in opts:
+        exclude_img = opts['exclude_img'].split(',')
+        print 'Exclude unwanted images:', exclude_img
+
+
     # main loop
     try:
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
-        convert(files, of, multi=multi, fkey=fkey)
+        convert(files, of, multi=multi, fkey=fkey, exclude_img=exclude_img)
     finally:
         print 'Cleaning up...'
         cleanup()
