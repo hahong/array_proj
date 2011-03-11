@@ -242,13 +242,14 @@ def main():
         print
         print 'Options:'
         print '   --n_elec=#            Number of electrodes/channels/units/sites'
-        print '   --n_max_trial=#       Hard maximum of the number of trials'
+        print '   --n_maxtrial=#        Hard maximum of the number of trials'
         print '   --n_img=#             Hard maximum of the number of images/stimuli'
         print '   --n_bins=#            Number of 1ms-bins'
         print '   --t_min=#             Low-bound of the spike time for stimuli'
         print '   --multi               Merge multiple array data (A, M, P) into one output'
         print '   --key=string          Comma separated keys for each array (only w/ --multi)'
         print '   --exclude_img=string  Comma separated image names to be excluded'
+        print '   --flist=string        CR separated input psf.pk file list to be added'
         return
 
     # -- parse options and arguments
@@ -276,6 +277,13 @@ def main():
     # print 'Files:', files
 
     # process options
+    if 'flist' in opts:
+        for f in open(opts['flist']).readlines():
+            files.append(f.strip())
+        print 'Using the followings:'
+        for f in files:
+            print '  ', f
+
     multi = False
     fkey = FKEY
     if 'multi' in opts:
@@ -304,12 +312,17 @@ def main():
         exclude_img = opts['exclude_img'].split(',')
         print 'Exclude unwanted images:', exclude_img
 
+    n_maxtrial = N_MAXTRIAL
+    if 'n_maxtrial' in opts:
+        n_maxtrial = int(opts['n_maxtrial'])
+        print 'Setting n_maxtrial:', n_maxtrial
+
 
     # main loop
     try:
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
-        convert(files, of, multi=multi, fkey=fkey, exclude_img=exclude_img)
+        convert(files, of, multi=multi, fkey=fkey, exclude_img=exclude_img, n_maxtrial=n_maxtrial)
     finally:
         print 'Cleaning up...'
         cleanup()
