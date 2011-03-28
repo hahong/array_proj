@@ -250,6 +250,7 @@ def main():
         print '   --key=string          Comma separated keys for each array (only w/ --multi)'
         print '   --exclude_img=string  Comma separated image names to be excluded'
         print '   --flist=string        CR separated input psf.pk file list to be added'
+        print '   --flistpx=string      (Path) prefix to be added before each line in `flist`'
         return
 
     # -- parse options and arguments
@@ -278,8 +279,14 @@ def main():
 
     # process options
     if 'flist' in opts:
+        flistpx = ''
+        if 'flistpx' in opts:
+            flistpx = opts['flistpx']
+
         for f in open(opts['flist']).readlines():
-            files.append(f.strip())
+            fp = f.strip()
+            if flistpx != '': fp = os.path.join(flistpx, fp)
+            files.append(fp)
         print 'Using the followings:'
         for f in files:
             print '  ', f
