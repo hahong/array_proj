@@ -324,13 +324,18 @@ def main():
         n_maxtrial = int(opts['n_maxtrial'])
         print 'Setting n_maxtrial:', n_maxtrial
 
+    n_bins = N_BINS
+    if 'n_bins' in opts:
+        n_bins = int(opts['n_bins'])
+        print 'Setting n_bins:', n_bins
+
     assert all([os.path.exists(f) for f in files])
 
     # main loop
     try:
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
-        convert(files, of, multi=multi, fkey=fkey, exclude_img=exclude_img, n_maxtrial=n_maxtrial)
+        convert(files, of, multi=multi, fkey=fkey, exclude_img=exclude_img, n_maxtrial=n_maxtrial, n_bins=n_bins)
     finally:
         print 'Cleaning up...'
         cleanup()
