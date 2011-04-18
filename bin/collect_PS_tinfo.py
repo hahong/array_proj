@@ -324,6 +324,7 @@ def main():
         n_maxtrial = int(opts['n_maxtrial'])
         print 'Setting n_maxtrial:', n_maxtrial
 
+    assert all([os.path.exists(f) for f in files])
 
     # main loop
     try:
