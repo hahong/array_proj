@@ -192,7 +192,7 @@ def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, exclud
     # /meta/iid2idx: iid to matrix-index info
     t_iididx = h5o.createTable(meta, 'iididx', IidIdx, 'Image ID and its index')
     # /meta/orgfile_img: file origin info, image-id-major 
-    orgfile = h5t.createCArray(meta, 'orgfile_img', atom16, shape_org, filters=filters)   # origin info
+    orgfile = h5o.createCArray(meta, 'orgfile_img', atom16, shape_org, filters=filters)   # origin info
 
     # -- fill metadata
     # some metadata records
