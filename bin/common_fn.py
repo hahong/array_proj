@@ -60,9 +60,10 @@ def get_stim_info(mf, c_stim=C_STIM, extinfo=False, \
                         break
                 if ignore: continue
             stims.append(x)
-        if x.value['type'] == 'dynamic_stimulus' or \
-                x.value['type'] == 'blankscreen' or \
-                x.value['type'] == 'image_directory_movie':
+        elif x.value['type'] == 'dynamic_stimulus' or x.value['type'] == 'blankscreen':
+            stims.append(x)
+        elif x.value['type'] == 'image_directory_movie':
+            if type(x.value['current_stimulus']) == int: continue
             stims.append(x)
         # otherwise, ignore
 

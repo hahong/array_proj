@@ -9,9 +9,11 @@ import pywt as wt
 import collections as cl
 import cPickle as pk
 import shutil as sh
+import tempfile
 from common_fn import *
 from scipy import stats
 from scipy.stats import kstest
+from joblib import Parallel, delayed
 
 N_SNIPPET_PER_IMG = 2
 I_THRESHOLD = 10
@@ -26,10 +28,13 @@ EPS = 1e-5
 
 APPLY_NEW_THR = True
 M_REJECT = 5.5/3.5
+NCPU = -1
+
+PARRUN = '++parrun'
 
 # -----------------------------------------------------------------------------
 def get_few_waveforms(fn_mwks, fn_nevs, nmax=N_SNIPPET_PER_IMG, ihalt=IIMG_HALT, \
-        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, fill_empty=True):
+        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, fill_empty=True, wavedec_lev=WAVEDEC_LEV):
     if apply_new_thr: new_thr = {'mult':reject}
     else: new_thr = None
     wavs = cl.defaultdict(list)   # wavs[ch] = [[snippet 1], [snippet 2], ...]
@@ -102,7 +107,7 @@ def get_feat_transf(wavs, n_featdim=N_FEATDIM, metd=FEAT_METD):
             W = np.empty(M.shape)
             npts = len(M)
             for i in range(npts):
-                dec = wt.wavedec(M[i], 'haar', level=WAVEDEC_LEV)
+                dec = wt.wavedec(M[i], 'haar', level=wavedec_lev)
                 W[i] = np.concatenate(dec)[:ndim]
 
             # -- K-S test
@@ -140,7 +145,7 @@ def get_feat_transf(wavs, n_featdim=N_FEATDIM, metd=FEAT_METD):
 
 # -----------------------------------------------------------------------------
 def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, metd=FEAT_METD, \
-        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT):
+        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, wavedec_lev=WAVEDEC_LEV):
     ff = {}; fi = {}
     for ch in T:
         ff[ch] = open(fn_out + SUFF_FET + str(ch) + '.tmp', 'wt')
@@ -158,7 +163,7 @@ def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, m
         wav = np.array(wav_info['waveform'])
         if metd == 'wav':                      # if wavelet decomposition
             ndim = len(wav)
-            dec = wt.wavedec(wav, 'haar', level=WAVEDEC_LEV)
+            dec = wt.wavedec(wav, 'haar', level=wavedec_lev)
             wav = np.concatenate(dec)[:ndim]
         pc = tuple(np.dot(wav, T[ch]))
 
@@ -265,22 +270,55 @@ def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR):
 
 # --------------------------------------------------------------------------------
 def main(fn_mwks, fn_nevs, fn_outs, full=False, n_featdim=N_FEATDIM, reject=M_REJECT, \
-        apply_new_thr=APPLY_NEW_THR, metd=FEAT_METD, nmax=N_SNIPPET_PER_IMG):
+        apply_new_thr=APPLY_NEW_THR, metd=FEAT_METD, nmax=N_SNIPPET_PER_IMG, wavedec_lev=WAVEDEC_LEV, ncpu=NCPU):
     # -- prepare
     wavs = get_few_waveforms(fn_mwks, fn_nevs, \
-            reject=reject, apply_new_thr=apply_new_thr, nmax=nmax)  
+            reject=reject, apply_new_thr=apply_new_thr, nmax=nmax, wavedec_lev=wavedec_lev)  
     T = get_feat_transf(wavs, n_featdim=n_featdim, metd=metd)       # PCA
     del wavs
     for ch in T: print '* Shape:', ch, T[ch].shape
 
     # -- do the job
     print 'Writing features...'
-    for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs):
-        write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, \
-                reject=reject, apply_new_thr=apply_new_thr)
+    #for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs):
+    #    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, \
+    #            reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev)
+    r = Parallel(n_jobs=ncpu, verbose=1)(delayed(parrun_push)((T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev)) for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs))
+
+
+def parrun_push(args):
+    fd, tmpf = tempfile.mkstemp()
+    os.close(fd)
+    pk.dump(args, open(tmpf, 'wb'))
+    os.system('./prep_sorting.py %s %s' % (PARRUN, tmpf))
+
+def parrun_pop(argfile):
+    T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev = pk.load(open(argfile))
+    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev)
+    os.unlink(argfile)
+
+
+def prep_files(fn_mwks, fn_nevs, fn_outs):
+    def load_set(flist, extchk=True):
+        if flist[0][0] == '+':
+            flist = [f.strip() for f in open(flist[0][1:]).readlines()]
+        if extchk: assert all([os.path.exists(f) for f in flist])
+        return flist
+
+    fn_mwks = load_set(fn_mwks.split(SEP))
+    fn_nevs = load_set(fn_nevs.split(SEP))
+    fn_outs = load_set(fn_outs.split(SEP), extchk=False)
+
+    assert len(fn_mwks) == len(fn_nevs)
+    assert len(fn_mwks) == len(fn_outs)
+    return fn_mwks, fn_nevs, fn_outs
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 3 and sys.argv[1] == PARRUN:
+        parrun_pop(sys.argv[2])
+        sys.exit(0)
+
     if len(sys.argv) < 4:
         print 'prep_sorting.py <mwk> <nev> <output file prefix> [options 1] [options 2] [...]'
         print 'Prepares input files for spike sorting, or simply rejects invalid spikes.'
@@ -298,11 +336,9 @@ if __name__ == '__main__':
         sys.exit(1)
 
     fn_mwks, fn_nevs, fn_outs = sys.argv[1:4]
-    fn_mwks = fn_mwks.split(SEP)
-    fn_nevs = fn_nevs.split(SEP)
-    fn_outs = fn_outs.split(SEP)
-    assert len(fn_mwks) == len(fn_nevs)
-    assert len(fn_mwks) == len(fn_outs)
+    fn_mwks, fn_nevs, fn_outs = prep_files(fn_mwks, fn_nevs, fn_outs)
+
+    assert False, '1212'
 
     opts = parse_opts(sys.argv[4:])
     print '* Processing:', fn_mwks, fn_nevs, fn_outs
@@ -331,10 +367,15 @@ if __name__ == '__main__':
     if 'nmax' in opts: nmax = int(opts['nmax'])
     else: nmax = N_SNIPPET_PER_IMG
 
+    if 'ncpu' in opts: ncpu = int(opts['ncpu'])
+    else: ncpu = NCPU
+
+    if 'wavedec_lev' in opts: wavedec_lev = int(opts['wavedec_lev'])
+    else: wavedec_lev = WAVEDEC_LEV
     # -----
-    print '* Variables: (full, n_featdim, reject, apply_new_thr, metd, nmax) =', \
-            (full, n_featdim, reject, apply_new_thr, metd, nmax)
+    print '* Variables: (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu) =', \
+            (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu)
 
     main(fn_mwks, fn_nevs, fn_outs, full=full, n_featdim=n_featdim, reject=reject, \
-            apply_new_thr=apply_new_thr, metd=metd, nmax=nmax)
+            apply_new_thr=apply_new_thr, metd=metd, nmax=nmax, wavedec_lev=wavedec_lev, ncpu=ncpu)
 
