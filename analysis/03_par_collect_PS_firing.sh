@@ -42,6 +42,8 @@ for fn in `'ls' -1d ${dirmg}/*.mwk`; do
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} extinfo" >> $fntmp
 	elif [[ $bname == *on*off* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
+	elif [[ $bname == *MovieGallant110413* ]]; then
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
 	else
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} exclude_img=circ_mask" >> $fntmp
 	fi

@@ -60,7 +60,9 @@ def get_stim_info(mf, c_stim=C_STIM, extinfo=False, \
                         break
                 if ignore: continue
             stims.append(x)
-        if x.value['type'] == 'dynamic_stimulus' or x.value['type'] == 'blankscreen':
+        if x.value['type'] == 'dynamic_stimulus' or \
+                x.value['type'] == 'blankscreen' or \
+                x.value['type'] == 'image_directory_movie':
             stims.append(x)
         # otherwise, ignore
 
@@ -78,6 +80,14 @@ def get_stim_info(mf, c_stim=C_STIM, extinfo=False, \
             if not extinfo: iid = dynstim
             else: iid = (dynstim, x.value['xoffset'], x.value['yoffset'], \
                 x.value['rotation'] % rotrmn, x.value['width'], x.value['height'])
+        elif x.value['type'] == 'image_directory_movie':
+            if not extinfo: iid = x.value['current_stimulus']['name']
+            else: iid = (x.value['current_stimulus']['name'], \
+                    x.value['current_stimulus']['pos_x'], \
+                    x.value['current_stimulus']['pos_y'], \
+                    x.value['current_stimulus']['rotation'], \
+                    x.value['current_stimulus']['size_x'], \
+                    x.value['current_stimulus']['size_y'])
         elif x.value['type'] == 'blankscreen':
             if not extinfo: iid = blank
             else: iid = (blank, 0, 0, 0, 0, 0)

@@ -27,7 +27,7 @@ EXCLUDE_IMG = None                  # exclude image by its name
 
 # ----------------------------------------------------------------------------
 def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose=2, \
-        extinfo=False, c_success=C_SUCCESS, proc_cluster=PROC_CLUSTER, max_clus=MAX_CLUS, \
+        extinfo=False, c_success=C_SUCCESS, t_success_lim=T_SUCCESS, proc_cluster=PROC_CLUSTER, max_clus=MAX_CLUS, \
         t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, exclude_img=EXCLUDE_IMG, \
         reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE):
     mf = MWKFile(fn_mwk)
@@ -102,7 +102,7 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     for i in range(n_stim):
         t0 = img_onset[i]; iid = img_id[i]
         # -- check if this presentation is successful. if it's not ignore this.
-        if np.sum((t_success > t0) & (t_success < (t0 + T_SUCCESS))) < 1: continue
+        if np.sum((t_success > t0) & (t_success < (t0 + t_success_lim))) < 1: continue
 
         if verbose > 0: 
             print 'At', (i + 1), 'out of', n_stim, '         \r',
@@ -221,6 +221,12 @@ def main():
     else:
         c_success = C_SUCCESS
 
+    if 't_success' in opts:
+        t_success = int(opts['t_success'])
+        print '* t_success:', t_success
+    else:
+        t_success = T_SUCCESS
+
     proc_cluster = PROC_CLUSTER
     if 'proc_cluster' in opts or 'proc_spksorting' in opts:
         print '* Collecting spike sorting information'
@@ -253,7 +259,7 @@ def main():
 
     # go go go
     firrate(fn_mwk, fn_out, override_delay_us=override_delay_us, override_elecs=override_elecs, \
-            extinfo=extinfo, c_success=c_success, proc_cluster=proc_cluster, max_clus=max_clus, \
+            extinfo=extinfo, c_success=c_success, t_success_lim=t_success, proc_cluster=proc_cluster, max_clus=max_clus, \
             t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy, exclude_img=exclude_img) 
     print 'Done.                                '
 
