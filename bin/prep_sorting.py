@@ -338,8 +338,6 @@ if __name__ == '__main__':
     fn_mwks, fn_nevs, fn_outs = sys.argv[1:4]
     fn_mwks, fn_nevs, fn_outs = prep_files(fn_mwks, fn_nevs, fn_outs)
 
-    assert False, '1212'
-
     opts = parse_opts(sys.argv[4:])
     print '* Processing:', fn_mwks, fn_nevs, fn_outs
 
