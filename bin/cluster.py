@@ -19,6 +19,9 @@ MAX_PTS = 10000
 BIN = os.getcwd() + os.sep + 'cluster_maci.exe'
 ERR_CLUSTER = -1
 MIN_CLUS = 60
+SEP = ','
+NELEC = 128
+NCPU = -1
 
 
 # --------------------------------------------------------------------------------
@@ -107,7 +110,7 @@ def spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed=None):
     frun.close()
 
 
-def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=-1, bin=BIN, rm_tmp_level=1, osuff=''):
+def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_level=1, osuff=''):
     wd = os.getcwd()
     pid = os.getpid()
     uniq = 0
@@ -186,6 +189,13 @@ def main(fn_prefix, metd, bin, osuffix, nsample):
         print 'cluster.py: invalid metd'
 
 # --------------------------------------------------------------------------------
+def prep_files(flist, nelec=NELEC):
+    flist = flist.split(SEP)
+    if flist[0][0] == '+':
+        flist = [f.strip() for f in open(flist[0][1:]).readlines()]
+    assert all([os.path.exists(f + SUFF_FET + str(ch)) for f in flist for ch in range(1, nelec+1)])
+    return flist
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print 'cluster.py <.fet prefixes separated by ","> [options 1] [options 2] [...]'
@@ -195,18 +205,14 @@ if __name__ == '__main__':
         print 'Options:'
         print '   metd        - clustering method (e.g, spc)'
         print '   bin         - clustering binary (must be abs path)'
-        print '   sep         - separator'
         print '   nsample     - number of sampled points/prefix'
         print '   osuffix     - suffix of the output files'
+        print '   nelec       - number of electrodes'
         sys.exit(1)
 
     opts = parse_opts(sys.argv[2:])
-    sep = ','
-    if 'sep' in opts:
-        sep = opts['sep']
-        print '* Separator:', sep
+    fn_prefix = sys.argv[1]
 
-    fn_prefix = sys.argv[1].split(sep)
     print '* Processing:', fn_prefix
     
     metd = METD_CLUSTER
@@ -215,13 +221,22 @@ if __name__ == '__main__':
     bin = BIN
     if 'bin' in opts: bin = opts['bin']
 
+    nelec = NELEC
+    if 'nelec' in opts: nelec = int(opts['nelec'])
+
+    ncpu = NCPU
+    if 'ncpu' in opts: ncpu = int(opts['ncpu'])
+
     osuffix = ''
     if 'osuffix' in opts: osuffix = opts['osuffix']
 
     nsample = MAX_PTS
     if 'nsample' in opts: nsample = int(opts['nsample'])
 
-    print '* Variables: (metd, bin, osuffix, nsample) =', (metd, bin, osuffix, nsample)
+    fn_prefix = prep_files(fn_prefix, nelec)
+    assert os.path.exists(bin)
+
+    print '* Variables: (metd, bin, osuffix, nsample, nelec, ncpu) =', (metd, bin, osuffix, nsample, nelec, ncpu)
 
     main(fn_prefix, metd, bin, osuffix, nsample)
 
