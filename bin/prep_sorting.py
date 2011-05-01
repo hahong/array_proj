@@ -41,7 +41,8 @@ def get_few_waveforms(fn_mwks, fn_nevs, nmax=N_SNIPPET_PER_IMG, ihalt=IIMG_HALT,
 
     # -- collect snippets for each image presentation
     # override_elecs: process only these electrodes. 1-based.
-    for fn_mwk, fn_nev in zip(fn_mwks, fn_nevs):
+    for i_pair, (fn_mwk, fn_nev) in enumerate(zip(fn_mwks, fn_nevs)):
+        print '* Processing (%d/%d): %s' % (i_pair+1, len(fn_mwks), fn_mwk)
         prev_iimg = -1
 
         for arg in getspk(fn_mwk, fn_nev,  
@@ -270,10 +271,10 @@ def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR):
 
 # --------------------------------------------------------------------------------
 def main(fn_mwks, fn_nevs, fn_outs, full=False, n_featdim=N_FEATDIM, reject=M_REJECT, \
-        apply_new_thr=APPLY_NEW_THR, metd=FEAT_METD, nmax=N_SNIPPET_PER_IMG, wavedec_lev=WAVEDEC_LEV, ncpu=NCPU):
+        apply_new_thr=APPLY_NEW_THR, metd=FEAT_METD, nmax=N_SNIPPET_PER_IMG, wavedec_lev=WAVEDEC_LEV, ncpu=NCPU, ihalt=IIMG_HALT):
     # -- prepare
     wavs = get_few_waveforms(fn_mwks, fn_nevs, \
-            reject=reject, apply_new_thr=apply_new_thr, nmax=nmax, wavedec_lev=wavedec_lev)  
+            reject=reject, apply_new_thr=apply_new_thr, nmax=nmax, wavedec_lev=wavedec_lev, ihalt=ihalt)  
     T = get_feat_transf(wavs, n_featdim=n_featdim, metd=metd)       # PCA
     del wavs
     for ch in T: print '* Shape:', ch, T[ch].shape
@@ -368,12 +369,15 @@ if __name__ == '__main__':
     if 'ncpu' in opts: ncpu = int(opts['ncpu'])
     else: ncpu = NCPU
 
+    if 'ihalt' in opts: ihalt = int(opts['ihalt'])
+    else: ihalt = IIMG_HALT
+
     if 'wavedec_lev' in opts: wavedec_lev = int(opts['wavedec_lev'])
     else: wavedec_lev = WAVEDEC_LEV
     # -----
-    print '* Variables: (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu) =', \
-            (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu)
+    print '* Variables: (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt) =', \
+            (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt)
 
     main(fn_mwks, fn_nevs, fn_outs, full=full, n_featdim=n_featdim, reject=reject, \
-            apply_new_thr=apply_new_thr, metd=metd, nmax=nmax, wavedec_lev=wavedec_lev, ncpu=ncpu)
+            apply_new_thr=apply_new_thr, metd=metd, nmax=nmax, wavedec_lev=wavedec_lev, ncpu=ncpu, ihalt=ihalt)
 

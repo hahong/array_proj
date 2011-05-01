@@ -1,10 +1,13 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
-	echo 'Usgage: 02_par_merge.sh <joblist output file name | stdout | exec>'
+if [ $# -lt 1 ]; then
+	echo 'Usgage: 02_par_merge.sh <joblist output file name | print | exec> [options]'
 	echo 'Special argument:'
 	echo '   - print:  print joblist to stdout'
 	echo '   - exec:   execute the joblist directly'
+	echo
+	echo 'Options:'
+	echo '   - cluster <mwk file list> <cluster prefix file list> <suffix>: merge with cluster info'
 	exit 1
 fi
 
@@ -13,34 +16,60 @@ fi
 # get tmp file
 myname=`basename $0`
 fntmp=`mktemp .${myname}.XXXXXX` || { echo "Failed to create temp file"; exit 1; }
+files=(`'ls' -1 ${dirmwk}/${patt}`)
+opts="none"
 
-for fn in `'ls' -1 ${dirmwk}/${patt}`; do
-	bname=`basename ${fn}`
+# process options
+if [ $# -ge 5 -a "$2" = "cluster" ]; then
+	files=(`cat $3`)
+	cfiles=(`cat $4`)
+	cfileslst="$4"
+	csuffix="$5"
+	opts="cluster"
+
+	if [ "${#files[@]}" != "${#cfiles[@]}" ]; then
+		echo 'Number of files mismatch' >&2
+		exit 1
+	fi
+fi
+
+for index in "${!files[@]}"; do
+        mwksrc=${files[$index]}
+	mwksrcb=`basename ${mwksrc}`
+	mwkdstb=$mwksrcb
+	if [ "$opts" == "cluster" ]; then
+		mwksrc="${dirmwk}/`basename ${mwksrc}`"
+		mwkdstb="`basename ${mwksrc} .mwk`${csuffix}.mwk"
+	fi
+
 	# if there's already mwk directory in ${dirmg}, ignore it.
 	# it is likely to be merged already.
-	if [ -d ${dirmg}/${bname} ]; then
+	if [ -d ${dirmg}/${mwkdstb} ]; then
 		continue
 	fi
 
-	if [ -d ${fn} ]; then
-		fnmwk=${fn}/${bname}
-		if [ ! -f ${fnmwk} ]; then
+	# already indexed?
+	if [ -d ${mwksrc} ]; then
+		mwksrc=${mwksrc}/${mwksrcb}
+		if [ ! -f ${mwksrc} ]; then
 			continue
 		fi
-	else
-		fnmwk=${fn}
 	fi
 
-	fnnev="${dirnev}/`basename ${bname} .mwk`.nev"
-	if [ ! -f ${fnnev} ]; then
+	# check nev files
+	nevsrc="${dirnev}/`basename ${mwksrcb} .mwk`.nev"
+	if [ ! -f ${nevsrc} ]; then
 		continue
 	fi
 
-	# basenames
-	bnmwk=`basename ${fnmwk}`
-	bnnev=`basename ${fnnev}`
+	oargs=""
+	# other options
+	if [ "$opts" = "cluster" ]; then
+		cfile0=${cfiles[$index]}
+		oargs="cluster=${cfile0} cluster_all=+${cfileslst}"
+	fi
 
-	echo "cp ${fnmwk} ${dirmg}/${bnmwk} && ${bin}/merge.py ${dirmg}/${bnmwk} ${fnnev} nowav && rm -f ${dirmg}/${bnmwk}/*.bak" >> $fntmp
+	echo "cp ${mwksrc} ${dirmg}/${mwkdstb} && ${bin}/merge.py ${dirmg}/${mwkdstb} ${nevsrc} nowav ${oargs} && rm -f ${dirmg}/${mwkdstb}/*.bak" >> $fntmp
 done
 
 if [ $1 == 'print' ]; then

@@ -275,6 +275,16 @@ def parse_opts(opts0):
 
     return opts
 
+
+
+def prep_files(flist, sep=',', extchk=True):
+    flist = flist.split(sep)
+    if flist[0][0] == '+':
+        flist = [f.strip() for f in open(flist[0][1:]).readlines()]
+    if extchk: assert all([os.path.exists(f) for f in flist])
+
+    return flist
+
 # -----------------------------------------------------------------------------
 # Set new threshold `thr`. If the `waveform` cannot pass `thr` returns None.
 # The new waveform is re-aligned based on the steepest point.

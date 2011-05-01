@@ -7,7 +7,7 @@ import sys
 sys.path.append('lib')
 from mergeutil import *
 from mworks.data import *
-from common_fn import parse_opts, T_START, T_STOP, get_stim_info, seq_search, sort_uniq
+from common_fn import parse_opts, T_START, T_STOP, get_stim_info, seq_search, sort_uniq, prep_files
 from collections import defaultdict
 
 BAD_ISI = 3000   # spiking within 3ms is bad
@@ -216,7 +216,7 @@ def main():
             cluster.prefix_clu = prefixes[1]
         
         if 'cluster_all' in opts:
-            clu_all = opts['cluster_all'].split(CLU_SEP)
+            clu_all = prep_files(opts['cluster_all'], sep=CLU_SEP, extchk=False)
             print 'merge: using other info', clu_all
             cluster.prefix_clu_all = clu_all
         callback_cluster = cluster
