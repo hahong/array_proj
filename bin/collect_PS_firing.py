@@ -163,7 +163,9 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
             't_stop': t_stop0,
             't_adjust': t_adjust,
             'actvelecs': actvelecs}
-    if proc_cluster: out['clus_info'] = clus_info
+    if proc_cluster:
+        out['clus_info'] = clus_info
+        out['max_clus'] = max_clus
     pk.dump(out, f)
     f.close()
 
@@ -177,9 +179,9 @@ def main():
         print 
         print 'Options:'
         print 'extinfo              - collects extra stimuli information in addition to the names'
-        print 'c_success=<string>   - code name for "success" signal'
+        print 'c_success=string     - code name for "success" signal'
         print 'proc_cluster         - process extra spike sorting information'
-        print 'max_cluster=<#>      - maximum number of clusters per channel'
+        print 'max_cluster=#        - maximum number of clusters per channel'
         return
 
     fn_mwk = sys.argv[1]
