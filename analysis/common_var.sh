@@ -4,8 +4,8 @@
 patt="Chabo*.mwk"
 dirmwk="data_mwk"
 dirnev="data_nev"
-dirmg="data_merged"
-dirpp="data_postproc"
+test $dirmg || dirmg="data_merged"
+test $dirpp || dirpp="data_postproc"
 sep=", "
 bin="bin"
 
