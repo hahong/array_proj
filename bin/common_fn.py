@@ -285,6 +285,17 @@ def prep_files(flist, sep=',', extchk=True):
 
     return flist
 
+
+
+def prepare_save_dir(sav_dir):
+    if sav_dir != '' and not os.path.exists(sav_dir):
+        try:
+            os.makedirs(sav_dir)
+        # in massively-parallel env, it is possible that the sav_dir is created after 
+        # os.path.exists check.  We just ignore if makedirs fails.
+        except Exception as details:
+            pass
+
 # -----------------------------------------------------------------------------
 # Set new threshold `thr`. If the `waveform` cannot pass `thr` returns None.
 # The new waveform is re-aligned based on the steepest point.
