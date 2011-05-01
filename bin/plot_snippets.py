@@ -24,10 +24,12 @@ MAX_CLUS = 5                          # number of clusters per channel
 CH_PER_FIG = 16
 MAX_SPK = 300
 IMG_MAX = 800
+EXCLUDE_IMG = None                  # exclude image by its name
 
 # ----------------------------------------------------------------------------
 def plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=None, override_elecs=None, \
-        verbose=True, c_success=C_SUCCESS, extinfo=False, prefix='out'):
+        verbose=True, c_success=C_SUCCESS, extinfo=False, prefix='out',  t_success_lim=T_SUCCESS, \
+        exclude_img=EXCLUDE_IMG):
     # ref = pk.load(open(fn_ref))
     # clus_info = ref['clus_info']
     # del ref
@@ -49,7 +51,8 @@ def plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=None, override_elecs=No
     for fn_mwk, fn_nev in zip(fn_mwks, fn_nevs):
         print '*', fn_mwk, fn_nev
         get_data(fn_mwk, fn_nev, clus_info, override_delay_us=override_delay_us, \
-                override_elecs=override_elecs, verbose=verbose, c_success=c_success, extinfo=extinfo)
+                override_elecs=override_elecs, verbose=verbose, c_success=c_success, \
+                t_success_lim=t_success_lim, extinfo=extinfo, exclude_img=exclude_img)
 
     print '* Collection done.              '
     figs = {}
@@ -90,7 +93,8 @@ def plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=None, override_elecs=No
 
 
 def get_data(fn_mwk, fn_nev, clus_info, override_delay_us=None, override_elecs=None, \
-        verbose=True, c_success=C_SUCCESS, max_clus=MAX_CLUS, extinfo=False, imgmax=IMG_MAX):
+        verbose=True, c_success=C_SUCCESS, t_success_lim=T_SUCCESS, max_clus=MAX_CLUS, \
+        extinfo=False, imgmax=IMG_MAX, exclude_img=EXCLUDE_IMG):
     mf = MWKFile(fn_mwk)
     mf.open()
     nf = load_spike_data(fn_nev)
@@ -109,7 +113,7 @@ def get_data(fn_mwk, fn_nev, clus_info, override_delay_us=None, override_elecs=N
     if override_elecs is None: actvelecs = toc[Merge.K_SPIKEWAV].keys() 
     else: actvelecs = override_elecs               # e.g, range(1, 97)
 
-    img_onset, img_id = get_stim_info(mf, extinfo=extinfo)
+    img_onset, img_id = get_stim_info(mf, extinfo=extinfo, exclude_img=exclude_img)
     n_stim = len(img_onset)
 
     # MAC-NSP time translation
@@ -127,7 +131,7 @@ def get_data(fn_mwk, fn_nev, clus_info, override_delay_us=None, override_elecs=N
         if i > imgmax: break
         t0 = img_onset[i]; iid = img_id[i]
         # -- check if this presentation is successful. if it's not ignore this.
-        if np.sum((t_success > t0) & (t_success < (t0 + T_SUCCESS))) < 1: continue
+        if np.sum((t_success > t0) & (t_success < (t0 + t_success_lim))) < 1: continue
 
         if verbose: 
             print 'At', (i + 1), 'out of', n_stim, '         \r',
@@ -196,6 +200,18 @@ def main():
     else:
         c_success = C_SUCCESS
 
+    if 't_success' in opts:
+        t_success = int(opts['t_success'])
+        print '* t_success:', t_success
+    else:
+        t_success = T_SUCCESS
+
+    exclude_img = EXCLUDE_IMG
+    if 'exclude_img' in opts:
+        exclude_img = opts['exclude_img'].split(',')
+        print '* Exclude unwanted images:', exclude_img
+
+
     extinfo = False
     if 'extinfo' in opts:
         extinfo = True
@@ -207,8 +223,9 @@ def main():
         print 'Output prefix:', prefix
 
     # go go go
-    plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=override_delay_us, override_elecs=override_elecs, \
-            c_success=c_success, extinfo=extinfo, prefix=prefix)
+    plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=override_delay_us, \
+            override_elecs=override_elecs, c_success=c_success, extinfo=extinfo, \
+            prefix=prefix, t_success_lim=t_success, exclude_img=exclude_img)
     print 'Done.     '
 
 

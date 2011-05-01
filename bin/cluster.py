@@ -22,6 +22,7 @@ MIN_CLUS = 60
 SEP = ','
 NELEC = 128
 NCPU = -1
+MULTIPATH = False
 
 
 # --------------------------------------------------------------------------------
@@ -91,8 +92,8 @@ def spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed=None):
     # -- writing parameter files for SPC clustering (copied from wave_clus)
     frun = open(fn_run, 'wt')
     print >>frun, 'NumberOfPoints:', npts
-    print >>frun, 'DataFile:',       fn_inp
-    print >>frun, 'OutFile:',        fn_out
+    print >>frun, 'DataFile:',       os.basename(fn_inp)
+    print >>frun, 'OutFile:',        os.basename(fn_out)
     print >>frun, 'Dimensions:',     ndim 
     # the followings are default constants. see Wave_clus
     print >>frun, 'MinTemp: 0'
@@ -110,29 +111,29 @@ def spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed=None):
     frun.close()
 
 
-def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_level=1, osuff=''):
+def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_level=1, osuff='', multipath=MULTIPATH):
     wd = os.getcwd()
     pid = os.getpid()
     uniq = 0
 
-    bname0 = os.path.basename(fn_prefix[0])
-    basedir0 = os.path.dirname(fn_prefix[0])
+    fn_prefix0 = fn_prefix[0]
+    bname0 = os.path.basename(fn_prefix0)
+    basedir0 = os.path.dirname(fn_prefix0)
     if basedir0 == '': basedir0 = '.'
-    os.chdir(basedir0)
 
-    fn_fet0s = glob.glob(bname0 + SUFF_FET + '*')
+    fn_fet0s = glob.glob(fn_prefix0 + SUFF_FET + '*')
     job_spc = []       # list for the SPC runs
     job_match = []     # list for the template matching
     job_rm = []        # list for the temp file removal
 
     # get unique `uniq` to prevent pid collision (in a cluster)
-    while os.path.exists('tmp.%d.%05d.000.inp' % (uniq, pid)):
+    while os.path.exists(basedir0 + os.sep + 'tmp.%d.%05d.000.inp' % (uniq, pid)):
         uniq += 1
 
     # -- make the input file and joblist
     for ifn, fn_fet0 in enumerate(fn_fet0s):
         # -- write SPC compatible input files
-        tmp_base = 'tmp.%d.%05d.%03d' % (uniq, pid, ifn)
+        tmp_base = basedir0 + os.sep + 'tmp.%d.%05d.%03d' % (uniq, pid, ifn)
         fn_inp = tmp_base + '.inp'
         fn_run = tmp_base + '.run'
         fn_out = tmp_base + '.out'
@@ -142,7 +143,8 @@ def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_
         # iterate over the prefixes
         for fpx in fn_prefix:
             bname = os.path.basename(fpx)
-            fn_fet = fn_fet0.replace(bname0, bname)
+            fn_fet = os.path.dirname(fn_fet0) + os.sep + os.path.basename(fn_fet0).replace(bname0, bname)
+            if multipath: fn_fet = os.path.dirname(fpx) + os.sep + os.path.basename(fn_fet)
             src = open(fn_fet).readlines()
 
             ndim = int(src[0].strip())
@@ -157,7 +159,7 @@ def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_
         finp.close()
 
         spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed)
-        cmd = bin + ' ' + fn_run
+        cmd = 'cd %s && %s %s' % (basedir0, bin, fn_run)
         job_spc.append(cmd)
         job_rm.append((tmp_base, fn_fet0))
 
@@ -183,8 +185,8 @@ def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_
 
 
 # --------------------------------------------------------------------------------
-def main(fn_prefix, metd, bin, osuffix, nsample):
-    if metd == 'spc': spc_cluster(fn_prefix, bin=bin, osuff=osuffix, nmax=nsample)
+def main(fn_prefix, metd, bin, osuffix, nsample, ncpu, multipath):
+    if metd == 'spc': spc_cluster(fn_prefix, bin=bin, osuff=osuffix, nmax=nsample, ncpu=ncpu, multipath=multipath)
     else:
         print 'cluster.py: invalid metd'
 
@@ -208,6 +210,7 @@ if __name__ == '__main__':
         print '   nsample     - number of sampled points/prefix'
         print '   osuffix     - suffix of the output files'
         print '   nelec       - number of electrodes'
+        print '   multipath   - allow one directory for one experiment'
         sys.exit(1)
 
     opts = parse_opts(sys.argv[2:])
@@ -233,10 +236,13 @@ if __name__ == '__main__':
     nsample = MAX_PTS
     if 'nsample' in opts: nsample = int(opts['nsample'])
 
+    multipath = MULTIPATH
+    if 'multipath' in opts: multipath = True
+
     fn_prefix = prep_files(fn_prefix, nelec)
     assert os.path.exists(bin)
 
-    print '* Variables: (metd, bin, osuffix, nsample, nelec, ncpu) =', (metd, bin, osuffix, nsample, nelec, ncpu)
+    print '* Variables: (metd, bin, osuffix, nsample, nelec, ncpu, multipath) =', (metd, bin, osuffix, nsample, nelec, ncpu, multipath)
 
-    main(fn_prefix, metd, bin, osuffix, nsample)
+    main(fn_prefix, metd, bin, osuffix, nsample, ncpu, multipath)
 

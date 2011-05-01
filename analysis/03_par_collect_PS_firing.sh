@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
+if [ $# -lt 1 ]; then
 	echo 'Usgage: 03_par_collect_PS_firing.sh <joblist output file name | stdout | exec> [opts]'
 	echo 'Special argument:'
 	echo '   - print:  print joblist to stdout'
@@ -43,7 +43,7 @@ for fn in `'ls' -1d ${dirmg}/*.mwk`; do
 	elif [[ $bname == *on*off* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
 	elif [[ $bname == *MovieGallant110413* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} $@ exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} $2 $3 exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
 	else
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} exclude_img=circ_mask" >> $fntmp
 	fi
