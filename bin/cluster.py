@@ -92,8 +92,8 @@ def spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed=None):
     # -- writing parameter files for SPC clustering (copied from wave_clus)
     frun = open(fn_run, 'wt')
     print >>frun, 'NumberOfPoints:', npts
-    print >>frun, 'DataFile:',       os.basename(fn_inp)
-    print >>frun, 'OutFile:',        os.basename(fn_out)
+    print >>frun, 'DataFile:',       os.path.basename(fn_inp)
+    print >>frun, 'OutFile:',        os.path.basename(fn_out)
     print >>frun, 'Dimensions:',     ndim 
     # the followings are default constants. see Wave_clus
     print >>frun, 'MinTemp: 0'
