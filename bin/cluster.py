@@ -111,7 +111,7 @@ def spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed=None):
     frun.close()
 
 
-def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_level=1, osuff='', multipath=MULTIPATH):
+def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_level=1, osuff='', multipath=MULTIPATH, cont=None):
     wd = os.getcwd()
     pid = os.getpid()
     uniq = 0
@@ -133,33 +133,39 @@ def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_
     # -- make the input file and joblist
     for ifn, fn_fet0 in enumerate(fn_fet0s):
         # -- write SPC compatible input files
-        tmp_base = basedir0 + os.sep + 'tmp.%d.%05d.%03d' % (uniq, pid, ifn)
+        if cont != None:
+            tmp_base = basedir0 + os.sep + '%s.%03d' % (cont, ifn)
+        else:
+            tmp_base = basedir0 + os.sep + 'tmp.%d.%05d.%03d' % (uniq, pid, ifn)
         fn_inp = tmp_base + '.inp'
         fn_run = tmp_base + '.run'
         fn_out = tmp_base + '.out'
 
-        finp = open(fn_inp, 'wt')
-        npts = 0    # total number of points to cluster
+        if cont == None:
+            finp = open(fn_inp, 'wt')
+            npts = 0    # total number of points to cluster
+
         # iterate over the prefixes
         for fpx in fn_prefix:
             bname = os.path.basename(fpx)
             fn_fet = os.path.dirname(fn_fet0) + os.sep + os.path.basename(fn_fet0).replace(bname0, bname)
             if multipath: fn_fet = os.path.dirname(fpx) + os.sep + os.path.basename(fn_fet)
-            src = open(fn_fet).readlines()
-
-            ndim = int(src[0].strip())
-            src.pop(0)                  # remove the header
-            np.random.shuffle(src)
-            out = src[:nmax] 
-            npts += len(out)
-            finp.writelines(out)
-
             job_match.append((fn_fet, tmp_base))
-            del src, out
-        finp.close()
 
-        spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed)
-        cmd = 'cd %s && %s %s' % (basedir0, bin, fn_run)
+            if cont == None:
+                src = open(fn_fet).readlines()
+                ndim = int(src[0].strip())
+                src.pop(0)                  # remove the header
+                np.random.shuffle(src)
+                out = src[:nmax] 
+                npts += len(out)
+                finp.writelines(out)
+                del src, out
+
+        if cont == None:
+            finp.close()
+            spc_write_run(fn_run, fn_inp, fn_out, npts, ndim, rseed)
+        cmd = 'cd %s && %s %s' % (basedir0, bin, os.path.basename(fn_run))
         job_spc.append(cmd)
         job_rm.append((tmp_base, fn_fet0))
 
@@ -185,8 +191,8 @@ def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_
 
 
 # --------------------------------------------------------------------------------
-def main(fn_prefix, metd, bin, osuffix, nsample, ncpu, multipath):
-    if metd == 'spc': spc_cluster(fn_prefix, bin=bin, osuff=osuffix, nmax=nsample, ncpu=ncpu, multipath=multipath)
+def main(fn_prefix, metd, bin, osuffix, nsample, ncpu, multipath, cont=None):
+    if metd == 'spc': spc_cluster(fn_prefix, bin=bin, osuff=osuffix, nmax=nsample, ncpu=ncpu, multipath=multipath, cont=cont)
     else:
         print 'cluster.py: invalid metd'
 
@@ -239,10 +245,15 @@ if __name__ == '__main__':
     multipath = MULTIPATH
     if 'multipath' in opts: multipath = True
 
+    cont = None
+    if 'cont' in opts:
+        print '* Continuing from previous session'
+        cont = opts['cont']
+
     fn_prefix = prep_files(fn_prefix, nelec)
     assert os.path.exists(bin)
 
     print '* Variables: (metd, bin, osuffix, nsample, nelec, ncpu, multipath) =', (metd, bin, osuffix, nsample, nelec, ncpu, multipath)
 
-    main(fn_prefix, metd, bin, osuffix, nsample, ncpu, multipath)
+    main(fn_prefix, metd, bin, osuffix, nsample, ncpu, multipath, cont=cont)
 
