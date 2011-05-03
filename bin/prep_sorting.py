@@ -25,16 +25,20 @@ FEAT_METD = 'wav'
 SEP = ','
 WAVEDEC_LEV = 5
 EPS = 1e-5
+WAVCUTDIM = None
 
 APPLY_NEW_THR = True
 M_REJECT = 5.5/3.5
 NCPU = -1
 
 PARRUN = '++parrun'
+CLEANUP = '++cleanup'
 
 # -----------------------------------------------------------------------------
 def get_few_waveforms(fn_mwks, fn_nevs, nmax=N_SNIPPET_PER_IMG, ihalt=IIMG_HALT, \
-        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, fill_empty=True, wavedec_lev=WAVEDEC_LEV):
+        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, fill_empty=True, \
+        wavedec_lev=WAVEDEC_LEV, wavcutdim=WAVCUTDIM, \
+        exclude_img=None, t_success_lim=T_SUCCESS, c_success=C_SUCCESS):
     if apply_new_thr: new_thr = {'mult':reject}
     else: new_thr = None
     wavs = cl.defaultdict(list)   # wavs[ch] = [[snippet 1], [snippet 2], ...]
@@ -45,11 +49,12 @@ def get_few_waveforms(fn_mwks, fn_nevs, nmax=N_SNIPPET_PER_IMG, ihalt=IIMG_HALT,
         print '* Processing (%d/%d): %s' % (i_pair+1, len(fn_mwks), fn_mwk)
         prev_iimg = -1
 
-        for arg in getspk(fn_mwk, fn_nev,  
-                t_start0=75000, t_stop0=175000, new_thr=new_thr):
+        for arg in getspk(fn_mwk, fn_nev, exclude_img=exclude_img, t_success_lim=t_success_lim, \
+                t_start0=75000, t_stop0=175000, new_thr=new_thr, c_success=c_success):
             iimg = arg['iimg']
             ch = arg['ch']
             wav = arg['wav']['unsorted']      # unsorted raw snippet
+            if wavcutdim != None: wav = wav[:wavcutdim]
 
             # if this is the beginning of the new image presentation...
             if prev_iimg != iimg:
@@ -70,6 +75,7 @@ def get_few_waveforms(fn_mwks, fn_nevs, nmax=N_SNIPPET_PER_IMG, ihalt=IIMG_HALT,
             print '* Empty channel', ch
             wavs[ch].append(np.zeros(np.shape(wav)))
 
+    print '* n_ch =', len(wavs.keys())
     print '\nSampling Done.'
     return wavs
 
@@ -82,6 +88,8 @@ def get_feat_transf(wavs, n_featdim=N_FEATDIM, metd=FEAT_METD):
             ndim = len(wavs[ch][0])
             break
     
+    print '* ndim =', ndim
+
     for ch in wavs:
         # -- prep/clean-up
         n = len(wavs[ch])
@@ -145,43 +153,16 @@ def get_feat_transf(wavs, n_featdim=N_FEATDIM, metd=FEAT_METD):
 
 
 # -----------------------------------------------------------------------------
-def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, metd=FEAT_METD, \
-        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, wavedec_lev=WAVEDEC_LEV):
-    ff = {}; fi = {}
-    for ch in T:
-        ff[ch] = open(fn_out + SUFF_FET + str(ch) + '.tmp', 'wt')
-        fi[ch] = open(fn_out + SUFF_INF + str(ch) + '.tmp', 'wt')
-        print >>ff[ch], n_featdim 
-        print >>fi[ch], n_featdim 
-    fmt = '%e\t' * n_featdim    # format string
-
-    if full: gen = get_full_spk(fn_nev, reject=reject, apply_new_thr=apply_new_thr)
-    else: gen = get_img_spk(fn_mwk, fn_nev, reject=reject, apply_new_thr=apply_new_thr)
-
-    # -- do the job for all spikes
-    for wav_info in gen:
-        ch = wav_info['id']
-        wav = np.array(wav_info['waveform'])
-        if metd == 'wav':                      # if wavelet decomposition
-            ndim = len(wav)
-            dec = wt.wavedec(wav, 'haar', level=wavedec_lev)
-            wav = np.concatenate(dec)[:ndim]
-        pc = tuple(np.dot(wav, T[ch]))
-
-        print >>ff[ch], fmt % pc
-        print >>fi[ch], wav_info['file_pos'], wav_info['timestamp'] 
-
-    # -- clean up
-    for ch in ff:
-        ff[ch].close()
-        fi[ch].close()
-
-    # -- remove potential duplicates
-    for ch in T:
+def cleanup(chs, fn_out):
+    for ch in chs:
         fn_inf = fn_out + SUFF_INF + str(ch)
         fn_fet = fn_out + SUFF_FET + str(ch)
-        inf = np.loadtxt(fn_inf + '.tmp', skiprows=1)
-        fet = np.loadtxt(fn_fet + '.tmp', skiprows=1)
+        try:
+            inf = np.loadtxt(fn_inf + '.tmp', skiprows=1)
+            fet = np.loadtxt(fn_fet + '.tmp', skiprows=1)
+        except:
+            print '* Cannot read:', fn_inf
+            continue
 
         ninf0 = len(inf)
         infs, fet = sort_uniq(inf[:,0].astype('int'), inf, fet)
@@ -191,7 +172,7 @@ def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, m
         if ninf0 == ninf1 and np.all(infs == inf):
             sh.move(fn_inf + '.tmp', fn_inf)
             sh.move(fn_fet + '.tmp', fn_fet)
-            return
+            continue
         
         # otherwise, rewriting is needed due to the change
         inf = infs
@@ -212,6 +193,48 @@ def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, m
         os.unlink(fn_fet + '.tmp')
         os.unlink(fn_inf + '.tmp')
 
+
+def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, metd=FEAT_METD, \
+        apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, wavedec_lev=WAVEDEC_LEV, wavcutdim=WAVCUTDIM, \
+        exclude_img=None, t_success_lim=T_SUCCESS, c_success=C_SUCCESS, movie_begin_fname=None, t_start0=T_START, t_stop0=T_STOP):
+    ff = {}; fi = {}
+    
+    if wavcutdim != None: print '* wavcutdim =', wavcutdim
+    prepare_save_dir(os.path.dirname(fn_out))
+
+    for ch in T:
+        ff[ch] = open(fn_out + SUFF_FET + str(ch) + '.tmp', 'wt')
+        fi[ch] = open(fn_out + SUFF_INF + str(ch) + '.tmp', 'wt')
+        print >>ff[ch], n_featdim 
+        print >>fi[ch], n_featdim 
+    fmt = '%e\t' * n_featdim    # format string
+
+    if full: gen = get_full_spk(fn_nev, reject=reject, apply_new_thr=apply_new_thr)
+    else: gen = get_img_spk(fn_mwk, fn_nev, reject=reject, apply_new_thr=apply_new_thr, \
+            exclude_img=exclude_img, t_success_lim=t_success_lim, c_success=c_success, \
+            movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0)
+
+    # -- do the job for all spikes
+    for wav_info in gen:
+        ch = wav_info['id']
+        wav = np.array(wav_info['waveform'])
+        if wavcutdim != None: wav = wav[:wavcutdim]
+        if metd == 'wav':                      # if wavelet decomposition
+            ndim = len(wav)
+            dec = wt.wavedec(wav, 'haar', level=wavedec_lev)
+            wav = np.concatenate(dec)[:ndim]
+        pc = tuple(np.dot(wav, T[ch]))
+
+        print >>ff[ch], fmt % pc
+        print >>fi[ch], wav_info['file_pos'], wav_info['timestamp'] 
+
+    # -- clean up
+    for ch in ff:
+        ff[ch].close()
+        fi[ch].close()
+
+    # -- remove potential duplicates
+    cleanup(T, fn_out)
 
 # --------------------------------------------------------------------------------
 def get_full_spk(fn_nev, apply_new_thr=APPLY_NEW_THR, reject=M_REJECT):   
@@ -240,7 +263,9 @@ def get_full_spk(fn_nev, apply_new_thr=APPLY_NEW_THR, reject=M_REJECT):
         yield wav_info
 
 
-def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR):
+def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR, \
+        exclude_img=None, t_success_lim=T_SUCCESS, c_success=C_SUCCESS, movie_begin_fname=None, \
+        t_start0=T_START, t_stop0=T_STOP):
     """get spikes around the image presentation"""
     prev_iimg = -1
     buf0 = []
@@ -248,7 +273,7 @@ def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR):
     if apply_new_thr: new_thr = {'mult':reject}
     else: new_thr = None
 
-    for arg, iimg in getspk(fn_mwk, fn_nev, full=False, new_thr=new_thr):
+    for arg, iimg in getspk(fn_mwk, fn_nev, full=False, new_thr=new_thr, exclude_img=exclude_img, t_success_lim=t_success_lim, c_success=c_success, movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0):
         # new image is presented. yield the contents in the buffer
         if prev_iimg != iimg:
             prev_iimg = iimg
@@ -271,10 +296,15 @@ def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR):
 
 # --------------------------------------------------------------------------------
 def main(fn_mwks, fn_nevs, fn_outs, full=False, n_featdim=N_FEATDIM, reject=M_REJECT, \
-        apply_new_thr=APPLY_NEW_THR, metd=FEAT_METD, nmax=N_SNIPPET_PER_IMG, wavedec_lev=WAVEDEC_LEV, ncpu=NCPU, ihalt=IIMG_HALT):
+        apply_new_thr=APPLY_NEW_THR, metd=FEAT_METD, nmax=N_SNIPPET_PER_IMG, \
+        wavedec_lev=WAVEDEC_LEV, ncpu=NCPU, ihalt=IIMG_HALT, wavcutdim=WAVCUTDIM, \
+        exclude_img=None, t_success_lim=T_SUCCESS, c_success=C_SUCCESS, movie_begin_fname=None, \
+        t_start0=T_START, t_stop0=T_STOP):
     # -- prepare
     wavs = get_few_waveforms(fn_mwks, fn_nevs, \
-            reject=reject, apply_new_thr=apply_new_thr, nmax=nmax, wavedec_lev=wavedec_lev, ihalt=ihalt)  
+            reject=reject, apply_new_thr=apply_new_thr, nmax=nmax, wavedec_lev=wavedec_lev, \
+            ihalt=ihalt,  wavcutdim=wavcutdim, \
+            exclude_img=exclude_img, t_success_lim=t_success_lim, c_success=c_success)  
     T = get_feat_transf(wavs, n_featdim=n_featdim, metd=metd)       # PCA
     del wavs
     for ch in T: print '* Shape:', ch, T[ch].shape
@@ -284,22 +314,22 @@ def main(fn_mwks, fn_nevs, fn_outs, full=False, n_featdim=N_FEATDIM, reject=M_RE
     #for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs):
     #    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, \
     #            reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev)
-    r = Parallel(n_jobs=ncpu, verbose=1)(delayed(parrun_push)((T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev)) for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs))
+    r = Parallel(n_jobs=ncpu, verbose=1)(delayed(parrun_push)((T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev, wavcutdim, exclude_img, t_success_lim, c_success, movie_begin_fname, t_start0, t_stop0)) for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs))
 
 
 def parrun_push(args):
     fd, tmpf = tempfile.mkstemp()
     os.close(fd)
     pk.dump(args, open(tmpf, 'wb'))
-    os.system('./prep_sorting.py %s %s' % (PARRUN, tmpf))
+    os.system('./%s %s %s' % (__file__, PARRUN, tmpf))
 
 def parrun_pop(argfile):
-    T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev = pk.load(open(argfile))
-    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev)
+    T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev, wavcutdim, exclude_img, t_success_lim, c_success, movie_begin_fname, t_start0, t_stop0 = pk.load(open(argfile))
+    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev, wavcutdim=wavcutdim, exclude_img=exclude_img, t_success_lim=t_success_lim, c_success=c_success, movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0)
     os.unlink(argfile)
 
 
-def prep_files(fn_mwks, fn_nevs, fn_outs):
+def prep_files_ex(fn_mwks, fn_nevs, fn_outs):
     def load_set(flist, extchk=True):
         if flist[0][0] == '+':
             flist = [f.strip() for f in open(flist[0][1:]).readlines()]
@@ -316,9 +346,15 @@ def prep_files(fn_mwks, fn_nevs, fn_outs):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3 and sys.argv[1] == PARRUN:
-        parrun_pop(sys.argv[2])
-        sys.exit(0)
+    if len(sys.argv) == 3:
+        if sys.argv[1] == PARRUN:
+            parrun_pop(sys.argv[2])
+            sys.exit(0)
+        elif sys.argv[1] == CLEANUP:
+            #for fn_out in prep_files(sys.argv[2], extchk=False):
+            #    cleanup(range(1,129), fn_out)
+            Parallel(n_jobs=-1, verbose=1)(delayed(cleanup)(range(1,129), fn_out) for fn_out in prep_files(sys.argv[2], extchk=False))
+            sys.exit(0)
 
     if len(sys.argv) < 4:
         print 'prep_sorting.py <mwk> <nev> <output file prefix> [options 1] [options 2] [...]'
@@ -337,7 +373,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     fn_mwks, fn_nevs, fn_outs = sys.argv[1:4]
-    fn_mwks, fn_nevs, fn_outs = prep_files(fn_mwks, fn_nevs, fn_outs)
+    fn_mwks, fn_nevs, fn_outs = prep_files_ex(fn_mwks, fn_nevs, fn_outs)
 
     opts = parse_opts(sys.argv[4:])
     print '* Processing:', fn_mwks, fn_nevs, fn_outs
@@ -374,10 +410,47 @@ if __name__ == '__main__':
 
     if 'wavedec_lev' in opts: wavedec_lev = int(opts['wavedec_lev'])
     else: wavedec_lev = WAVEDEC_LEV
+
+    if 'wavcutdim' in opts: wavcutdim = int(opts['wavcutdim'])
+    else: wavcutdim = WAVCUTDIM
+
+    if 'c_success' in opts:
+        c_success = opts['c_success']
+        print '* c_success:', c_success
+    else:
+        c_success = C_SUCCESS
+
+    if 't_success' in opts:
+        t_success = int(opts['t_success'])
+        print '* t_success:', t_success
+    else:
+        t_success = T_SUCCESS
+
+    t_start0 = T_START
+    if 't_start' in opts:
+        t_start0 = int(opts['t_start'])
+        print '* t_start =', t_start0
+
+    t_stop0 = T_STOP
+    if 't_stop' in opts:
+        t_stop0 = int(opts['t_stop'])
+        print '* t_stop =', t_stop0
+
+    exclude_img = None
+    if 'exclude_img' in opts:
+        exclude_img = opts['exclude_img'].split(',')
+        print '* Exclude unwanted images:', exclude_img
+
+    movie_begin_fname = None
+    if 'movie_begin_fname' in opts:
+        movie_begin_fname = opts['movie_begin_fname']
+        print '* movie_begin_fname:', movie_begin_fname
+
     # -----
-    print '* Variables: (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt) =', \
-            (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt)
+    print '* Variables: (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt, wavcutdim) =', \
+            (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt, wavcutdim)
 
     main(fn_mwks, fn_nevs, fn_outs, full=full, n_featdim=n_featdim, reject=reject, \
-            apply_new_thr=apply_new_thr, metd=metd, nmax=nmax, wavedec_lev=wavedec_lev, ncpu=ncpu, ihalt=ihalt)
+            apply_new_thr=apply_new_thr, metd=metd, nmax=nmax, wavedec_lev=wavedec_lev, ncpu=ncpu, ihalt=ihalt, wavcutdim=wavcutdim, \
+            exclude_img=exclude_img, t_success_lim=t_success, c_success=c_success, movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0)
 

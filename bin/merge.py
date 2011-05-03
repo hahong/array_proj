@@ -66,12 +66,15 @@ def get_standard_cid(clu, tclu, nmax=np.inf, _debug=False):
     return nclu, ucid
 
 
-def load_superset(pf0, pfs, ch):
+def load_superset(pf0, pfs, ch, multipath=True):
     clus = []
-    dir = os.path.dirname(pf0)
+    dir0 = os.path.dirname(pf0)
     for pf in pfs:
-        bname = os.path.basename(pf)
-        fn_clu = dir + os.sep + bname + '.clu.' + str(ch)
+        if multipath:
+            fn_clu = pf + '.clu.' + str(ch)
+        else:
+            bname = os.path.basename(pf)
+            fn_clu = dir0 + os.sep + bname + '.clu.' + str(ch)
         clus.append(np.loadtxt(fn_clu, skiprows=1).astype('int'))
     return np.concatenate(clus)
 

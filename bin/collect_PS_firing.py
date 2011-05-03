@@ -29,7 +29,8 @@ EXCLUDE_IMG = None                  # exclude image by its name
 def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose=2, \
         extinfo=False, c_success=C_SUCCESS, t_success_lim=T_SUCCESS, proc_cluster=PROC_CLUSTER, max_clus=MAX_CLUS, \
         t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, exclude_img=EXCLUDE_IMG, \
-        reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE):
+        reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE, \
+        movie_begin_fname=None):
     mf = MWKFile(fn_mwk)
     mf.open()
 
@@ -99,10 +100,34 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     # all_spike[chn_id][img_id]: when the neurons spiked?
     all_spike = {}
     clus_info = {}
+
+    frame_onset = {}
+    movie_iid = None
+    movie_onsets = []
+    movie_onset0 = 0
+
     for i in range(n_stim):
         t0 = img_onset[i]; iid = img_id[i]
+        
         # -- check if this presentation is successful. if it's not ignore this.
         if np.sum((t_success > t0) & (t_success < (t0 + t_success_lim))) < 1: continue
+
+        # -- process movie?
+        if movie_begin_fname != None:
+            # begin new clip?
+            if movie_begin_fname in iid:
+                # was there previous clip?
+                if movie_iid != None:
+                    if movie_iid not in frame_onset: frame_onset[movie_iid] = []
+                    frame_onset[movie_iid].append(movie_onsets)
+                # init for new clip
+                movie_onsets = []
+                iid = movie_iid = iid.replace(movie_begin_fname, '')
+                movie_onset0 = t0
+                movie_onsets.append(0)
+            elif movie_iid != None:
+                movie_onsets.append(t0 - movie_onset0)
+                continue
 
         if verbose > 0: 
             print 'At', (i + 1), 'out of', n_stim, '         \r',
@@ -156,6 +181,11 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
                     all_spike[key][iid] = []
                 all_spike[key][iid].append(t_rel[key])
 
+    # flush movie data
+    if movie_iid != None:
+        if movie_iid not in frame_onset: frame_onset[movie_iid] = []
+        frame_onset[movie_iid].append(movie_onsets)
+
     # finished calculation....
     f = open(fn_out, 'w')
     out =  {'all_spike': all_spike, 
@@ -166,6 +196,8 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     if proc_cluster:
         out['clus_info'] = clus_info
         out['max_clus'] = max_clus
+    if movie_begin_fname != None:
+        out['frame_onset'] = frame_onset
     pk.dump(out, f)
     f.close()
 
@@ -259,10 +291,15 @@ def main():
         exclude_img = opts['exclude_img'].split(',')
         print '* Exclude unwanted images:', exclude_img
 
+    movie_begin_fname = None
+    if 'movie_begin_fname' in opts:
+        movie_begin_fname = opts['movie_begin_fname']
+        print '* movie_begin_fname:', movie_begin_fname
+
     # go go go
     firrate(fn_mwk, fn_out, override_delay_us=override_delay_us, override_elecs=override_elecs, \
             extinfo=extinfo, c_success=c_success, t_success_lim=t_success, proc_cluster=proc_cluster, max_clus=max_clus, \
-            t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy, exclude_img=exclude_img) 
+            t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy, exclude_img=exclude_img, movie_begin_fname=movie_begin_fname) 
     print 'Done.                                '
 
 

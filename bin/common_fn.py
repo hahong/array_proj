@@ -135,7 +135,8 @@ def sort_uniq(base, *args):
 # ----------------------------------------------------------------------------
 def getspk(fn_mwk, fn_nev, override_elecs=None, \
         override_delay_us=OVERRIDE_DELAY_US, verbose=False, extinfo=False, \
-        c_success=C_SUCCESS, t_start0=T_START, t_stop0=T_STOP, full=True, new_thr=None):
+        c_success=C_SUCCESS, t_start0=T_START, t_stop0=T_STOP, full=True, new_thr=None, \
+        exclude_img=None, t_success_lim=T_SUCCESS, movie_begin_fname=None):
     mf = MWKFile(fn_mwk)
     mf.open()
     br = load_spike_data(fn_nev)
@@ -150,7 +151,7 @@ def getspk(fn_mwk, fn_nev, override_elecs=None, \
     t_success = [ev.time for ev in xget_events(mf, codes=[c_success])]
     t_success = np.array(t_success)
 
-    img_onset, img_id = get_stim_info(mf, extinfo=extinfo)
+    img_onset, img_id = get_stim_info(mf, extinfo=extinfo, exclude_img=exclude_img)
     n_stim = len(img_onset)
 
     # MAC-NSP time translation
@@ -167,11 +168,19 @@ def getspk(fn_mwk, fn_nev, override_elecs=None, \
         spikes = mf.get_events(codes=[code], time_range=time_range)
         q.put([(s.value['id'], s.value['foffset'], s.time) for s in spikes])
 
+    movie_began = False
     # actual calculation -------------------------------
     for i in range(n_stim):
         t0 = img_onset[i]; iid = img_id[i]
         # check if this presentation is successful. if it's not ignore this.
-        if np.sum((t_success > t0) & (t_success < (t0 + T_SUCCESS))) < 1: continue
+        if np.sum((t_success > t0) & (t_success < (t0 + t_success_lim))) < 1: continue
+
+        if movie_begin_fname != None:
+            if movie_begin_fname in iid:
+                iid = iid.replace(movie_begin_fname, '')
+                movie_began = True
+            elif movie_began:
+                continue
 
         if verbose: print 'At', (i + 1), 'out of', n_stim
    

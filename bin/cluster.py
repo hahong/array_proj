@@ -146,20 +146,28 @@ def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_
             npts = 0    # total number of points to cluster
 
         # iterate over the prefixes
-        for fpx in fn_prefix:
+        for i_fpx, fpx in enumerate(fn_prefix):
             bname = os.path.basename(fpx)
             fn_fet = os.path.dirname(fn_fet0) + os.sep + os.path.basename(fn_fet0).replace(bname0, bname)
             if multipath: fn_fet = os.path.dirname(fpx) + os.sep + os.path.basename(fn_fet)
-            job_match.append((fn_fet, tmp_base))
+            job_match.append((i_fpx, fn_fet, tmp_base))
 
             if cont == None:
                 src = open(fn_fet).readlines()
                 ndim = int(src[0].strip())
                 src.pop(0)                  # remove the header
-                np.random.shuffle(src)
+
+                np.random.shuffle(src)      # <- this is actually faster
                 out = src[:nmax] 
+                
+                # isrc = range(len(src))    # <- this is super slow
+                # np.random.shuffle(isrc)
+                # out = []
+                # for isrc0 in isrc[:nmax]: out.append(src[isrc0])
+
                 npts += len(out)
                 finp.writelines(out)
+
                 del src, out
 
         if cont == None:
@@ -173,7 +181,7 @@ def spc_cluster(fn_prefix, rseed=None, nmax=MAX_PTS, ncpu=NCPU, bin=BIN, rm_tmp_
     # run the SPC clustering parallely
     r = Parallel(n_jobs=ncpu, verbose=1)(delayed(os.system)(cmd) for cmd in job_spc)
     # template matching with NN
-    r = Parallel(n_jobs=ncpu, verbose=1)(delayed(spc_template_match)(fn_fet, tmp_base, osuff=osuff) for fn_fet, tmp_base in job_match)
+    r = Parallel(n_jobs=ncpu, verbose=1)(delayed(spc_template_match)(fn_fet, tmp_base, osuff=osuff) for _, fn_fet, tmp_base in sorted(job_match))
         
     # -- remove temporary files
     if rm_tmp_level > 0:

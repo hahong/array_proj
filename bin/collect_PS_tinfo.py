@@ -66,11 +66,33 @@ def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, exclud
     fd, tmpf = tempfile.mkstemp()
     os.close(fd)                           # hdf5 module will handle the file. close it now.
     convert.tmpf = tmpf
+    proc_cluster = None
+    clus_info = None
+    frame_onset = None
 
     # -- read thru the files, store into the tmp.hdf5 file (= tmpf)
     for i_f, f in enumerate(files):
         if verbose > 0: print 'At (%d/%d): %s' % (i_f+1, n_files, f)
         dat = pk.load(open(f))
+
+        if proc_cluster == None:
+            if 'max_clus' in dat and 'clus_info' in dat:
+                proc_cluster = True
+                max_clus = dat['max_clus']
+                clus_info = dat['clus_info']
+                print '* Collecting cluster info'
+            else:
+                proc_cluster = False
+        elif proc_cluster:
+            clus_info0 = dat['clus_info']
+            for k in clus_info0:
+                if k not in clus_info:
+                    clus_info[k] = clus_info0[k]
+                    continue
+                assert clus_info[k]['nclusters'] == clus_info0[k]['nclusters']
+                assert clus_info[k]['unsorted_cid'] == clus_info0[k]['unsorted_cid']
+                clus_info[k]['nbad_isi'] += clus_info0[k]['nbad_isi']
+                clus_info[k]['nspk'] += clus_info0[k]['nspk']
 
         # -- initialization
         if not initialized:
@@ -118,8 +140,19 @@ def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, exclud
             if verbose > 0: print '* Electrode offset: %d           ' % eo
 
         # -- actual conversion for this file
-        for el in dat['all_spike']:
-            ie = el - 1 + eo  # index to the electrode, 0-based
+        for el in sorted(dat['all_spike']):
+            if proc_cluster:
+                ie = (el[0] - 1 + eo) * max_clus + el[1]  # index to the electrode, 0-based
+                fill_blank = False
+                if el not in clus_info:
+                    ch1, i_unit = el
+                    if i_unit >= clus_info[(ch1,0)]['nclusters']: continue
+
+                    if verbose: print '* Filling blanks:', el
+                    fill_blank = True
+                    # this is not necessary: el = el_ref   # fill the blank using el_ref data
+            else:
+                ie = el - 1 + eo  # index to the electrode, 0-based
             if verbose > 0:
                 print '* At: Ch/site/unit %d                          \r' % ie,
                 sys.stdout.flush()
@@ -149,24 +182,35 @@ def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, exclud
                 ntr = ntr0 - n_excess  # number of actual trials to read in the chunk
                 spk = np.zeros((ntr, n_bytes), dtype=np.uint8)   # temprary spike conut holder
 
-                # sweep the chunk, and bit-pack the data
-                for i in xrange(ntr):
-                    trial = trials[i]
-                    tr_bits[:] = 0
+                if not fill_blank:
+                    # sweep the chunk, and bit-pack the data
+                    for i in xrange(ntr):
+                        trial = trials[i]
+                        tr_bits[:] = 0
 
-                    # bit-pack all the spiking times in `trial`
-                    for t0 in trial:     # t0: spiking time rel. to the onset of the stimulus
-                        t = int(np.round((t0 - t_min) / 1000.))   # us -> ms, 0 at t_min
-                        if t < 0 or t >= n_bins: continue
-                        tr_bits[t] = 1   # set the bit
+                        # bit-pack all the spiking times in `trial`
+                        for t0 in trial:     # t0: spiking time rel. to the onset of the stimulus
+                            t = int(np.round((t0 - t_min) / 1000.))   # us -> ms, 0 at t_min
+                            if t < 0 or t >= n_bins: continue
+                            tr_bits[t] = 1   # set the bit
 
-                    spk[i,:] = np.packbits(tr_bits)
+                        spk[i,:] = np.packbits(tr_bits)
 
                 # finished this image in this electrode; store the data
                 db[ie,ii,itb:ite,:] = spk
                 org[ii,ie,itb:ite] = i_f
                 tr[ie, ii] += ntr
-    
+
+        # -- additional movie data conversion
+        if 'frame_onset' in dat:
+            print '* Collecting frame onset info'
+            if frame_onset == None:
+                frame_onset = dat['frame_onset']
+            else:
+                frame_onset0 = dat['frame_onset']
+                for iid in frame_onset0:
+                    frame_onset[iid].extend(frame_onset0[iid])
+
     # -- finished main conversion; now save into a new optimized hdf5 file
     n_img_ac = len(iid2idx)   # actual number of images
     n_tr_ac = np.max(tr)      # actual maximum number of trials
@@ -202,6 +246,8 @@ def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, exclud
     h5o.createArray(meta, 'iid2idx_pk', pk.dumps(iid2idx))
     h5o.createArray(meta, 'idx2iid_pk', pk.dumps(idx2iid))
     h5o.createArray(meta, 'ntrials_img', tr[:,:n_img_ac].T)  # save as img-major order (tr is in channel-major)
+    h5o.createArray(meta, 'frame_onset_pk', pk.dumps(frame_onset))
+    h5o.createArray(meta, 'clus_info_pk', pk.dumps(clus_info))
     orgfile[...] = org[:n_img_ac,:,:n_tr_ac]
 
     # populate /meta/iididx
