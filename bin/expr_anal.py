@@ -14,6 +14,9 @@ DEF_PSTH_RANGE_MS = [-50, 200]       # in ms
 DEF_RSEED = 0
 PROC_CLUSTER = False
 
+NCOLS = 16
+NROWS = 8
+
 # ---------------------------------------------------------------------------
 def get_one_ch(elec_id, all_spike, include=None, exclude=[], trial_by_trial=False, prange=None):
     arr = []
@@ -190,8 +193,11 @@ def get_all_iids(all_spike, as_string=False):
             s = iid.split('_')
             if len(s) == 1:
                 s = [iid[:get_all_iids.l_pref], iid[get_all_iids.l_pref:]]
-            k = int(s[-1])
-            t_iids.append((k, iid))
+            try:
+                k = int(s[-1])
+                t_iids.append((k, iid))
+            except:
+                t_iids.append((iid,iid))
         t_iids = sorted(t_iids)
         return [t_iid[1] for t_iid in t_iids]
     return iids
@@ -413,7 +419,9 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
         evoked = True
         print '* evoked PSTH'
     if opts.has_key('sel'):
-        sel = [int(el) for el in opts['sel'].split(',')]
+        if opts['sel'] == 'none': sel = []
+        else:
+            sel = [int(el) for el in opts['sel'].split(',')]
         print '* selected:', sel
     if verbose != 0: print '* blanks:', blanks
     if sel is None: sel = actvelecs
@@ -422,16 +430,19 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
     avghist_y = {}
     blankhist_x = {}
     blankhist_y = {}
+    n_elecs = len(actvelecs)
+    i_lbl_plot = (int(n_elecs / NCOLS) - 1) * NCOLS
 
     # plot overall per-channel averaged PSTH first.
+    print '* Pass 1: overall plot'
     pl.figure()
     for i_plot, elec_id in enumerate(actvelecs):
         arr, n_trial = get_one_ch(elec_id, all_spike, exclude=blanks)   # get spikes.
         if verbose > 1: print '* len =', len(arr)
         txt = 'E%d (avg)' % elec_id
 
-        ax = pl.subplot(10, 10, i_plot + 1)      # XXX: 10x10 should be changed later!
-        if i_plot == 90: visible = True
+        ax = pl.subplot(NROWS, NCOLS, i_plot + 1)      # XXX: 10x10 should be changed later!
+        if i_plot == i_lbl_plot: visible = True
         else: visible = False
 
         hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt) 
@@ -445,13 +456,14 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
     pl.close()
 
     # plot overall per-channel blank PSTH
+    print '* Pass 2: overall evoked plot'
     pl.figure()
     for i_plot, elec_id in enumerate(actvelecs):
         arr, n_trial = get_one_ch(elec_id, all_spike, include=blanks)   # get spikes.
         txt = 'E%d (blanks)' % elec_id
 
-        ax = pl.subplot(10, 10, i_plot + 1)      # XXX: 10x10 should be changed later!
-        if i_plot == 90: visible = True
+        ax = pl.subplot(NROWS, NCOLS, i_plot + 1)      # XXX: 10x10 should be changed later!
+        if i_plot == i_lbl_plot: visible = True
         else: visible = False
 
         hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt) 
@@ -465,6 +477,7 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
     pl.close()
 
     # per-channel, per-image PSTH
+    print '* Pass 3: per-chanel  plot'
     for elec_id in sel:
         pl.figure()
         n_row = int(np.ceil(np.sqrt(len(all_iids))))
