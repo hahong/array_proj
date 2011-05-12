@@ -3,8 +3,9 @@
 import sys
 import numpy as np
 import cPickle as pk
+from matplotlib import rc, use
+use('pdf')
 from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib import rc
 import pylab as pl
 import csv
 
@@ -477,7 +478,7 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
     pl.close()
 
     # per-channel, per-image PSTH
-    print '* Pass 3: per-chanel  plot'
+    print '* Pass 3: per-chanel plot'
     for elec_id in sel:
         pl.figure()
         n_row = int(np.ceil(np.sqrt(len(all_iids))))

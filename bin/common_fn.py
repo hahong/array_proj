@@ -23,7 +23,7 @@ T_REJECT = 10
 N_REJECT = 50
 DEFAULT_N_PCA = 3
 N_PRE_PT = 11
-SEARCH_RNG = [6, 15]
+SEARCH_RNG = [6, 16]
 
 # ----------------------------------------------------------------------------
 def xget_events(mf, **kwargs):

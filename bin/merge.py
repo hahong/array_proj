@@ -7,7 +7,7 @@ import sys
 sys.path.append('lib')
 from mergeutil import *
 from mworks.data import *
-from common_fn import parse_opts, T_START, T_STOP, get_stim_info, seq_search, sort_uniq, prep_files
+from common_fn import parse_opts, T_START, T_STOP, get_stim_info, seq_search, sort_uniq, prep_files, set_new_threshold
 from collections import defaultdict
 
 BAD_ISI = 3000   # spiking within 3ms is bad
@@ -170,6 +170,10 @@ cluster.ucid = {}             # (static) cluster id of "unsorted" group (-1 if t
 cluster.nmax = CLU_NMAX       # (static) maximum units/ch
 
 
+def set_new_threshold_rng(wav, thr):
+    return set_new_threshold(wav, thr, rng=(11, 13), i_chg=32)
+    # return set_new_threshold(wav, thr)
+
 # Arbiter ----------------------------------------------------------------
 def main():
     warnings.simplefilter('once')
@@ -234,10 +238,19 @@ def main():
         code_recv = opts['code_recv']
         print 'merge: code_recv =', code_recv
 
+    adj_reject = None
+    amp_reject = None
+    if 'adj_reject' in opts:
+        adj_reject = float(opts['adj_reject'])
+        amp_reject = set_new_threshold_rng
+        print 'merge: amplitude rejection multiplier =', adj_reject
+
+
 
     # -- execute
     m = Merge(fn_mwk, fn_nev)
-    if m.merge(proc_wav=proc_wav, code_sent=code_sent, code_recv=code_recv,
+    if m.merge(proc_wav=proc_wav, code_sent=code_sent, code_recv=code_recv, \
+            adj_reject=adj_reject, amp_reject=amp_reject, \
             callback_reject=callback_reject, callback_cluster=callback_cluster):
         print 'merge: merged successfully.'
 

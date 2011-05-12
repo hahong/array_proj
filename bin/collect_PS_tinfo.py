@@ -141,9 +141,9 @@ def convert(files, opref, n_img=None, n_maxtrial=N_MAXTRIAL, n_elec=None, exclud
 
         # -- actual conversion for this file
         for el in sorted(dat['all_spike']):
+            fill_blank = False
             if proc_cluster:
                 ie = (el[0] - 1 + eo) * max_clus + el[1]  # index to the electrode, 0-based
-                fill_blank = False
                 if el not in clus_info:
                     ch1, i_unit = el
                     if i_unit >= clus_info[(ch1,0)]['nclusters']: continue
