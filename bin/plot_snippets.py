@@ -2,6 +2,8 @@
 
 import numpy as np
 import cPickle as pk
+from matplotlib import rc, use
+use('pdf')
 import pylab as pl
 import struct
 import sys
@@ -10,7 +12,6 @@ from mworks.data import MWKFile
 from mergeutil import Merge
 from common_fn import get_stim_info, xget_events, load_spike_data
 from collections import defaultdict
-from matplotlib import rc
 
 C_STIM = '#announceStimulus'
 I_STIM_ID = 2
@@ -22,20 +23,65 @@ T_SUCCESS = 250000                  # 250ms time window in order to be considere
 PROC_CLUSTER = False
 MAX_CLUS = 5                          # number of clusters per channel
 CH_PER_FIG = 16
-MAX_SPK = 300
-IMG_MAX = 800
+MAX_SPK = 500
+IMG_MAX = 1800
 EXCLUDE_IMG = None                  # exclude image by its name
+
+V_CONV = 0.249
+T_CONV = 1000. / 30000
+I_PRESPK = 11
+YLIM1 = [-80, 80]
+NTICKS1 = 6
+COLS = 16
+ROWS = 8
+#COLORS = ['#555555', 'r', 'r', 'r', 'r', 'r']
+COLORS2 = ['#555555', 'r', 'g', 'b', 'c', 'm']
+COLORS = COLORS2
+
+# -----------------------------
+def plot_once1(wavs, k, v_conv=V_CONV, t_conv=T_CONV, i_prespk=I_PRESPK, visible=False, nticks=NTICKS1, \
+        ax=None, ylim1=YLIM1, fontsize=6, colors=COLORS):
+    y = wavs.mean(axis=0)
+    x = (np.arange(len(y)) - i_prespk) * t_conv
+    ch, cid = k
+    color = colors[cid]
+    if cid == 0: alpha = 0.5
+    else: alpha = 1
+    pl.plot(x, y, color=color, alpha=alpha)
+
+    if len(wavs) > 2:
+        s = wavs.std(axis=0)
+        pl.fill_between(x, y + s, y - s, color=color, alpha=0.2)
+
+    pl.axhline(0, color='k', alpha=0.35)
+    pl.xlim([x[0], x[-1]])
+    pl.ylim(ylim1)
+
+    if ax is None: ax = pl.gca()
+    ax.xaxis.set_major_locator(pl.MaxNLocator(nticks)) 
+    ax.yaxis.set_major_locator(pl.MaxNLocator(nticks)) 
+    if not visible:
+        ax.set_xticklabels([''] * nticks)
+        ax.set_yticklabels([''] * nticks)
+    else:
+        for tick in ax.xaxis.get_major_ticks():
+            tick.label1.set_fontsize(fontsize)
+        for tick in ax.yaxis.get_major_ticks():
+            tick.label1.set_fontsize(fontsize)
 
 # ----------------------------------------------------------------------------
 def plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=None, override_elecs=None, \
         verbose=True, c_success=C_SUCCESS, extinfo=False, prefix='out',  t_success_lim=T_SUCCESS, \
-        exclude_img=EXCLUDE_IMG):
+        exclude_img=EXCLUDE_IMG, v_conv=V_CONV, t_conv=T_CONV, i_prespk=I_PRESPK, selected=None):
     # ref = pk.load(open(fn_ref))
     # clus_info = ref['clus_info']
     # del ref
     rc('font', **{
-        'family'          : 'serif',
-        'serif'           : ['Times New Roman']})
+        'family'          : 'sans-serif',
+        'sans-serif'      : ['Arial', 'Helvetica']})
+    rc('mathtext', **{
+        'fontset'         : 'stixsans',
+    })
     rc('figure', **{
         'subplot.left'    : '0.02',
         'subplot.right'   : '0.98',
@@ -67,9 +113,9 @@ def plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=None, override_elecs=No
             pl.figure(i_fig)
 
         ax = pl.subplot(MAX_CLUS, CH_PER_FIG, i_subpl)
-        wavs = np.array(clus_info[k]) 
+        wavs = np.array(clus_info[k]) * v_conv
         y = wavs.mean(axis=0)
-        x = range(len(y))
+        x = (np.arange(len(y)) - i_prespk) * t_conv
         pl.plot(x, y, 'b-')
 
         if len(wavs) > 2:
@@ -90,6 +136,47 @@ def plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=None, override_elecs=No
         pl.savefig(prefix + '%02d.pdf' % i)
         pl.close()
 
+    # -- summary plot all in one
+    n_elec = len(override_elecs)
+    n_col = COLS
+    n_row = int(np.ceil(n_elec / float(n_col)))
+    n_row0 = ROWS
+    pl.figure(1, figsize=(17.96, 10.25))
+    pl.subplots_adjust(wspace=0.005)
+    pl.subplots_adjust(hspace=0.005)
+    pl.subplots_adjust(left=0.03)
+    pl.subplots_adjust(right=0.98)
+    pl.subplots_adjust(bottom=0.03)
+    pl.subplots_adjust(top=0.98)
+    for k in sorted(clus_info):
+        ch, cid = k
+        ax = pl.subplot(n_row0, n_col, ch)
+    
+        wavs = np.array(clus_info[k]) * v_conv
+        visible = False
+        if ch == (n_row - 1) * n_col + 1: visible = True
+        plot_once1(wavs, k, visible=visible, ax=ax) 
+
+        if selected != None and ch in selected:
+            pl.figure(ch+1000,figsize=(4,4))
+            pl.subplots_adjust(left=0.14)
+            pl.subplots_adjust(right=0.98)
+            pl.subplots_adjust(bottom=0.11)
+            pl.subplots_adjust(top=0.98)
+            plot_once1(wavs, k, visible=True, fontsize=11, colors=COLORS2)
+            pl.xlabel('Time/ms')
+            #pl.ylabel(ur'Voltage/\u03bcV')
+            pl.ylabel(r'Voltage/$\mathrm{\mu}$V')
+            pl.figure(1)
+
+    if selected != None:
+        for sel_ch in selected:
+            pl.figure(sel_ch + 1000)
+            pl.savefig(prefix + '_sel%03d.pdf' % sel_ch)
+            pl.close()
+
+    pl.savefig(prefix + '_summ.pdf')
+    pl.close()
 
 
 def get_data(fn_mwk, fn_nev, clus_info, override_delay_us=None, override_elecs=None, \
@@ -222,10 +309,16 @@ def main():
         prefix = opts['prefix']
         print 'Output prefix:', prefix
 
+
+    selected = []
+    if 'sel' in opts:
+        selected = [int(e) for e in opts['sel'].split(',')]
+        print '* Selected:', selected
+
     # go go go
     plot_all(fn_mwks, fn_nevs, fn_ref, override_delay_us=override_delay_us, \
             override_elecs=override_elecs, c_success=c_success, extinfo=extinfo, \
-            prefix=prefix, t_success_lim=t_success, exclude_img=exclude_img)
+            prefix=prefix, t_success_lim=t_success, exclude_img=exclude_img, selected=selected)
     print 'Done.     '
 
 

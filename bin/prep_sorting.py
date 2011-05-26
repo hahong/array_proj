@@ -179,11 +179,13 @@ def cleanup(chs, fn_out):
         print 'Ch %d: rewriting (size change: %d -> %d)' % (ch, ninf0, ninf1)
         assert len(inf) == len(fet)
 
+        n_featdim = fet.shape[1]
         ff = open(fn_fet, 'wt')
         fi = open(fn_inf, 'wt')
         print >>ff, n_featdim
         print >>fi, n_featdim
 
+        fmt = '%e\t' * n_featdim    # format string
         for i in xrange(ninf1):
             print >>ff, fmt % tuple(fet[i])
             print >>fi, int(inf[i,0]), inf[i,1]
@@ -194,7 +196,7 @@ def cleanup(chs, fn_out):
         os.unlink(fn_inf + '.tmp')
 
 
-def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, metd=FEAT_METD, \
+def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, metd=FEAT_METD, invalidate_bad_ISI=True, \
         apply_new_thr=APPLY_NEW_THR, reject=M_REJECT, wavedec_lev=WAVEDEC_LEV, wavcutdim=WAVCUTDIM, \
         exclude_img=None, t_success_lim=T_SUCCESS, c_success=C_SUCCESS, movie_begin_fname=None, t_start0=T_START, t_stop0=T_STOP):
     ff = {}; fi = {}
@@ -212,7 +214,8 @@ def write_features(T, fn_mwk, fn_nev, fn_out, full=False, n_featdim=N_FEATDIM, m
     if full: gen = get_full_spk(fn_nev, reject=reject, apply_new_thr=apply_new_thr)
     else: gen = get_img_spk(fn_mwk, fn_nev, reject=reject, apply_new_thr=apply_new_thr, \
             exclude_img=exclude_img, t_success_lim=t_success_lim, c_success=c_success, \
-            movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0)
+            movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0, \
+            invalidate_bad_ISI=invalidate_bad_ISI)
 
     # -- do the job for all spikes
     for wav_info in gen:
@@ -265,7 +268,7 @@ def get_full_spk(fn_nev, apply_new_thr=APPLY_NEW_THR, reject=M_REJECT):
 
 def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR, \
         exclude_img=None, t_success_lim=T_SUCCESS, c_success=C_SUCCESS, movie_begin_fname=None, \
-        t_start0=T_START, t_stop0=T_STOP):
+        t_start0=T_START, t_stop0=T_STOP, invalidate_bad_ISI=True):
     """get spikes around the image presentation"""
     prev_iimg = -1
     buf0 = []
@@ -280,7 +283,8 @@ def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR, \
             print 'At:', iimg, '  \r',
             sys.stdout.flush()
             if len(buf0) != 0:
-                buf = invalidate_artifacts(buf0)
+                if invalidate_bad_ISI: buf = invalidate_artifacts(buf0)
+                else: buf = buf0
                 for b in buf: yield b
                 del buf, buf0
             if arg['id'] > 0: buf0 = []
@@ -290,7 +294,8 @@ def get_img_spk(fn_mwk, fn_nev, reject=M_REJECT, apply_new_thr=APPLY_NEW_THR, \
 
     # still need to yield the contents
     if len(buf0) != 0:
-        buf = invalidate_artifacts(buf0)
+        if invalidate_bad_ISI: buf = invalidate_artifacts(buf0)
+        else: buf = buf0
         for b in buf: yield b
 
 
@@ -299,7 +304,7 @@ def main(fn_mwks, fn_nevs, fn_outs, full=False, n_featdim=N_FEATDIM, reject=M_RE
         apply_new_thr=APPLY_NEW_THR, metd=FEAT_METD, nmax=N_SNIPPET_PER_IMG, \
         wavedec_lev=WAVEDEC_LEV, ncpu=NCPU, ihalt=IIMG_HALT, wavcutdim=WAVCUTDIM, \
         exclude_img=None, t_success_lim=T_SUCCESS, c_success=C_SUCCESS, movie_begin_fname=None, \
-        t_start0=T_START, t_stop0=T_STOP):
+        t_start0=T_START, t_stop0=T_STOP, invalidate_bad_ISI=True):
     # -- prepare
     wavs = get_few_waveforms(fn_mwks, fn_nevs, \
             reject=reject, apply_new_thr=apply_new_thr, nmax=nmax, wavedec_lev=wavedec_lev, \
@@ -314,7 +319,7 @@ def main(fn_mwks, fn_nevs, fn_outs, full=False, n_featdim=N_FEATDIM, reject=M_RE
     #for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs):
     #    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, \
     #            reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev)
-    r = Parallel(n_jobs=ncpu, verbose=1)(delayed(parrun_push)((T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev, wavcutdim, exclude_img, t_success_lim, c_success, movie_begin_fname, t_start0, t_stop0)) for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs))
+    r = Parallel(n_jobs=ncpu, verbose=1)(delayed(parrun_push)((T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev, wavcutdim, exclude_img, t_success_lim, c_success, movie_begin_fname, t_start0, t_stop0, invalidate_bad_ISI)) for fn_mwk, fn_nev, fn_out in zip(fn_mwks, fn_nevs, fn_outs))
 
 
 def parrun_push(args):
@@ -324,8 +329,8 @@ def parrun_push(args):
     os.system('./%s %s %s' % (__file__, PARRUN, tmpf))
 
 def parrun_pop(argfile):
-    T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev, wavcutdim, exclude_img, t_success_lim, c_success, movie_begin_fname, t_start0, t_stop0 = pk.load(open(argfile))
-    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev, wavcutdim=wavcutdim, exclude_img=exclude_img, t_success_lim=t_success_lim, c_success=c_success, movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0)
+    T, fn_mwk, fn_nev, fn_out, full, n_featdim, metd, reject, apply_new_thr, wavedec_lev, wavcutdim, exclude_img, t_success_lim, c_success, movie_begin_fname, t_start0, t_stop0, invalidate_bad_ISI = pk.load(open(argfile))
+    write_features(T, fn_mwk, fn_nev, fn_out, full=full, n_featdim=n_featdim, metd=metd, reject=reject, apply_new_thr=apply_new_thr, wavedec_lev=wavedec_lev, wavcutdim=wavcutdim, exclude_img=exclude_img, t_success_lim=t_success_lim, c_success=c_success, movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0, invalidate_bad_ISI=invalidate_bad_ISI)
     os.unlink(argfile)
 
 
@@ -387,9 +392,15 @@ if __name__ == '__main__':
     else: n_featdim = N_FEATDIM
     
     apply_new_thr = APPLY_NEW_THR
+    invalidate_bad_ISI = True
     if 'reject' in opts:
         if opts['reject'] == 'noadj':
             apply_new_thr = False
+            reject = 1
+        elif opts['reject'] == 'noinvalidate':
+            print '* No invalidation'
+            apply_new_thr = False
+            invalidate_bad_ISI = False
             reject = 1
         else:
             reject = float(opts['reject'])
@@ -450,7 +461,7 @@ if __name__ == '__main__':
     print '* Variables: (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt, wavcutdim) =', \
             (full, n_featdim, reject, apply_new_thr, metd, nmax, wavedec_lev, ncpu, ihalt, wavcutdim)
 
-    main(fn_mwks, fn_nevs, fn_outs, full=full, n_featdim=n_featdim, reject=reject, \
+    main(fn_mwks, fn_nevs, fn_outs, full=full, n_featdim=n_featdim, reject=reject, invalidate_bad_ISI=invalidate_bad_ISI, \
             apply_new_thr=apply_new_thr, metd=metd, nmax=nmax, wavedec_lev=wavedec_lev, ncpu=ncpu, ihalt=ihalt, wavcutdim=wavcutdim, \
             exclude_img=exclude_img, t_success_lim=t_success, c_success=c_success, movie_begin_fname=movie_begin_fname, t_start0=t_start0, t_stop0=t_stop0)
 
