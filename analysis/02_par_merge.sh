@@ -7,7 +7,7 @@ if [ $# -lt 1 ]; then
 	echo '   - exec:   execute the joblist directly'
 	echo
 	echo 'Options:'
-	echo '   - cluster <mwk file list> <cluster prefix file list> <suffix>: merge with cluster info'
+	echo '   - cluster <mwk file list> <cluster prefix file list> <suffix> [options to be passed]: merge with cluster info'
 	exit 1
 fi
 
@@ -25,6 +25,7 @@ if [ $# -ge 5 -a "$2" = "cluster" ]; then
 	cfiles=(`cat $4`)
 	cfileslst="$4"
 	csuffix="$5"
+	cextopts="$6"
 	opts="cluster"
 
 	if [ "${#files[@]}" != "${#cfiles[@]}" ]; then
@@ -69,7 +70,7 @@ for index in "${!files[@]}"; do
 		oargs="cluster=${cfile0} cluster_all=+${cfileslst}"
 	fi
 
-	echo "cp ${mwksrc} ${dirmg}/${mwkdstb} && ${bin}/merge.py ${dirmg}/${mwkdstb} ${nevsrc} nowav ${oargs} && rm -f ${dirmg}/${mwkdstb}/*.bak" >> $fntmp
+	echo "cp ${mwksrc} ${dirmg}/${mwkdstb} && ${bin}/merge.py ${dirmg}/${mwkdstb} ${nevsrc} nowav ${oargs} ${cextopts} && rm -f ${dirmg}/${mwkdstb}/*.bak" >> $fntmp
 done
 
 if [ $1 == 'print' ]; then
