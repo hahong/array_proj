@@ -62,7 +62,7 @@ for index in "${!files[@]}"; do
 	if [ ! -f ${nevsrc} ]; then
 		continue
 	fi
-
+	
 	oargs=""
 	# other options
 	if [ "$opts" = "cluster" ]; then

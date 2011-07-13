@@ -30,7 +30,7 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
         extinfo=False, c_success=C_SUCCESS, t_success_lim=T_SUCCESS, proc_cluster=PROC_CLUSTER, max_clus=MAX_CLUS, \
         t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, exclude_img=EXCLUDE_IMG, \
         reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE, \
-        movie_begin_fname=None):
+        movie_begin_fname=None, ign_unregistered=False):
     mf = MWKFile(fn_mwk)
     mf.open()
 
@@ -158,6 +158,7 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
                 key = s.value['id']
           
             # put the relative time
+            if ign_unregistered and key not in t_rel: continue
             t_rel[key].append(int(s.time + t_adjust - t0))
             # update the clus_info and n_cluster
             if proc_cluster and key not in clus_info:
@@ -296,10 +297,16 @@ def main():
         movie_begin_fname = opts['movie_begin_fname']
         print '* movie_begin_fname:', movie_begin_fname
 
+    ign_unregistered = False
+    if 'ign_unregistered' in opts:
+        ign_unregistered = True
+        print '* Ignore unregistered keys'
+
     # go go go
     firrate(fn_mwk, fn_out, override_delay_us=override_delay_us, override_elecs=override_elecs, \
             extinfo=extinfo, c_success=c_success, t_success_lim=t_success, proc_cluster=proc_cluster, max_clus=max_clus, \
-            t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy, exclude_img=exclude_img, movie_begin_fname=movie_begin_fname) 
+            t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy, exclude_img=exclude_img, movie_begin_fname=movie_begin_fname, \
+            ign_unregistered=ign_unregistered) 
     print 'Done.                                '
 
 

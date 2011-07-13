@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #patt="Chabo_????????_RSVP*.mwk"
-patt="Chabo*.mwk"
+test "$patt" || patt="Tito*.mwk"
 dirmwk="data_mwk"
-dirnev="data_nev"
-test $dirmg || dirmg="data_merged"
-test $dirpp || dirpp="data_postproc"
+test $dirnev || dirnev="data_nev_tmp"
+test $dirmg || dirmg="data_merged_tmp"
+test $dirpp || dirpp="data_postproc_tmp"
 sep=", "
 bin="bin"
 
