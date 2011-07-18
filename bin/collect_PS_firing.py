@@ -25,12 +25,18 @@ MAX_CLUS = 5                        # number of clusters per channel
 REJECT_SLOPPY = False               # by default, do not reject sloppy (time to present > 2 frames) stimuli
 EXCLUDE_IMG = None                  # exclude image by its name
 
+CH_SHIFT = {}                       # shifting channels based on rules: CH_SHIFT[rule_name] = {src_1_based_ch:new_1_based_ch}
+# for 1-to-1 cards
+CH_SHIFT['1to1'] = {}
+for ch1 in xrange(1, 49): CH_SHIFT['1to1'][ch1] = ch1 
+for ch1 in xrange(81, 129): CH_SHIFT['1to1'][ch1] = ch1 - 32
+
 # ----------------------------------------------------------------------------
 def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose=2, \
         extinfo=False, c_success=C_SUCCESS, t_success_lim=T_SUCCESS, proc_cluster=PROC_CLUSTER, max_clus=MAX_CLUS, \
         t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, exclude_img=EXCLUDE_IMG, \
         reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE, \
-        movie_begin_fname=None, ign_unregistered=False):
+        movie_begin_fname=None, ign_unregistered=False, ch_shift=None):
     mf = MWKFile(fn_mwk)
     mf.open()
 
@@ -150,12 +156,16 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
 
         # -- put actual spiking info
         for s in spikes:
+            ch = s.value['id']
+            if ch_shift != None:   # if mapping is requested
+                if ch not in ch_shift: continue
+                ch = ch_shift[ch]
+
             if proc_cluster: 
-                ch = s.value['id']
                 cid = s.value['cluster_id']
                 key = (ch, cid)
             else:
-                key = s.value['id']
+                key = ch
           
             # put the relative time
             if ign_unregistered and key not in t_rel: continue
@@ -302,11 +312,16 @@ def main():
         ign_unregistered = True
         print '* Ignore unregistered keys'
 
+    ch_shift = None
+    if 'ch_shift' in opts:
+        ch_shift = opts['ch_shift']
+        print '* Shifting based on this rule:', ch_shift
+
     # go go go
     firrate(fn_mwk, fn_out, override_delay_us=override_delay_us, override_elecs=override_elecs, \
             extinfo=extinfo, c_success=c_success, t_success_lim=t_success, proc_cluster=proc_cluster, max_clus=max_clus, \
             t_start0=t_start0, t_stop0=t_stop0, reject_sloppy=reject_sloppy, exclude_img=exclude_img, movie_begin_fname=movie_begin_fname, \
-            ign_unregistered=ign_unregistered) 
+            ign_unregistered=ign_unregistered, ch_shift=CH_SHIFT[ch_shift]) 
     print 'Done.                                '
 
 
