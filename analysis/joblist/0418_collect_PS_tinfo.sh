@@ -1,0 +1,2 @@
+./collect_PS_tinfo.py --n_bins=350 --n_maxtrial=80 subproj/001_twindow_perf/Chabo_20110418_RSVPVar03a_S110204_001 --flist=joblist/0418_collect_PS_tinfo_Var03a.lst --flistpx=data_postproc --exclude_img=circ_mask
+./collect_PS_tinfo.py --n_bins=350 --n_maxtrial=120 subproj/001_twindow_perf/Chabo_20110418_RSVPVar06a_S110204_001 --flist=joblist/0418_collect_PS_tinfo_Var06a.lst --flistpx=data_postproc --exclude_img=circ_mask

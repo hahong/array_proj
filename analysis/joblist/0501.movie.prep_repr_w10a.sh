@@ -1,0 +1,1 @@
+./prep_sorting.py +joblist/0429_prep_repr_w10_02.mwk.lst +joblist/0429_prep_repr_w10_02.nev.lst +joblist/0501.movie.prep_repr_w10a.out.lst featdim=10 reject=noadj nmax=10 ncpu=22 wavedec_lev=5 wavcutdim=32 exclude_img=circ_mask c_success=success t_success=2500000 movie_begin_fname="_frame_0" t_start=-300000 t_stop=2000000 ihalt=50

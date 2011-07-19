@@ -1,0 +1,2 @@
+./collect_PS_tinfo.py --n_bins=350 --n_maxtrial=120 subproj/001_twindow_perf/Chabo_20110425_RSVPVar03a.Cars.Faces_S110204_001 --flist=joblist/0425_collect_PS_tinfo_Cars.Faces.lst --flistpx=data_postproc --exclude_img=circ_mask
+./collect_PS_tinfo.py --n_bins=350 --n_maxtrial=120 subproj/001_twindow_perf/Chabo_20110425_RSVPVar03a.Cars.Planes_S110204_001 --flist=joblist/0425_collect_PS_tinfo_Cars.Planes.lst --flistpx=data_postproc --exclude_img=circ_mask

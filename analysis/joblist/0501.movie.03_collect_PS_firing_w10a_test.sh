@@ -1,0 +1,1 @@
+bin/collect_PS_firing.py data_merged_tmp/Chabo_20110414_MovieGallant110413_S110204_RefAA_002_w10a_test.mwk data_postproc_tmp/Chabo_20110414_MovieGallant110413_S110204_RefAA_002_w10a_test.psf.pk 300 128 proc_cluster  exclude_img=circ_mask c_success=success t_success=2500000

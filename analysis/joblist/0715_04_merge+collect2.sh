@@ -1,0 +1,4 @@
+bin/collect_PS_firing.py data_merged_tmp/Tito_20110714_RSVPVar00a_M_001.mwk data_postproc_tmp/Tito_20110714_RSVPVar00a_M_001.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data_merged_tmp/Tito_20110714_RSVPVar00a_M_002.mwk data_postproc_tmp/Tito_20110714_RSVPVar00a_M_002.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data_merged_tmp/Tito_20110714_RSVPVar00a_M_003.mwk data_postproc_tmp/Tito_20110714_RSVPVar00a_M_003.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data_merged_tmp/Tito_20110714_RSVPVar00a_M_004.mwk data_postproc_tmp/Tito_20110714_RSVPVar00a_M_004.psf.pk 300 96    exclude_img=circ_mask ign_unregistered

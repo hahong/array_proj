@@ -1,0 +1,3 @@
+bin/collect_PS_firing.py data_merged_tmp/Chabo_20110214_RSVPNicole305_A_001_w10a.mwk data_postproc_tmp/Chabo_20110214_RSVPNicole305_A_001_w10a.psf.pk 300 96 proc_cluster  exclude_img=circ_mask
+bin/collect_PS_firing.py data_merged_tmp/Chabo_20110214_RSVPNicole305_M_001_w10a.mwk data_postproc_tmp/Chabo_20110214_RSVPNicole305_M_001_w10a.psf.pk 300 96 proc_cluster  exclude_img=circ_mask
+bin/collect_PS_firing.py data_merged_tmp/Chabo_20110214_RSVPNicole305_P_001_w10a.mwk data_postproc_tmp/Chabo_20110214_RSVPNicole305_P_001_w10a.psf.pk 300 96 proc_cluster  exclude_img=circ_mask

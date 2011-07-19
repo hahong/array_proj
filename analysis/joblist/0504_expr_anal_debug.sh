@@ -1,0 +1,12 @@
+./expr_anal.py ps data_postproc/Chabo_20110211_RSVPVar00a_on100_off100_A_1to1_003.psf.pk  z_unused/Chabo_20110211_RSVPVar00a_on100_off100_A_1to1_003.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110211_RSVPVar00a_on100_off100_A_1to1_004.psf.pk  z_unused/Chabo_20110211_RSVPVar00a_on100_off100_A_1to1_004.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_001.psf.pk  z_unused/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_001.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_002.psf.pk  z_unused/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_002.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_003.psf.pk  z_unused/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_003.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_004.psf.pk  z_unused/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_004.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_005.psf.pk  z_unused/Chabo_20110212_RSVPVar00a_on100_off100_P_1to1_005.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110213_RSVPVar00a_on024_off100_M_1to1_009.psf.pk  z_unused/Chabo_20110213_RSVPVar00a_on024_off100_M_1to1_009.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110213_RSVPVar00a_on024_off100_M_1to1_010.psf.pk  z_unused/Chabo_20110213_RSVPVar00a_on024_off100_M_1to1_010.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110213_RSVPVar00a_on100_off100_M_1to1_006.psf.pk  z_unused/Chabo_20110213_RSVPVar00a_on100_off100_M_1to1_006.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110213_RSVPVar00a_on100_off100_M_1to1_007.psf.pk  z_unused/Chabo_20110213_RSVPVar00a_on100_off100_M_1to1_007.pdf sel=none blanks=640,649
+./expr_anal.py ps data_postproc/Chabo_20110213_RSVPVar00a_on100_off100_M_1to1_008.psf.pk  z_unused/Chabo_20110213_RSVPVar00a_on100_off100_M_1to1_008.pdf sel=none blanks=640,649

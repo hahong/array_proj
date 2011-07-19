@@ -1,0 +1,3 @@
+./collect_PS_tinfo.py --n_maxtrial=60 subproj/001_twindow_perf/Chabo_20110318_RSVPVar00a_on024_off024_S110204_001 --flist=joblist/0330_collect_PS_tinfo_024_024.lst --flistpx=data_postproc --exclude_img=circ_mask
+./collect_PS_tinfo.py --n_maxtrial=60 subproj/001_twindow_perf/Chabo_20110318_RSVPVar00a_on024_off100_S110204_001 --flist=joblist/0330_collect_PS_tinfo_024_100.lst --flistpx=data_postproc --exclude_img=circ_mask
+./collect_PS_tinfo.py --n_maxtrial=60 subproj/001_twindow_perf/Chabo_20110318_RSVPVar00a_on100_off100_S110204_001 --flist=joblist/0330_collect_PS_tinfo_100_100.lst --flistpx=data_postproc --exclude_img=circ_mask

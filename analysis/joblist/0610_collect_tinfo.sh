@@ -1,0 +1,1 @@
+cd bin && ./collect_PS_tinfo.py --n_maxtrial=320 subproj/001_twindow_perf_tmp/Chabo_20110610_RSVPNicole305_S110204_001 --flist=joblist/0610_collect_tinfo.lst --flistpx=data_postproc --exclude_img=circ_mask

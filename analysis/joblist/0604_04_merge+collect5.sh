@@ -1,0 +1,1 @@
+bin/collect_PS_firing.py data_merged_tmp/SWDebug_20110604_RSVPNicole10x6_A_RefAA_004.mwk data_postproc_tmp/SWDebug_20110604_RSVPNicole10x6_A_RefAA_004.psf.pk 300 128    exclude_img=circ_mask

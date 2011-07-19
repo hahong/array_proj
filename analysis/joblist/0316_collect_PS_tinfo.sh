@@ -1,0 +1,2 @@
+./collect_PS_tinfo.py --n_maxtrial=60 subproj/002_var0xa_perf/Chabo_20110316_RSVPVar00a_on024_off000_S110204_001 --flist=joblist/0316_collect_PS_tinfo_on024_off000.lst --flistpx=data_postproc --exclude_img=circ_mask
+./collect_PS_tinfo.py --n_maxtrial=60 subproj/002_var0xa_perf/Chabo_20110316_RSVPVar00a_on024_off100_S110204_001 --flist=joblist/0316_collect_PS_tinfo_on024_off100.lst --flistpx=data_postproc --exclude_img=circ_mask

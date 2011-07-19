@@ -1,0 +1,1 @@
+bin/collect_PS_firing.py data_merged_tmp/Chabo_20110318_RSVPVar00a_on100_off100_S110204_RefAA_001_w10_test.mwk data_postproc_tmp/Chabo_20110318_RSVPVar00a_on100_off100_S110204_RefAA_001_w10_test.psf.pk 300 128 reject_sloppy exclude_img=circ_mask t_stop=450000  proc_cluster

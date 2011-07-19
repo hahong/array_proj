@@ -1,0 +1,1 @@
+cd bin && ./collect_PS_tinfo.py --n_maxtrial=60 subproj/001_twindow_perf_tmp/Chabo_20110318_RSVPVar00a_on100_off100_S110204_001.w10a --flist=joblist/0526.postsw.Var00a.psf.lst --flistpx=data_postproc_tmp --exclude_img=circ_mask
