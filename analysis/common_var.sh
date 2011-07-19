@@ -1,11 +1,13 @@
 #!/bin/bash
 
-#patt="Chabo_????????_RSVP*.mwk"
-test "$patt" || patt="Tito*.mwk"
-dirmwk="data_mwk"
-test $dirnev || dirnev="data_nev_tmp"
-test $dirmg || dirmg="data_merged_tmp"
-test $dirpp || dirpp="data_postproc_tmp"
+test "$pridat" || pridat="d002_Tito"     # set the primary data path (in data/)
+test "$patt" || patt="*.mwk"             # pattern of interested mworks data
+
+test "$dirdat" || dirdat="data"
+test $dirmwk || dirmwk="$dirdat/$pridat/mwk"
+test $dirnev || dirnev="$dirdat/$pridat/neudat"
+test $dirmg || dirmg="$dirdat/$pridat/mwk_merged"
+test $dirpp || dirpp="$dirdat/$pridat/data_postproc"
 sep=", "
 bin="bin"
 
