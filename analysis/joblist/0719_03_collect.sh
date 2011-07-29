@@ -1,0 +1,7 @@
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110719_RSVPNicole10x6_M_001.mwk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_001.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110719_RSVPNicole10x6_M_002.mwk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_002.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110719_RSVPNicole10x6_M_003.mwk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_003.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110719_RSVPNicole10x6_M_004.mwk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_004.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110719_RSVPNicole305_M_001.mwk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_001.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110719_RSVPNicole305_M_002.mwk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_002.psf.pk 300 96    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110719_RSVPNicole305_M_003.mwk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_003.psf.pk 300 96    exclude_img=circ_mask ign_unregistered

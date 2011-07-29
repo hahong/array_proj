@@ -26,6 +26,7 @@ REJECT_SLOPPY = False               # by default, do not reject sloppy (time to 
 EXCLUDE_IMG = None                  # exclude image by its name
 
 CH_SHIFT = {}                       # shifting channels based on rules: CH_SHIFT[rule_name] = {src_1_based_ch:new_1_based_ch}
+CH_SHIFT[None] = None
 # for 1-to-1 cards
 CH_SHIFT['1to1'] = {}
 for ch1 in xrange(1, 49): CH_SHIFT['1to1'][ch1] = ch1 

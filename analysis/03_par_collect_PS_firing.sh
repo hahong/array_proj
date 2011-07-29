@@ -53,17 +53,17 @@ for index in "${!files[@]}"; do
 
 	# some tidbits for image set types
 	if [[ $bname == *pos* || $bname == *POS* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo c_success=images_shown" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo c_success=images_shown ign_unregistered" >> $fntmp
 	elif [[ $bname == *Chou* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo ign_unregistered" >> $fntmp
 	elif [[ $bname == *RF* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo ign_unregistered" >> $fntmp
 	elif [[ $bname == *on*off* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
 	elif [[ $bname == *MovieGallant110413* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
 	else
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} exclude_img=circ_mask" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} exclude_img=circ_mask ign_unregistered" >> $fntmp
 	fi
 done
 
