@@ -1,0 +1,11 @@
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_003.psf.pk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_003 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_002.psf.pk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_002 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_001.psf.pk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole305_M_001 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_004.psf.pk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_004 blanks=60,62 extfirinfo
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_003.psf.pk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_003 blanks=60,62 extfirinfo
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_002.psf.pk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_002 blanks=60,62 extfirinfo
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_001.psf.pk data/d002_Tito/data_postproc/Tito_20110719_RSVPNicole10x6_M_001 blanks=60,62 extfirinfo
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110715_RSVPVar00a_A_SB_003.psf.pk data/d002_Tito/data_postproc/Tito_20110715_RSVPVar00a_A_SB_003 blanks_patt=zz_blank extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110715_RSVPVar00a_A_SB_002.psf.pk data/d002_Tito/data_postproc/Tito_20110715_RSVPVar00a_A_SB_002 blanks_patt=zz_blank extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110715_RSVPVar00a_A_SB_001.psf.pk data/d002_Tito/data_postproc/Tito_20110715_RSVPVar00a_A_SB_001 blanks_patt=zz_blank extfirinfo exclude_img=circ_mask off_num_sort
+bin/expr_anal.py dp data/d002_Tito/data_postproc/Tito_20110714_RSVPVar00a_M_SB_001.psf.pk data/d002_Tito/data_postproc/Tito_20110714_RSVPVar00a_M_SB_001 blanks_patt=zz_blank extfirinfo exclude_img=circ_mask off_num_sort
