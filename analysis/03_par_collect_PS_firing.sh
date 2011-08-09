@@ -46,7 +46,7 @@ for index in "${!files[@]}"; do
 	# if using all 128-channels (i.e., using sw-box, then set the #channels
 	if [[ $bname == *S110204* ]]; then
 		nelec=${allnelec}
-	elif [[ $bname == *S110720* ]]; then
+	elif [[ $bname == *_S110720_* ]]; then
 		nelec=${allnelec}
 	elif [[ $bname == *1to1* ]]; then
 		nelec=${allnelec}
