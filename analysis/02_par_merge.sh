@@ -8,6 +8,7 @@ if [ $# -lt 1 ]; then
 	echo
 	echo 'Options:'
 	echo '   - cluster <mwk file list> <cluster prefix file list> <suffix> [options to be passed]: merge with cluster info'
+	echo '   - multinsp <NSP name>'
 	exit 1
 fi
 
@@ -32,16 +33,35 @@ if [ $# -ge 5 -a "$2" = "cluster" ]; then
 		echo 'Number of files mismatch' >&2
 		exit 1
 	fi
+elif [ $# -ge 3 -a "$2" = "multinsp" ]; then
+	nsp="$3"
+	opts="multinsp"
+	files=("test.mwk" "test2.mwk" "test3_xxx_NSP2_P_001.mwk")
 fi
 
 for index in "${!files[@]}"; do
         mwksrc=${files[$index]}
 	mwksrcb=`basename ${mwksrc}`
 	mwkdstb=$mwksrcb
+	nevsrc="${dirnev}/`basename ${mwksrcb} .mwk`.nev"
+
 	if [ "$opts" == "cluster" ]; then
+		# -- clustering
 		mwksrc="${dirmwk}/`basename ${mwksrc}`"
 		mwkdstb="`basename ${mwksrc} .mwk`${csuffix}.mwk"
+		nevsrc="${dirnev}/`basename ${mwksrcb} .mwk`.nev"
+	elif [ "$opts" == "multinsp" ]; then
+		# -- multiple NSPs
+		if [[ $mwksrc != *$nsp* ]]; then
+			continue    # discard non-multi-nsp data
+		fi
+		# removes $nsp and the first preceeding suffix
+		# e.g., Tito_20110809_RSVPVar03a_S110720A_NSP2_P_001 -> Tito_20110809_RSVPVar03a_S110720A_001
+		mwksrc=`python -c "s0 = '${mwksrc}'; s1 = s0.split('_${nsp}_'); s1a = s1[0]; s1b = '_'.join(s1[1].split('_')[1:]); print s1a + '_' + s1b"`
+		mwksrcb=`basename ${mwksrc}`
+		mwkdstbhost=$mwksrcb
 	fi
+
 
 	# if there's already mwk directory in ${dirmg}, ignore it.
 	# it is likely to be merged already.
@@ -58,7 +78,6 @@ for index in "${!files[@]}"; do
 	fi
 
 	# check nev files
-	nevsrc="${dirnev}/`basename ${mwksrcb} .mwk`.nev"
 	if [ ! -f ${nevsrc} ]; then
 		continue
 	fi
@@ -68,6 +87,8 @@ for index in "${!files[@]}"; do
 	if [ "$opts" = "cluster" ]; then
 		cfile0=${cfiles[$index]}
 		oargs="cluster=${cfile0} cluster_all=+${cfileslst}"
+	elif [ "$opts" = "multinsp" ]; then
+		oargs="timetransf=${dirmg}/${mwkdstbhost}"
 	fi
 
 	echo "cp ${mwksrc} ${dirmg}/${mwkdstb} && ${bin}/merge.py ${dirmg}/${mwkdstb} ${nevsrc} nowav ${oargs} ${cextopts} && rm -f ${dirmg}/${mwkdstb}/*.bak" >> $fntmp
