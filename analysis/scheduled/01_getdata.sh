@@ -7,6 +7,11 @@ LOCK=$LOGDIR/01_getdata.sh.lock
 ###################################################################
 # -- Get the data 
 
+if [ -f $LOCK ]; then
+	# -- if locked, terminates immediately
+	echo "Locked:" $LOCK
+	exit
+fi
 touch $LOCK
 
 # 1. Tito
