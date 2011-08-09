@@ -7,6 +7,13 @@ JOBNAME=joblist/`date +%Y%m%d`_04_merge+collect.sh
 
 ###################################################################
 # -- Merge and collect
+
+if [ -f $LOCK ]; then
+	# -- if locked, terminates immediately
+	echo "Locked:" $LOCK
+	exit
+fi
+
 cd $PROJROOT/analysis/
 touch $LOCK   # create a lock file so that no data transfer occurs from mh17
 ./04_par_merge+collect_PS_firing.py > $JOBNAME
