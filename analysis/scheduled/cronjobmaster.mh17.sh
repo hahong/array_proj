@@ -5,4 +5,4 @@ CRONDIR=$PROJROOT/analysis/scheduled/
 LOGDIR=$CRONDIR/log/
 
 . $HOME/.bash_profile
-. $CRONDIR/10_PSTH.mh17.sh
+. $CRONDIR/11_getdata.mh17.sh
