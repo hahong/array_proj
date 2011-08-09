@@ -24,5 +24,6 @@ wait
 
 rsync -avzuH --exclude='/.snapshot' --remove-source-files labuser@dicarlo3:data/blackrock_log/Tito*.* $PROJROOT/data/d002_Tito/log/ 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_log.log &
 rsync -avzuH --exclude='/.snapshot' --remove-source-files labuser@dicarlo4:data/blackrock_log/Tito*.* $PROJROOT/data/d002_Tito/log/ 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_log_dicarlo4.log &
+wait
 
 rm $LOCK
