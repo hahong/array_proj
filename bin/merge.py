@@ -245,13 +245,20 @@ def main():
         amp_reject = set_new_threshold_rng
         print 'merge: amplitude rejection multiplier =', adj_reject
 
-
+    _force_timetransf = None
+    if 'force_timetransf' in opts:
+        a, b, delay = [float(e) for e in opts['force_timetransf'].split(',')]
+        _force_timetransf = {}
+        _force_timetransf['C'] = [a, b]
+        _force_timetransf['delay'] = delay
+        print 'merge: time transformation =', _force_timetransf
 
     # -- execute
     m = Merge(fn_mwk, fn_nev)
     if m.merge(proc_wav=proc_wav, code_sent=code_sent, code_recv=code_recv, \
             adj_reject=adj_reject, amp_reject=amp_reject, \
-            callback_reject=callback_reject, callback_cluster=callback_cluster):
+            callback_reject=callback_reject, callback_cluster=callback_cluster, \
+            _force_timetransf=_force_timetransf):
         print 'merge: merged successfully.'
 
 if __name__ == '__main__':

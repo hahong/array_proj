@@ -36,7 +36,11 @@ if [ $# -ge 5 -a "$2" = "cluster" ]; then
 elif [ $# -ge 3 -a "$2" = "multinsp" ]; then
 	nsp="$3"
 	opts="multinsp"
-	files=("test.mwk" "test2.mwk" "test3_xxx_NSP2_P_001.mwk")
+	files0=(`'ls' -1 ${dirnev}/*${nsp}*.nev`)
+	files=()
+	for index in "${!files0[@]}"; do
+		files[$index]="${dirmwk}/`basename ${files0[$index]} .nev`.mwk"
+	done
 fi
 
 for index in "${!files[@]}"; do
@@ -87,8 +91,8 @@ for index in "${!files[@]}"; do
 	if [ "$opts" = "cluster" ]; then
 		cfile0=${cfiles[$index]}
 		oargs="cluster=${cfile0} cluster_all=+${cfileslst}"
-	elif [ "$opts" = "multinsp" ]; then
-		oargs="timetransf=${dirmg}/${mwkdstbhost}"
+	#elif [ "$opts" = "multinsp" ]; then
+		#oargs="timetransf=${dirmg}/${mwkdstbhost}"
 	fi
 
 	echo "cp ${mwksrc} ${dirmg}/${mwkdstb} && ${bin}/merge.py ${dirmg}/${mwkdstb} ${nevsrc} nowav ${oargs} ${cextopts} && rm -f ${dirmg}/${mwkdstb}/*.bak" >> $fntmp

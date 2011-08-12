@@ -49,8 +49,12 @@ for index in "${!files[@]}"; do
 	elif [[ $bname == *_S110720_* ]]; then
 		nelec=${allnelec}
 	elif [[ $bname == *_S110720A_* ]]; then
-		nelec=110
-		opts="${opts} ch_shift=20110720A"
+		if [[ $bname == *_NSP* ]]; then
+			nelec=96
+		else
+			nelec=110
+			opts="${opts} ch_shift=20110720A"
+		fi
 	elif [[ $bname == *1to1* ]]; then
 		nelec=${allnelec}
 	fi
