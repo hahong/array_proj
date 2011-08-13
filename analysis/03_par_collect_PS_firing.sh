@@ -43,6 +43,7 @@ for index in "${!files[@]}"; do
 	# Main loop -------------------------------------------------------------------------
 
 	nelec=${defnelec}
+	chshift=""
 	# if using all 128-channels (i.e., using sw-box, then set the #channels
 	if [[ $bname == *S110204* ]]; then
 		nelec=${allnelec}
@@ -53,7 +54,7 @@ for index in "${!files[@]}"; do
 			nelec=96
 		else
 			nelec=110
-			opts="${opts} ch_shift=20110720A"
+			chshift="ch_shift=20110720A"
 		fi
 	elif [[ $bname == *1to1* ]]; then
 		nelec=${allnelec}
@@ -62,17 +63,17 @@ for index in "${!files[@]}"; do
 
 	# some tidbits for image set types
 	if [[ $bname == *pos* || $bname == *POS* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo c_success=images_shown ign_unregistered" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} extinfo c_success=images_shown ign_unregistered" >> $fntmp
 	elif [[ $bname == *Chou* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo ign_unregistered" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} extinfo ign_unregistered" >> $fntmp
 	elif [[ $bname == *RF* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} extinfo ign_unregistered" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} extinfo ign_unregistered" >> $fntmp
 	elif [[ $bname == *on*off* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
 	elif [[ $bname == *MovieGallant110413* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
 	else
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} exclude_img=circ_mask ign_unregistered" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask ign_unregistered" >> $fntmp
 	fi
 done
 
