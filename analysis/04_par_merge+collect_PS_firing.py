@@ -3,6 +3,7 @@
 import os
 import tempfile
 import signal
+import sys
 
 
 def cleanup():
@@ -29,13 +30,41 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 
-def main():
+def parse_opts(tokens, optpx='--'):
+    opts0 = []
+    args = []
+    opts = {}
+    n = len(optpx)
+
+    for token in tokens:
+        if token[:2] == optpx: opts0.append(token[n:])
+        else: args.append(token)
+
+    for opt in opts0:
+        parsed = opt.split('=')
+        key = parsed[0].strip()
+        if len(parsed) > 1:
+            cmd = parsed[1].strip()
+        else:
+            cmd = ''
+        opts[key] = cmd
+
+    return args, opts
+
+
+def main(args, opts):
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
+    merge_opts = ''
+    if 'merge_opts' in opts: merge_opts = opts['merge_opts']
+
+    coll_opts = ''
+    if 'coll_opts' in opts: coll_opts = opts['coll_opts']
+
     try:
         main.fntmp = fntmp = tempfile.mktemp()
-        os.system('./02_par_merge.sh %s' % fntmp)
+        os.system('./02_par_merge.sh %s %s' % (fntmp, merge_opts))
 
         # fake merged mwks to get the output from 03_par_collect_PS_firing.sh
         main.fnmwks = fnmwks = []
@@ -52,7 +81,7 @@ def main():
 
 
         main.fntmp2 = fntmp2 = tempfile.mktemp()
-        os.system('./03_par_collect_PS_firing.sh %s' % fntmp2)
+        os.system('./03_par_collect_PS_firing.sh %s %s' % (fntmp2, coll_opts))
         for l0 in open(fntmp2, 'rt').readlines():
             l = l0.strip()
             f = l.split()[1]
@@ -72,5 +101,5 @@ main.fnmwks = None
 
 
 if __name__ == '__main__':
-    # assumes no arguments
-    main()
+    args, opts = parse_opts(sys.argv[1:])
+    main(args, opts)
