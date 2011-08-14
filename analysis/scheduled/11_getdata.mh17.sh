@@ -27,4 +27,4 @@ rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REM
 wait
 
 # -- Done
-rm $LOCK
+rm -f $LOCK
