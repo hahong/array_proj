@@ -1,0 +1,7 @@
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110802_RSVPVar03a_S110720_001.mwk data/d002_Tito/data_postproc/Tito_20110802_RSVPVar03a_S110720_001.psf.pk 300 128    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110802_RSVPVar03a_S110720_002.mwk data/d002_Tito/data_postproc/Tito_20110802_RSVPVar03a_S110720_002.psf.pk 300 128    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110802_RSVPVar03a_S110720_003.mwk data/d002_Tito/data_postproc/Tito_20110802_RSVPVar03a_S110720_003.psf.pk 300 128    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110802_RSVPVar03a_S110720_004.mwk data/d002_Tito/data_postproc/Tito_20110802_RSVPVar03a_S110720_004.psf.pk 300 128    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110802_RSVPVar03a_S110720_005.mwk data/d002_Tito/data_postproc/Tito_20110802_RSVPVar03a_S110720_005.psf.pk 300 128    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110802_RSVPVar03a_S110720_006.mwk data/d002_Tito/data_postproc/Tito_20110802_RSVPVar03a_S110720_006.psf.pk 300 128    exclude_img=circ_mask ign_unregistered
+bin/collect_PS_firing.py data/d002_Tito/mwk_merged/Tito_20110802_RSVPVar03a_S110720_007.mwk data/d002_Tito/data_postproc/Tito_20110802_RSVPVar03a_S110720_007.psf.pk 300 128    exclude_img=circ_mask ign_unregistered
