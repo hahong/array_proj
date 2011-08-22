@@ -16,6 +16,10 @@ fi
 
 cd $PROJROOT/analysis/
 touch $LOCK   # create a lock file so that no data transfer occurs from mh17
+
+# 1. Tito
 ./04_par_merge+collect_PS_firing.py > $JOBNAME
+dirnev=data/d002_Tito/neudat_NSP2/ ./04_par_merge+collect_PS_firing.py --merge_opts='multinsp NSP2' >> $JOBNAME
+
 parrun.py $JOBNAME 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_analysis.log
 rm -f $LOCK
