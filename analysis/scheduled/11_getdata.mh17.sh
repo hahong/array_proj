@@ -2,8 +2,10 @@
 # This script is meant to be called by cronjobmaster.sh
 test "$PROJROOT" || PROJROOT=/mindhive/dicarlolab/proj/array_data/
 test "$LOGDIR" || LOGDIR=$PROJROOT/analysis/scheduled/log/
+LCLBIN=$PROJROOT/analysis/scheduled/
 REMOTEFILER=dicarlo2
 REMOTEUSER=array
+REMOTEBIN=array/analysis/scheduled/
 REMOTELOG=array/analysis/scheduled/log/
 REMOTEDATA=array/data/
 LOCK=$LOGDIR/11_getdata.mh17.sh.lock
@@ -23,13 +25,30 @@ touch $LOCK
 
 ##################################################################
 # Start fetch
+LCLGET=$LCLBIN/12_getbadlist.mh17.sh
+LCLSET=$LCLBIN/13_setbadlist.mh17.sh
+RMTGET=$REMOTEBIN/12_getbadlist.mh17.sh
+RMTSET=$REMOTEBIN/13_setbadlist.mh17.sh
+
+LCLBADLST=$LOGDIR/12_getbadlist.mh17.sh.badlist
+RMTBADLST=$REMOTELOG/12_getbadlist.mh17.sh.badlist
+
+function syncall {
+	rmtdir=$1
+	lcldir=$2
+
+	# syncbad: local -> remote
+	$LCLGET $lcldir > $LCLBADLST
+	scp $LCLBADLST $REMOTEUSER@$REMOTEFILER:$RMTBADLST
+	ssh $REMOTEUSER@$REMOTEFILER "$RMTSET $RMTBADLST $rmtdir; echo $RMTGET $rmtdir " #> $RMTBADLST" 
+	scp $REMOTEUSER@$REMOTEFILER:$RMTBADLST $LCLBADLST
+	$LCLSET $LCLBADLST $lcldir
+
+	# rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2.log &
+}
 
 # -- 1. Tito
-# syncbad: local -> remote
-./12_getbadlist.mh17.sh $PROJROOT/data/d002_Tito/ > $LOGDIR/12_getbadlist.mh17.sh.lcl2rmt
-scp $LOGDIR/12_getbadlist.mh17.sh.lcl2rmt $REMOTEUSER@$REMOTEFILER:$REMOTELOG
-
-
+syncall $REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/
 # rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2.log &
 wait
 
