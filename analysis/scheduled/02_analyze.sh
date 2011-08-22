@@ -3,8 +3,8 @@
 test "$PROJROOT" || PROJROOT=/home/array/array/
 test "$LOGDIR" || LOGDIR=$PROJROOT/analysis/scheduled/log/
 LOCK=$LOGDIR/02_analyze.sh.lock
-JOBNAME=joblist/`date +%Y%m%d`_04_merge+collect.sh
-JOBNAMEPSTH=joblist/`date +%Y%m%d`_10_plot_PSTH.sh
+JOBNAME=joblist/`date +%Y%m%d`_04_merge+collect_`date +%H%M`.sh
+JOBNAMEPSTH=joblist/`date +%Y%m%d`_10_plot_PSTH_`date +%H%M`.sh
 LOGNAME=$LOGDIR/`date +%Y%m%d_%H%M%S`_analysis.log
 HTMLPSTH=/home/array/public_html/psth/
 
