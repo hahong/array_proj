@@ -39,17 +39,17 @@ function syncall {
 
 	# syncbad: local -> remote
 	$LCLGET $lcldir > $LCLBADLST
-	scp $LCLBADLST $REMOTEUSER@$REMOTEFILER:$RMTBADLST
+	scp $LCLBADLST $REMOTEUSER@$REMOTEFILER:$RMTBADLST 2>&1
 	ssh $REMOTEUSER@$REMOTEFILER "$RMTSET $RMTBADLST $rmtdir; $RMTGET $rmtdir > $RMTBADLST" 
 	# syncbad: remote -> local
-	scp $REMOTEUSER@$REMOTEFILER:$RMTBADLST $LCLBADLST
+	scp $REMOTEUSER@$REMOTEFILER:$RMTBADLST $LCLBADLST 2>&1
 	$LCLSET $LCLBADLST $lcldir
 	# file sync
-	#rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$rmtdir $lcldir 2>&1
+	rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$rmtdir $lcldir 2>&1
 }
 
 # -- 1. Tito
-syncall $REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/
+syncall $REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2.log &
 # rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2.log &
 wait
 
