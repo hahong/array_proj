@@ -64,8 +64,11 @@ for index in "${!files[@]}"; do
 	fi
 
 
+	cmddefault="${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask ign_unregistered"
 	# some tidbits for image set types
-	if [[ $bname == *pos* || $bname == *POS* ]]; then
+	if [[ $bname == *_nopos_* || $bname == *_NOPOS_* ]]; then
+		echo $cmddefault >> $fntmp
+	elif [[ $bname == *pos* || $bname == *POS* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} extinfo c_success=images_shown ign_unregistered" >> $fntmp
 	elif [[ $bname == *Chou* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} extinfo ign_unregistered" >> $fntmp
@@ -76,7 +79,7 @@ for index in "${!files[@]}"; do
 	elif [[ $bname == *MovieGallant110413* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
 	else
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask ign_unregistered" >> $fntmp
+		echo $cmddefault >> $fntmp
 	fi
 done
 
