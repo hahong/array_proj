@@ -39,6 +39,9 @@ for index in "${!files[@]}"; do
 	if [ -f ${dirpp}/${fnpsf} ]; then
 		continue
 	fi
+	if [ -f ${dirpp}/${fnpsf}.bad ]; then
+		continue
+	fi
 
 	# Main loop -------------------------------------------------------------------------
 
