@@ -34,17 +34,18 @@ LCLBADLST=$LOGDIR/12_getbadlist.mh17.sh.badlist
 RMTBADLST=$REMOTELOG/12_getbadlist.mh17.sh.badlist
 
 function syncall {
-	rmtdir=$1
-	lcldir=$2
+	rmtdir=`dirname $1`/`basename $1`/
+	lcldir=`dirname $2`/`basename $2`/
 
 	# syncbad: local -> remote
 	$LCLGET $lcldir > $LCLBADLST
 	scp $LCLBADLST $REMOTEUSER@$REMOTEFILER:$RMTBADLST
-	ssh $REMOTEUSER@$REMOTEFILER "$RMTSET $RMTBADLST $rmtdir; echo $RMTGET $rmtdir " #> $RMTBADLST" 
+	ssh $REMOTEUSER@$REMOTEFILER "$RMTSET $RMTBADLST $rmtdir; $RMTGET $rmtdir > $RMTBADLST" 
+	# syncbad: remote -> local
 	scp $REMOTEUSER@$REMOTEFILER:$RMTBADLST $LCLBADLST
 	$LCLSET $LCLBADLST $lcldir
-
-	# rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2.log &
+	# file sync
+	#rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$rmtdir $lcldir 2>&1
 }
 
 # -- 1. Tito

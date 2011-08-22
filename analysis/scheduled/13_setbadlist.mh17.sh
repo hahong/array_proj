@@ -17,5 +17,6 @@ for fbadshort in `cat $badlist`; do
 	fi
 
 	# process only if forg exists and fdest doesn't exist.
-	echo Apply: $forg
+	echo Apply: $forg '->' $fdst
+	mv $forg $fdst
 done
