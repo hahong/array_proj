@@ -6,6 +6,7 @@ LOCK=$LOGDIR/02_analyze.sh.lock
 JOBNAME=joblist/`date +%Y%m%d`_04_merge+collect.sh
 JOBNAMEPSTH=joblist/`date +%Y%m%d`_10_plot_PSTH.sh
 LOGNAME=$LOGDIR/`date +%Y%m%d_%H%M%S`_analysis.log
+HTMLPSTH=/home/array/public_html/psth/
 
 ###################################################################
 # -- Merge and collect
@@ -28,6 +29,7 @@ parrun.py $JOBNAME 2>&1 | tee -a $LOGNAME
 # Plot PSTHs
 ./10_plot_PSTH.sh > $JOBNAMEPSTH
 NJOBS=5 parrun.py $JOBNAMEPSTH 2>&1 | tee -a $LOGNAME 
+rsync -a $PROJROOT/data/d002_Tito/subproj/100_PSTH/*.pdf $HTMLPSTH
 
 # -- END
 rm -f $LOCK
