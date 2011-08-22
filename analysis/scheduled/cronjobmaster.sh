@@ -1,9 +1,9 @@
 #!/bin/bash
 test "$HOME" || HOME=/home/array/
-PROJROOT=$HOME/array/
-CRONDIR=$PROJROOT/analysis/scheduled/
-LOGDIR=$CRONDIR/log/
+export PROJROOT=$HOME/array/
+export CRONDIR=$PROJROOT/analysis/scheduled/
+export LOGDIR=$CRONDIR/log/
 
 . $HOME/.profile 
-. $CRONDIR/01_getdata.sh
-. $CRONDIR/02_analyze.sh
+$CRONDIR/01_getdata.sh
+$CRONDIR/02_analyze.sh
