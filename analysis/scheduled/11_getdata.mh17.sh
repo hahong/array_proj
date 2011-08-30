@@ -49,9 +49,10 @@ function syncall {
 }
 
 # -- 1. Tito
-syncall $REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2.log &
+syncall $REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2_d002_Tito.log
+syncall $REMOTEDATA/d003_Tito/ $PROJROOT/data/d003_Tito/ | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2_d003_Tito.log
 # rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$REMOTEDATA/d002_Tito/ $PROJROOT/data/d002_Tito/ 2>&1 | tee -a $LOGDIR/`date +%Y%m%d_%H%M%S`_Tito_dicarlo2.log &
-wait
-
+# wait
+ 
 # -- Done
 rm -f $LOCK
