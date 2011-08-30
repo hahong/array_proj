@@ -1,6 +1,6 @@
 #!/bin/bash
 
-test "$pridat" || pridat="d002_Tito"     # set the primary data path (in data/)
+test "$pridat" || pridat="d003_Tito"     # set the primary data path (in data/)
 test "$patt" || patt="*.mwk"             # pattern of interested mworks data
 
 test "$dirdat" || dirdat="data"
