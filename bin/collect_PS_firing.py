@@ -7,7 +7,7 @@ import sys
 sys.path.append('lib')
 from mworks.data import MWKFile
 from mergeutil import Merge
-from common_fn import get_stim_info, xget_events
+from common_fn import get_stim_info, xget_events, xget_events_readahead
 
 C_MSG = '#announceMessage'
 C_STIM = '#announceStimulus'
@@ -24,6 +24,8 @@ PROC_CLUSTER = False
 MAX_CLUS = 5                        # number of clusters per channel
 REJECT_SLOPPY = False               # by default, do not reject sloppy (time to present > 2 frames) stimuli
 EXCLUDE_IMG = None                  # exclude image by its name
+DIFF_CUTOFF = 3000000               # if the animal is not working longer than 3s, then don't do readahead
+MAX_READAHEAD = 6000000             # maximum readahead: 6s
 
 CH_SHIFT = {}                       # shifting channels based on rules: CH_SHIFT[rule_name] = {src_1_based_ch:new_1_based_ch}
 CH_SHIFT[None] = None
@@ -119,6 +121,7 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     # actual calculation -------------------------------
     # all_spike[chn_id][img_id]: when the neurons spiked?
     all_spike = {}
+    all_foffset = {}
     clus_info = {}
 
     frame_onset = {}
@@ -126,12 +129,53 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     movie_onsets = []
     movie_onset0 = 0
 
-    for i in range(n_stim):
+
+    t0_valid = []
+    iid_valid = []
+    for i in xrange(n_stim):
         t0 = img_onset[i]; iid = img_id[i]
-        
         # -- check if this presentation is successful. if it's not ignore this.
         if np.sum((t_success > t0) & (t_success < (t0 + t_success_lim))) < 1: continue
+        t0_valid.append(t0)
+        iid_valid.append(iid)
+    n_stim_valid = len(t0_valid)
 
+    """ DEBUG
+    import time
+    t0x = time.time()
+    t0 = t0_valid[0]
+    xget_events_readahead(mf, c_spikes, (t0, t0 + t_stop), readahead=10000000)
+    print 10, time.time() - t0x
+
+    t0x = time.time()
+    xget_events_readahead(mf, c_spikes, (t0 + 20000000, t0 + 20000000 + t_stop), readahead=30000000)
+    print 30, time.time() - t0x
+
+    t0x = time.time()
+    xget_events_readahead(mf, c_spikes, (t0 + 60000000, t0 + 60000000 + t_stop), readahead=60000000)
+    print 60, time.time() - t0x
+    """
+
+    # DBG np.save('xx1.npy', np.array(t0_valid))
+    # DBG np.save('xx2.npy', np.diff(t0_valid) / 1000000.)
+    # DBG assert False
+
+    t_slack = t_stop - t_start
+    readaheads = np.zeros(n_stim_valid, 'int')
+    i_cnkbegin = 0            # beginning of the chunk
+    for i in xrange(1, n_stim_valid):
+        t0 = t0_valid[i]
+        t0p = t0_valid[i - 1]
+        t0b = t0_valid[i_cnkbegin]
+
+        if (t0 - t0p > DIFF_CUTOFF) or (t0 - t0b > MAX_READAHEAD):
+            readaheads[i_cnkbegin:i] = t0p - t0b + t_slack
+            i_cnkbegin = i
+            continue
+    readaheads[i_cnkbegin:] = t0 - t0b + t_slack
+
+    for i in xrange(n_stim_valid):
+        t0 = t0_valid[i]; iid = iid_valid[i]; readahead=int(readaheads[i])
         # -- process movie?
         if movie_begin_fname != None:
             # begin new clip?
@@ -150,23 +194,27 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
                 continue
 
         if verbose > 0: 
-            print 'At', (i + 1), 'out of', n_stim, '         \r',
+            print 'At', (i + 1), 'out of', n_stim_valid, '         \r',
             sys.stdout.flush()
    
-        spikes = xget_events(mf, codes=[c_spikes], time_range=[t0 + t_start, t0 + t_stop])
+        #spikes = xget_events(mf, codes=[c_spikes], time_range=[t0 + t_start, t0 + t_stop])
+        spikes = xget_events_readahead(mf, c_spikes, (t0 + t_start, t0 + t_stop), readahead=readahead)
         actvunits = {}
         t_rel = {}
-        # -- prepare the t_rel
+        foffset = {}
+        # -- prepare the t_rel & foffset
         for ch in actvelecs:
             # if no clustering info is used...
             if not proc_cluster:
                 t_rel[ch] = []
+                foffset[ch] = []
                 continue
             # if clustering info is used...
             cids = range(max_clus)
             actvunits[ch] = cids
             for cid in cids:
                 t_rel[(ch,cid)] = []
+                foffset[(ch,cid)] = []
 
         # -- put actual spiking info
         for s in spikes:
@@ -184,6 +232,7 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
             # put the relative time
             if ign_unregistered and key not in t_rel: continue
             t_rel[key].append(int(s.time + t_adjust - t0))
+            foffset[key].append(int(s.value['foffset']))
             # update the clus_info and n_cluster
             if proc_cluster and key not in clus_info:
                 clus_info[key] = s.value
@@ -202,9 +251,12 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
                     # not using defaultdict here:
                     # all_spike[key] = defaultdict(list)
                     all_spike[key] = {}
+                    all_foffset[key] = {}
                 if iid not in all_spike[key]:
                     all_spike[key][iid] = []
+                    all_foffset[key][iid] = []
                 all_spike[key][iid].append(t_rel[key])
+                all_foffset[key][iid].append(foffset[key])
 
     # flush movie data
     if movie_iid != None:
@@ -224,8 +276,12 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     if movie_begin_fname != None:
         out['frame_onset'] = frame_onset
     pk.dump(out, f)
-    f.close()
 
+    # put all_foffset into the 2nd half to speed up reading
+    out2 = {'all_foffset': all_foffset,}
+    pk.dump(out2, f)
+
+    f.close()
 
 
 # ----------------------------------------------------------------------------

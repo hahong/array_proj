@@ -41,6 +41,37 @@ def xget_events(mf, **kwargs):
     Event = namedtuple('Event', 'value time empty')
     return [Event(*ev) for ev in evs]
 
+
+def xget_events_readahead(mf, code, time_range, readahead=15000000):
+    tstart0, tend0 = time_range
+    assert tstart0 < tend0
+    _tr = xget_events_readahead.trange
+    _ra = xget_events_readahead.readahead
+    _rat = xget_events_readahead.readahead_t
+    tstart = tstart0; tend = tend0 + readahead
+
+    if code not in _tr: _tr[code] = (-1,-1)
+    # if _ra doesn't have the full time_range, read ahead
+    if _tr[code][0] > tstart0 or _tr[code][1] < tend0:
+        _ra[code] = xget_events(mf, codes=[code], time_range=[tstart, tend])
+        _rat[code] = [e.time for e in _ra[code]]
+        _tr[code] = (tstart, tend)
+        # DBG print '** len =', len(_rat[code])
+    
+    # get the corresponding slice
+    ib = np.searchsorted(_rat[code], tstart0)                # begin
+    ie = np.searchsorted(_rat[code], tend0, side='right')    # end
+    # DBG print '#<', np.sum(np.array(_rat[code][ib:ie]) < tstart0)
+    # DBG print '#>', np.sum(np.array(_rat[code][ib:ie]) > tend0)
+    return _ra[code][ib:ie]
+
+    
+xget_events_readahead.trange = {}
+xget_events_readahead.readahead = {}
+xget_events_readahead.readahead_t = {}
+
+
+
 # ----------------------------------------------------------------------------
 def get_stim_info(mf, c_stim=C_STIM, extinfo=False, \
         dynstim='ds_9999', rotrmn=180, blank='zb_99999',\
