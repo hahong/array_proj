@@ -1,0 +1,1 @@
+cd bin && ./collect_PS_tinfo.py --n_maxtrial=100 data/d002_Tito/subproj/001_twindow_perf/Tito_20110811_RSVPVar03a_S110720_001 --flist=joblist/20110811_collect_tinfo_Var03a.lst --flistpx=data/d002_Tito/data_postproc --exclude_img=circ_mask
