@@ -77,7 +77,8 @@ for index in "${!files[@]}"; do
 	elif [[ $bname == *on*off* ]]; then
 		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} reject_sloppy exclude_img=circ_mask t_stop=450000" >> $fntmp
 	elif [[ $bname == *MovieGallant110413* ]]; then
-		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
+		# echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask c_success=success t_success=2500000" >> $fntmp
+		echo "${bin}/collect_PS_firing.py ${fn} ${dirpp}/${fnpsf} ${defdelay} ${nelec} ${opts} ${chshift} exclude_img=circ_mask ign_unregistered c_success=success t_success=2500000 movie_begin_fname=\"_frame_0\" t_stop=2500000" >> $fntmp
 	else
 		echo $cmddefault >> $fntmp
 	fi

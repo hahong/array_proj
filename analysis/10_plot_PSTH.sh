@@ -10,5 +10,10 @@ for pkf in `'ls' -1 $dirpp/*.psf.pk`; do
 	if [ -f $wd/$bname.pdf ]; then 
 		continue 
 	fi
-	echo bin/plot_PSTH.py $wd/$bname $pkf
+
+	if [[ $bname == *MovieGallant110413* ]]; then
+		echo bin/plot_PSTH.py $wd/$bname $pkf --n_bins=2600
+	else
+		echo bin/plot_PSTH.py $wd/$bname $pkf
+	fi
 done

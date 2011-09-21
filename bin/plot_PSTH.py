@@ -11,11 +11,13 @@ from matplotlib.backends.backend_pdf import PdfPages
 import pylab as pl
 
 XLIM = [-100, 400]
+DEF_NBINS = 500
 
 # ------------------------------------------------------------
 # assume interval is (-100, 250)
-def load_db(files, db, n_bins=500, t_shift=100000, verbose=1):
+def load_db(files, db, n_bins=DEF_NBINS, t_shift=100000, verbose=1):
     n = len(files)
+    #db['n_bins'] = n_bins
     for i_f, f in enumerate(files):
         if verbose > 0: print 'At (%d/%d): %s' % (i_f+1, n, f)
         dat = pk.load(open(f))
@@ -80,10 +82,11 @@ def SNR(wav0, chunk=15):
 
 
 # ------------------------------------------------------------
-def plot_all(db, pp, n_bins=500, t_shift=100000, log='log.tmp', log2=None, verbose=0):
+def plot_all(db, pp, n_bins=None, t_shift=100000, log='log.tmp', log2=None, verbose=0):
     keys = db.keys()
     k0 = keys[0]
-    n_elec = db[k0]['mat'].shape[0]
+    n_elec, n_bins0 = db[k0]['mat'].shape
+    if n_bins is None: n_bins = n_bins0
 
     n = len(keys)
     M = np.zeros((n_elec, n_bins))   # averaged across the images
@@ -97,6 +100,9 @@ def plot_all(db, pp, n_bins=500, t_shift=100000, log='log.tmp', log2=None, verbo
             print img
             print db[img]['cnt']
         # converting to Spkies/s
+        # DBG print db[img]['mat']
+        # DBG print db[img]['cnt']
+        print img
         T = db[img]['mat'] / (float(db[img]['cnt']) / n_elec) * 1000.
         M += T
 
@@ -187,15 +193,42 @@ def plot_all(db, pp, n_bins=500, t_shift=100000, log='log.tmp', log2=None, verbo
 def main():
     if len(sys.argv) < 3:
         print 'plot_PSTH.py <out prefix> <in1.psf.pk> [in2.psf.pk] ...'
+        print
+        print 'Options:'
+        print '  --n_bins=#       Number of 1-ms bins'
         return
 
-    of = sys.argv[1]
-    files = sys.argv[2:]
+    # -- parse options and arguments
+    opts0 = []
+    args = []
+    opts = {}
+
+    for token in sys.argv[1:]:
+        if token[:2] == '--': opts0.append(token[2:])
+        else: args.append(token)
+
+    for opt in opts0:
+        parsed = opt.split('=')
+        key = parsed[0].strip()
+        if len(parsed) > 1:
+            cmd = parsed[1].strip()
+        else:
+            cmd = ''
+        opts[key] = cmd
+
+    # -- do the work
+    of = args[0]
+    files = args[1:]
     print 'OF =', of
     print 'FILES =', files
 
+    n_bins = DEF_NBINS
+    if 'n_bins' in opts:
+        n_bins = int(opts['n_bins'])
+        print '  * n_bins =', n_bins
+
     db = {}
-    load_db(files, db)
+    load_db(files, db, n_bins=n_bins)
 
     # -- plot
     init()
