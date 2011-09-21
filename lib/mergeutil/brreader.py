@@ -10,6 +10,59 @@ def to_pystr(sz):
     """convert NULL terminated string to Python string"""
     return sz.split('\0')[0]
 
+
+class BufferedFile:
+    def __init__(self, fn, mode):
+        assert mode == 'rb'
+        self.fp = None
+        self.close()
+        self.fp = open(fn, 'rb')
+
+    def close(self):
+        if self.fp != None: self.fp.close()
+        self.pos = 0
+        self.fp_pos = 0
+        self.buf = ''
+        self.buf_off = -1
+        self.fp = None
+
+    def seek(self, offset, whence=0):
+        if whence == 0: self.pos = offset
+        elif whence == 1: self.pos += offset
+        else: raise ValueError, 'Not implemented'
+
+    def tell(self):
+        return self.pos
+
+    def read(self, size, readahead=None):
+        if readahead is None:
+            return self._read(size)
+
+        # if data fetch is needed..
+        if (self.buf_off > self.pos) or (self.buf_off + len(self.buf) < self.pos + size):
+            self.buf_off = self.pos
+            self.buf = self._read(readahead)
+            self.pos = self.buf_off
+
+        ib = self.pos - self.buf_off
+        ie = ib + size
+        r = self.buf[ib:ie]
+        self.pos += len(r)
+        return r
+
+    def _read(self, size):
+        f = self.fp
+        # to reduce unnecessary fseek
+        if self.fp_pos != self.pos:
+            self.fp_pos = self.pos
+            f.seek(self.pos)
+        r = f.read(size)
+        new_pos = self.pos + len(r)
+        self.pos = new_pos
+        self.fp_pos = new_pos
+        return r
+
+
 # BlackRockReader class
 class BRReader:
     # Properties -----------------------------------------------------------
@@ -101,7 +154,8 @@ class BRReader:
         """.nev file header reader"""
         nev_filename = self.nev_filename
         if nev_filename is None: return True
-        f = open(nev_filename, 'rb')
+        #f = open(nev_filename, 'rb')
+        f = BufferedFile(nev_filename, 'rb')
 
         # header and packet size
         s_header, i_vmajor, i_vminor, i_flags = struct.unpack('<8sBBH', f.read(12))
@@ -282,7 +336,7 @@ class BRReader:
 
 
     # .nev file methods ====================================================================
-    def read_once(self, pos=None, proc_wav=False):
+    def read_once(self, pos=None, proc_wav=False, readahead=None, readahead_abs=None):
         """read one particular block: must be on the right position!!!"""
         l_sigheader = BRReader.L_SIGHEADER   # signal block header size
         l_packet = self._l_packet            # signal block size
@@ -290,9 +344,10 @@ class BRReader:
         t_res = self._t_res
         f = self._nev_fp
 
+        if readahead != None: readahead_abs = (readahead + 1) * l_packet
         if pos != None: f.seek(pos)
         else: pos = f.tell()
-        signal_block = f.read(l_packet)
+        signal_block = f.read(l_packet, readahead=readahead_abs)
         if signal_block == '': return None   # reached EOF
 
         sig_t0, sig_id, ext_info = struct.unpack('<LHBx', signal_block[:l_sigheader])
