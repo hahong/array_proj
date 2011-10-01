@@ -102,7 +102,7 @@ def plot_all(db, pp, n_bins=None, t_shift=100000, log='log.tmp', log2=None, verb
         # converting to Spkies/s
         # DBG print db[img]['mat']
         # DBG print db[img]['cnt']
-        print img
+        # DBG print img
         T = db[img]['mat'] / (float(db[img]['cnt']) / n_elec) * 1000.
         M += T
 
