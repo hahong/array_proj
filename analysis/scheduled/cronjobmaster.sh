@@ -5,5 +5,4 @@ export CRONDIR=$PROJROOT/analysis/scheduled/
 export LOGDIR=$CRONDIR/log/
 
 . $HOME/.profile 
-$CRONDIR/01_getdata.sh
-$CRONDIR/02_analyze.sh
+$CRONDIR/01_getdata.sh && $CRONDIR/02_analyze.sh

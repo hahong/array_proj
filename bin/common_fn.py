@@ -91,7 +91,8 @@ def get_stim_info(mf, c_stim=C_STIM, extinfo=False, \
                         break
                 if ignore: continue
             stims.append(x)
-        elif x.value['type'] == 'dynamic_stimulus' or x.value['type'] == 'blankscreen':
+        elif x.value['type'] == 'dynamic_stimulus' or x.value['type'] == 'blankscreen' or\
+             x.value['type'] == 'drifting_grating':
             stims.append(x)
         elif x.value['type'] == 'image_directory_movie':
             if type(x.value['current_stimulus']) == int: continue
@@ -108,7 +109,7 @@ def get_stim_info(mf, c_stim=C_STIM, extinfo=False, \
             if not extinfo: iid = x.value['name']
             else: iid = (x.value['name'], x.value['pos_x'], x.value['pos_y'], \
                 x.value['rotation'], x.value['size_x'], x.value['size_y'])
-        elif x.value['type'] == 'dynamic_stimulus':
+        elif x.value['type'] == 'dynamic_stimulus' or x.value['type'] == 'drifting_grating':
             if not extinfo: iid = dynstim
             else: iid = (dynstim, x.value['xoffset'], x.value['yoffset'], \
                 x.value['rotation'] % rotrmn, x.value['width'], x.value['height'])

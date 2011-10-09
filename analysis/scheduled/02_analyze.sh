@@ -14,7 +14,7 @@ HTMLPSTH=/home/array/public_html/psth/
 if [ -f $LOCK ]; then
 	# -- if locked, terminates immediately
 	echo "Locked:" $LOCK
-	exit
+	exit 1
 fi
 
 cd $PROJROOT/analysis/

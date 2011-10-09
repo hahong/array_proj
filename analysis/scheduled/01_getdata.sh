@@ -10,7 +10,7 @@ LOCK=$LOGDIR/01_getdata.sh.lock
 if [ -f $LOCK ]; then
 	# -- if locked, terminates immediately
 	echo "Locked:" $LOCK
-	exit
+	exit 1
 fi
 touch $LOCK
 

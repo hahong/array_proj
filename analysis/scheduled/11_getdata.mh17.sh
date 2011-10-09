@@ -12,14 +12,14 @@ LOCK=$LOGDIR/11_getdata.mh17.sh.lock
 
 ###################################################################
 # if still processing the data at dicarlo2, then quits.
-ssh $REMOTEUSER@$REMOTEFILER "test -f $REMOTELOG/01_getdata.sh.lock" && exit   
-ssh $REMOTEUSER@$REMOTEFILER "test -f $REMOTELOG/02_analyze.sh.lock" && exit   
+ssh $REMOTEUSER@$REMOTEFILER "test -f $REMOTELOG/01_getdata.sh.lock" && exit 1  
+ssh $REMOTEUSER@$REMOTEFILER "test -f $REMOTELOG/02_analyze.sh.lock" && exit 1  
 
 # -- Check lock
 if [ -f $LOCK ]; then
         # -- if locked, terminates immediately
         echo "Locked:" $LOCK
-        exit
+        exit 1
 fi
 touch $LOCK
 
