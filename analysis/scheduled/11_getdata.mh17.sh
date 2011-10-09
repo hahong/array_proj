@@ -45,7 +45,7 @@ function syncall {
 	scp $REMOTEUSER@$REMOTEFILER:$RMTBADLST $LCLBADLST 2>&1
 	$LCLSET $LCLBADLST $lcldir
 	# file sync
-	rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$rmtdir $lcldir 2>&1
+	rsync -avzuH --exclude='*.ns5' --exclude='*.ns5.*' --exclude='.*ns5*' --exclude='.*nev*' --exclude='.*ccf*' --exclude='.*mwk*' --exclude='*cluster_wd*' $REMOTEUSER@$REMOTEFILER:$rmtdir $lcldir 2>&1
 }
 
 # -- 1. Tito
