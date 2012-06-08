@@ -1,0 +1,1 @@
+bin/plot_PSTH.py data/d002_Tito/subproj/100_PSTH/Tito_20110822_RSVPVar06_nopos_S110720A_001 data/d002_Tito/data_postproc/Tito_20110822_RSVPVar06_nopos_S110720A_001.psf.pk
