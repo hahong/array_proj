@@ -1,0 +1,10 @@
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_001             data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_001.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_002             data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_002.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_003             data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_003.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_004             data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_004.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_NSP2_P_001      data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_NSP2_P_001.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_NSP2_P_002      data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_NSP2_P_002.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_NSP2_P_003      data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_NSP2_P_003.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20110930_RF_S110720A_NSP2_P_004      data/d003_Tito/data_postproc/Tito_20110930_RF_S110720A_NSP2_P_004.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20111002_RF_8deg_S110720A_001        data/d003_Tito/data_postproc/Tito_20111002_RF_8deg_S110720A_001.psf.pk --n_bins=650
+./collect_PS_tinfo.py --n_maxtrial=70 data/d003_Tito/subproj/001_twindow_perf/Tito_20111002_RF_8deg_S110720A_NSP2_P_001 data/d003_Tito/data_postproc/Tito_20111002_RF_8deg_S110720A_NSP2_P_001.psf.pk --n_bins=650
