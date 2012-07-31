@@ -1,0 +1,505 @@
+(edif scard  (edifVersion 2 0 0)
+    (edifLevel 0)
+    (keywordMap (keywordLevel 0))
+    (library SCARD
+        (edifLevel 0)
+        (cell SCARD (cellType generic)
+            (view schematic (viewType netlist)
+                (contents
+
+                    (net Net1
+                        (joined
+                            (portRef 108 (instanceRef U1))
+                            (portRef 20 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net2
+                        (joined
+                            (portRef 106 (instanceRef U1))
+                            (portRef 21 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net3
+                        (joined
+                            (portRef 105 (instanceRef U1))
+                            (portRef 22 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net4
+                        (joined
+                            (portRef 104 (instanceRef U1))
+                            (portRef 23 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net5
+                        (joined
+                            (portRef 101 (instanceRef U1))
+                            (portRef 24 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net6
+                        (joined
+                            (portRef 100 (instanceRef U1))
+                            (portRef 25 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net7
+                        (joined
+                            (portRef 99 (instanceRef U1))
+                            (portRef 26 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net8
+                        (joined
+                            (portRef 97 (instanceRef U1))
+                            (portRef 27 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net9
+                        (joined
+                            (portRef 96 (instanceRef U1))
+                            (portRef 28 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net10
+                        (joined
+                            (portRef 95 (instanceRef U1))
+                            (portRef 29 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net11
+                        (joined
+                            (portRef 94 (instanceRef U1))
+                            (portRef 30 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net12
+                        (joined
+                            (portRef 93 (instanceRef U1))
+                            (portRef 31 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net13
+                        (joined
+                            (portRef 92 (instanceRef U1))
+                            (portRef 32 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net14
+                        (joined
+                            (portRef 91 (instanceRef U1))
+                            (portRef 33 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net15
+                        (joined
+                            (portRef 90 (instanceRef U1))
+                            (portRef 34 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net16
+                        (joined
+                            (portRef 89 (instanceRef U1))
+                            (portRef 35 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net17
+                        (joined
+                            (portRef 88 (instanceRef U1))
+                            (portRef 36 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net18
+                        (joined
+                            (portRef 87 (instanceRef U1))
+                            (portRef 37 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net19
+                        (joined
+                            (portRef 86 (instanceRef U1))
+                            (portRef 38 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net20
+                        (joined
+                            (portRef 85 (instanceRef U1))
+                            (portRef 39 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net21
+                        (joined
+                            (portRef 84 (instanceRef U1))
+                            (portRef 40 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net22
+                        (joined
+                            (portRef 83 (instanceRef U1))
+                            (portRef 41 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net23
+                        (joined
+                            (portRef 82 (instanceRef U1))
+                            (portRef 42 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net24
+                        (joined
+                            (portRef 81 (instanceRef U1))
+                            (portRef 43 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net25
+                        (joined
+                            (portRef 80 (instanceRef U1))
+                            (portRef 44 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net26
+                        (joined
+                            (portRef 79 (instanceRef U1))
+                            (portRef 45 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net27
+                        (joined
+                            (portRef 78 (instanceRef U1))
+                            (portRef 46 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net28
+                        (joined
+                            (portRef 77 (instanceRef U1))
+                            (portRef 47 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net29
+                        (joined
+                            (portRef 75 (instanceRef U1))
+                            (portRef 48 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net30
+                        (joined
+                            (portRef 74 (instanceRef U1))
+                            (portRef 49 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net31
+                        (joined
+                            (portRef 72 (instanceRef U1))
+                            (portRef 50 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net32
+                        (joined
+                            (portRef 67 (instanceRef U1))
+                            (portRef 51 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net33
+                        (joined
+                            (portRef 66 (instanceRef U1))
+                            (portRef 52 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net34
+                        (joined
+                            (portRef 65 (instanceRef U1))
+                            (portRef 53 (instanceRef U1))
+                        )
+                    )
+
+                    (net Net35
+                        (joined
+                            (portRef 111 (instanceRef U1))
+                            (portRef 22 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net36
+                        (joined
+                            (portRef 110 (instanceRef U1))
+                            (portRef 23 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net37
+                        (joined
+                            (portRef 112 (instanceRef U2))
+                            (portRef 24 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net38
+                        (joined
+                            (portRef 111 (instanceRef U2))
+                            (portRef 25 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net39
+                        (joined
+                            (portRef 109 (instanceRef U2))
+                            (portRef 26 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net40
+                        (joined
+                            (portRef 108 (instanceRef U2))
+                            (portRef 27 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net41
+                        (joined
+                            (portRef 106 (instanceRef U2))
+                            (portRef 28 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net42
+                        (joined
+                            (portRef 104 (instanceRef U2))
+                            (portRef 29 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net43
+                        (joined
+                            (portRef 103 (instanceRef U2))
+                            (portRef 30 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net44
+                        (joined
+                            (portRef 102 (instanceRef U2))
+                            (portRef 31 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net45
+                        (joined
+                            (portRef 101 (instanceRef U2))
+                            (portRef 32 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net46
+                        (joined
+                            (portRef 100 (instanceRef U2))
+                            (portRef 33 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net47
+                        (joined
+                            (portRef 99 (instanceRef U2))
+                            (portRef 34 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net48
+                        (joined
+                            (portRef 98 (instanceRef U2))
+                            (portRef 35 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net49
+                        (joined
+                            (portRef 97 (instanceRef U2))
+                            (portRef 36 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net50
+                        (joined
+                            (portRef 92 (instanceRef U2))
+                            (portRef 37 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net51
+                        (joined
+                            (portRef 89 (instanceRef U2))
+                            (portRef 38 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net52
+                        (joined
+                            (portRef 87 (instanceRef U2))
+                            (portRef 39 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net53
+                        (joined
+                            (portRef 86 (instanceRef U2))
+                            (portRef 40 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net54
+                        (joined
+                            (portRef 84 (instanceRef U2))
+                            (portRef 41 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net55
+                        (joined
+                            (portRef 83 (instanceRef U2))
+                            (portRef 42 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net56
+                        (joined
+                            (portRef 80 (instanceRef U2))
+                            (portRef 43 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net57
+                        (joined
+                            (portRef 78 (instanceRef U2))
+                            (portRef 44 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net58
+                        (joined
+                            (portRef 77 (instanceRef U2))
+                            (portRef 45 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net59
+                        (joined
+                            (portRef 76 (instanceRef U2))
+                            (portRef 46 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net60
+                        (joined
+                            (portRef 75 (instanceRef U2))
+                            (portRef 47 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net61
+                        (joined
+                            (portRef 74 (instanceRef U2))
+                            (portRef 48 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net62
+                        (joined
+                            (portRef 73 (instanceRef U2))
+                            (portRef 49 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net63
+                        (joined
+                            (portRef 72 (instanceRef U2))
+                            (portRef 50 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net64
+                        (joined
+                            (portRef 71 (instanceRef U2))
+                            (portRef 51 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net65
+                        (joined
+                            (portRef 70 (instanceRef U2))
+                            (portRef 52 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net66
+                        (joined
+                            (portRef 69 (instanceRef U2))
+                            (portRef 53 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net67
+                        (joined
+                            (portRef 68 (instanceRef U2))
+                            (portRef 54 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net68
+                        (joined
+                            (portRef 67 (instanceRef U2))
+                            (portRef 55 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net69
+                        (joined
+                            (portRef 66 (instanceRef U2))
+                            (portRef 56 (instanceRef U2))
+                        )
+                    )
+
+                    (net Net70
+                        (joined
+                            (portRef 65 (instanceRef U2))
+                            (portRef 57 (instanceRef U2))
+                        )
+                    )
+
+                )
+            )
+        )
+    )
+) 
+

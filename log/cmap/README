@@ -1,0 +1,6 @@
+chkmap.py tests the mapping txt file
+
+Note that these text files are often OCR-ed hardcopies.  
+See "originals" directory.  Also because of that, 
+beware of potential OCR errors although "chkmap.py"
+tries to detect every possible pitfall.

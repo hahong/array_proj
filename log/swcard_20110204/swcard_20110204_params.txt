@@ -1,0 +1,6 @@
+Minimal gap:		0.2 mm
+Width of new traces:	0.3 mm
+Routing grid:		0.3 mm
+Obstacle closeness:	0.0 mm
+Trace bend:		0.5 mm
+Layer change:		5.0 mm
