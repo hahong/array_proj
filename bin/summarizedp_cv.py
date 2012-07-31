@@ -251,10 +251,10 @@ def main(rseed=RSEED):
             topn = int(opts('topn'))
             print '* TOPN =', topn
         if 'bad' in opts:
-            bad = [int(b) for b in opts['bad']]
+            bad = [int(b) for b in opts['bad'].split(',')]
             print '* BAD =', bad
         if 'ng' in opts:
-            ng = [int(b) for b in opts['ng']]
+            ng = [int(b) for b in opts['ng'].split(',')]
             print '* NG =', ng
         if 'px' in opts:
             px = opts['px']
