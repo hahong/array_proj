@@ -1,23 +1,25 @@
 #!/usr/bin/env python
 
 import numpy as np
-import cPickle as pk
-import struct
 import sys
 import os
 sys.path.append('lib')
-import numpy.linalg                  # numpy's linear algebra code to do svd and pca.
 from multiprocessing import Process, Queue
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 from mworks.data import MWKFile
 from mergeutil import Merge, BRReader, PLXReader
 
 C_STIM = '#announceStimulus'
+C_MSG = '#announceMessage'
+ERR_UTIME_MSG = 'updating main window display is taking longer than two frames'
+ERR_UTIME_TYPE = 2                  # Errors are type 2 in #aanounceStimulus
+
 I_STIM_ID = 2
 T_START = -100000
 T_STOP = 250000
 C_SUCCESS = 'number_of_stm_shown'   # one visual stimulus should have one "success" event within
 T_SUCCESS = 250000                  # 250ms time window in order to be considered as valid one.
+
 OVERRIDE_DELAY_US = 300
 T_REJECT = 10
 N_REJECT = 50
@@ -168,7 +170,11 @@ def sort_uniq(base, *args):
 def getspk(fn_mwk, fn_nev, override_elecs=None, \
         override_delay_us=OVERRIDE_DELAY_US, verbose=False, extinfo=False, \
         c_success=C_SUCCESS, t_start0=T_START, t_stop0=T_STOP, full=True, new_thr=None, \
-        exclude_img=None, t_success_lim=T_SUCCESS, movie_begin_fname=None):
+        exclude_img=None, t_success_lim=T_SUCCESS, movie_begin_fname=None, \
+        only_new_t=False, reject_sloppy=False, \
+        c_stim=C_STIM, c_msg=C_MSG, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE):
+    """TODO: merge with firrate() in collect_PS_firing.py"""
+
     mf = MWKFile(fn_mwk)
     mf.open()
     br = load_spike_data(fn_nev)
@@ -184,6 +190,43 @@ def getspk(fn_mwk, fn_nev, override_elecs=None, \
     t_success = np.array(t_success)
 
     img_onset, img_id = get_stim_info(mf, extinfo=extinfo, exclude_img=exclude_img)
+
+    # if requested, remove all sloppy (time spent during update main window > 2 frames)
+    if reject_sloppy:
+        # since get_stim_info ignores fixation point, all stimuli info must be retrived.
+        all_stims = xget_events(mf, codes=[c_stim])
+        all_times = np.array([s.time for s in all_stims])
+        msgs = xget_events(mf, codes=[c_msg])
+        errs = [m for m in msgs if m.value['type'] == err_utime_type and \
+                err_utime_msg in m.value['message']]
+
+        for e in errs:
+            t0 = e.time
+            rel_t = all_times - t0
+            # index to the closest prior stimulus
+            ci = int(np.argsort(rel_t[rel_t < 0])[-1])
+            # ...and its presented MWK time
+            tc = all_stims[ci].time
+            # get all affected sloppy stimuli
+            ss = list(np.nonzero(np.array(img_onset) == tc)[0])
+
+            new_img_onset = []
+            new_img_id = []
+
+            # I know this is kinda O(n^2), but since ss is short, it's essentially O(n)
+            for i, (io, ii) in enumerate(zip(img_onset, img_id)):
+                if i in ss:
+                    if verbose > 1:
+                        print '** Removing sloppy:', img_id[i]
+                    continue      # if i is sloppy stimuli, remove it.
+                new_img_onset.append(io)
+                new_img_id.append(ii)
+
+            # trimmed the bad guys..
+            img_onset = new_img_onset
+            img_id = new_img_id
+        assert len(img_onset) == len(img_id)
+
     n_stim = len(img_onset)
 
     # MAC-NSP time translation
@@ -195,33 +238,47 @@ def getspk(fn_mwk, fn_nev, override_elecs=None, \
     t_start = t_start0 - t_adjust
     t_stop = t_stop0 - t_adjust
 
-    # memory saving trick ------------------------------
-    def xloader(q, mf, code, time_range):
-        spikes = mf.get_events(codes=[code], time_range=time_range)
-        q.put([(s.value['id'], s.value['foffset'], s.time) for s in spikes])
-
-    movie_began = False
     # actual calculation -------------------------------
-    for i in range(n_stim):
-        t0 = img_onset[i]; iid = img_id[i]
-        # check if this presentation is successful. if it's not ignore this.
+    te_prev = -1
+
+    t0_valid = []
+    iid_valid = []
+    for i in xrange(n_stim):
+        t0 = img_onset[i]
+        iid = img_id[i]
+        # -- check if this presentation is successful. if it's not ignore this.
         if np.sum((t_success > t0) & (t_success < (t0 + t_success_lim))) < 1: continue
+        t0_valid.append(t0)
+        iid_valid.append(iid)
+    n_stim_valid = len(t0_valid)
 
-        if movie_begin_fname != None:
-            if movie_begin_fname in iid:
-                iid = iid.replace(movie_begin_fname, '')
-                movie_began = True
-            elif movie_began:
-                continue
+    t_slack = t_stop - t_start
+    readaheads = np.zeros(n_stim_valid, 'int')
+    i_cnkbegin = 0            # beginning of the chunk
+    for i in xrange(1, n_stim_valid):
+        t0 = t0_valid[i]
+        t0p = t0_valid[i - 1]
+        t0b = t0_valid[i_cnkbegin]
 
-        if verbose: print 'At', (i + 1), 'out of', n_stim
-   
-        # TODO: unused due to the memory management
-        # spikes = mf.get_events(codes=[c_spikes], time_range=[t0+t_start, t0+t_stop])
-        # for s in spikes:
+        if (t0 - t0p > DIFF_CUTOFF) or (t0 - t0b > MAX_READAHEAD):
+            readaheads[i_cnkbegin:i] = t0p - t0b + t_slack
+            i_cnkbegin = i
+            continue
+    readaheads[i_cnkbegin:] = t0 - t0b + t_slack
+
+    for i in xrange(n_stim_valid):
+        iid = iid_valid[i]
+        readahead=int(readaheads[i])
+
+        t0 = t0_valid[i]
+        tb = t0 + t_start
+        te = t0 + t_stop    # this is inclusive!!
+        if only_new_t and tb <= te_prev:
+            tb = te_prev + 1
+        te_prev = te
 
         q = Queue()
-        p = Process(target=xloader, args=(q, mf, c_spikes, [t0 + t_start, t0 + t_stop]))
+        p = Process(target=xloader, args=(q, mf, c_spikes, [tb, te]))
         p.start()
         spk_info = q.get()
         p.join()
@@ -231,20 +288,20 @@ def getspk(fn_mwk, fn_nev, override_elecs=None, \
             if override_elecs != None and ch not in override_elecs: continue 
             # waveform
             try:
-                wav_info = br.read_once(pos=pos, proc_wav=True)
+                wav_info = br.read_once(pos=pos, proc_wav=True, readahead=readahead)
             except Exception, e:
                 print '*** Exception:', e
                 continue
 
             # -- apply new threshold if requested
             if new_thr != None:
-                if new_thr.has_key('mult'):
+                if 'mult' in new_thr:
                     lthr = br.chn_info[ch]['low_thr']
                     hthr = br.chn_info[ch]['high_thr']
                     if lthr == 0: thr0 = hthr
                     else: thr0 = lthr
                     thr = thr0 * new_thr['mult']
-                elif new_thr.has_key('abs'):
+                elif 'abs' in new_thr:
                     thr = new_thr['abs']
             
                 wf0 = wav_info['waveform']

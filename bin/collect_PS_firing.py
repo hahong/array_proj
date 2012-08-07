@@ -122,7 +122,6 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
     movie_onsets = []
     movie_onset0 = 0
 
-
     t0_valid = []
     iid_valid = []
     for i in xrange(n_stim):
