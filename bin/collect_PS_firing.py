@@ -7,19 +7,10 @@ import sys
 sys.path.append('lib')
 from mworks.data import MWKFile
 from mergeutil import Merge
-from common_fn import get_stim_info, xget_events, xget_events_readahead
+#from common_fn import get_stim_info, xget_events, xget_events_readahead, C_MSG, C_STIM, ERR_UTIME_MSG, ERR_UTIME_TYPE
+from common_fn import *
 
-C_MSG = '#announceMessage'
-C_STIM = '#announceStimulus'
-ERR_UTIME_MSG = 'updating main window display is taking longer than two frames'
-ERR_UTIME_TYPE = 2                  # Errors are type 2 in #aanounceStimulus
-
-T_START = -100000
-T_STOP = 250000
 DEFAULT_ELECS = range(1, 97)
-
-C_SUCCESS = 'number_of_stm_shown'   # one visual stimulus should have one "success" event within
-T_SUCCESS = 250000                  # 250ms time window in order to be considered as valid one.
 PROC_CLUSTER = False
 MAX_CLUS = 5                        # number of clusters per channel
 REJECT_SLOPPY = False               # by default, do not reject sloppy (time to present > 2 frames) stimuli
@@ -53,6 +44,8 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
         t_start0=T_START, t_stop0=T_STOP, c_msg=C_MSG, c_stim=C_STIM, exclude_img=EXCLUDE_IMG, \
         reject_sloppy=REJECT_SLOPPY, err_utime_msg=ERR_UTIME_MSG, err_utime_type=ERR_UTIME_TYPE, \
         movie_begin_fname=None, ign_unregistered=False, ch_shift=None):
+    """TODO: merge with get_spk() in common_fn.py"""
+
     mf = MWKFile(fn_mwk)
     mf.open()
 
@@ -139,26 +132,6 @@ def firrate(fn_mwk, fn_out, override_delay_us=None, override_elecs=None, verbose
         t0_valid.append(t0)
         iid_valid.append(iid)
     n_stim_valid = len(t0_valid)
-
-    """ DEBUG
-    import time
-    t0x = time.time()
-    t0 = t0_valid[0]
-    xget_events_readahead(mf, c_spikes, (t0, t0 + t_stop), readahead=10000000)
-    print 10, time.time() - t0x
-
-    t0x = time.time()
-    xget_events_readahead(mf, c_spikes, (t0 + 20000000, t0 + 20000000 + t_stop), readahead=30000000)
-    print 30, time.time() - t0x
-
-    t0x = time.time()
-    xget_events_readahead(mf, c_spikes, (t0 + 60000000, t0 + 60000000 + t_stop), readahead=60000000)
-    print 60, time.time() - t0x
-    """
-
-    # DBG np.save('xx1.npy', np.array(t0_valid))
-    # DBG np.save('xx2.npy', np.diff(t0_valid) / 1000000.)
-    # DBG assert False
 
     t_slack = t_stop - t_start
     readaheads = np.zeros(n_stim_valid, 'int')
