@@ -224,9 +224,10 @@ def getspk(fn_mwk, fn_nev=None, override_elecs=None, \
 
     mf = MWKFile(fn_mwk)
     mf.open()
+
     if fn_nev is not None:
         br = load_spike_data(fn_nev)
-        br.open()
+        assert br.open()
     else:
         br = None
 
@@ -244,6 +245,7 @@ def getspk(fn_mwk, fn_nev=None, override_elecs=None, \
     else:
         actvelecs = override_elecs    # e.g, range(1, 97)
 
+    # -- preps
     img_onset, img_id = get_stim_info(mf, extinfo=extinfo, \
             exclude_img=exclude_img)
 
@@ -298,6 +300,14 @@ def getspk(fn_mwk, fn_nev=None, override_elecs=None, \
     t_start = t_start0 - t_adjust
     t_stop = t_stop0 - t_adjust
 
+    # yield metadata
+    infometa = {'type': 'preamble', 'actvelecs': actvelecs,
+            't_adjust': t_adjust}
+    if fn_nev is not None:
+        infometa['n_packets'] = br._n_packets
+        infometa['chn_info'] = br.chn_info
+    yield infometa
+
     # actual calculation -------------------------------
     t0_valid = []
     iid_valid = []
@@ -345,11 +355,8 @@ def getspk(fn_mwk, fn_nev=None, override_elecs=None, \
             sys.stdout.flush()
 
         # -- yield new image onset info
-        infoimg = {'t_imgonset': t0, 't_adjust': t_adjust, \
-            'imgid': iid, 'i_img': i, \
-            'type': 'begin', 'actvelecs': actvelecs}
+        infoimg = {'t_imgonset': t0, 'imgid': iid, 'i_img': i, 'type': 'begin'}
         yield infoimg
-        infoimg.pop('actvelecs')  # remove for speed
 
         spikes, spk_last = xget_events_readahead(mf, c_spikes, \
                 (tb, te), readahead=readahead, peekend=True)
@@ -483,6 +490,14 @@ def parse_opts(opts0):
         opts[key] = cmd
 
     return opts
+
+
+def makeavail(sth, sth2idx, idx2sth, query=None):
+    if sth not in sth2idx:
+        if query is not None and not query(sth):
+            return
+        sth2idx[sth] = len(idx2sth)
+        idx2sth.append(sth)
 
 
 def prep_files(flist, sep=',', extchk=True):

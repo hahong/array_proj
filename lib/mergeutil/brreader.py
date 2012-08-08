@@ -197,6 +197,7 @@ class BRReader:
                 spike_id.append(elec_id)
 
         # done.
+        statinfo = os.stat(nev_filename)
         self._nev_fp = f
         self._i_vmajor = i_vmajor
         self._i_vminor = i_vminor
@@ -204,6 +205,7 @@ class BRReader:
         self._valid = True
         self._l_header = l_header
         self._l_packet = l_packet
+        self._n_packets = int(round(float(statinfo.st_size - l_header) / l_packet))
         self._t_res = t_res
         self._t_sample = t_sample
         self._n_extheader = n_extheader
@@ -213,6 +215,7 @@ class BRReader:
         self._s_comment = s_comment
         self._p_databegin = f.tell()
         self._spike_id = spike_id
+
         return True
 
 
