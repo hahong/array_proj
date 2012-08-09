@@ -4,6 +4,7 @@ import numpy as np
 import cPickle as pk
 import tables as tbl
 import sys
+import warnings
 sys.path.append('lib')
 from common_fn import getspk, C_SUCCESS, T_SUCCESS, \
         T_START, T_STOP, REJECT_SLOPPY, makeavail
@@ -210,6 +211,11 @@ def get_waveform(fn_mwk, fn_nev, fn_out, movie_begin_fname=None, \
     idx2ch = []
     n_spks = 0
 
+    # does "n_spks_lim" reach "n_max_spks"?
+    b_warn_max_spks_lim = False
+    # list of image presentations without spikes
+    l_empty_spks = []
+
     for info in getspk(fn_mwk, fn_nev=fn_nev, **kwargs):
         # -- get the metadata. this must be called before other clauses
         if info['type'] == 'preamble':
@@ -242,10 +248,12 @@ def get_waveform(fn_mwk, fn_nev, fn_out, movie_begin_fname=None, \
         if info['type'] == 'begin':
             t_abs = info['t_imgonset']
             iid = info['imgid']
+            i_img = info['i_img']
 
             makeavail(iid, iid2idx, idx2iid)
             Mimg.append(iid2idx[iid])
             Mimg_tabs.append(t_abs)
+            b_no_spks = True
 
             # process movie if requested
             if movie_begin_fname is not None:
@@ -262,13 +270,21 @@ def get_waveform(fn_mwk, fn_nev, fn_out, movie_begin_fname=None, \
             Msnp_tabs[n_spks] = t_abs
             Msnp_ch[n_spks] = i_ch
             Msnp_pos[n_spks] = pos
+            b_no_spks = False
 
             n_spks += 1
             if n_spks >= n_spks_lim:
-                import warnings
                 warnings.warn('n_spks exceedes n_spks_lim! '\
                     'Aborting further additions.')
+                b_warn_max_spks_lim = True
                 break
+
+        elif info['type'] == 'end':
+            if not b_no_spks:
+                continue
+            # if there's no spike at all, list the stim
+            warnings.warn('No spikes are there!       ')
+            l_empty_spks.append(i_img)
 
     # -- done!
     # finished calculation....
@@ -314,6 +330,11 @@ def get_waveform(fn_mwk, fn_nev, fn_out, movie_begin_fname=None, \
     h5o.createArray(meta, 'iid2idx_pk', pk.dumps(iid2idx))
     h5o.createArray(meta, 'idx2ch', idx2ch)
     h5o.createArray(meta, 'ch2idx_pk', pk.dumps(ch2idx))
+
+    # some error signals
+    h5o.createArray(meta, 'b_warn_max_spks_lim', b_warn_max_spks_lim)
+    if len(l_empty_spks) > 0:
+        h5o.createArray(meta, 'l_empty_spks', l_empty_spks)
 
     h5o.close()
 

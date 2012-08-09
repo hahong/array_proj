@@ -58,7 +58,7 @@ def xget_events(mf, **kwargs):
 
 
 def xget_events_readahead(mf, code, time_range, readahead=15000000, \
-        peekend=False):
+        peeklast=False):
     """Buffered MWKFile handler.
     TODO: should be re-implemented as a class!"""
     tstart0, tend0 = time_range
@@ -85,8 +85,9 @@ def xget_events_readahead(mf, code, time_range, readahead=15000000, \
     # DBG print '#<', np.sum(np.array(_rat[code][ib:ie]) < tstart0)
     # DBG print '#>', np.sum(np.array(_rat[code][ib:ie]) > tend0)
 
-    if peekend:
-        return _ra[code][ib:ie], _ra[code][-1]
+    if peeklast:
+        last = _ra[code][-1] if len(_ra[code]) > 1 else None
+        return _ra[code][ib:ie], last
     else:
         return _ra[code][ib:ie]
 
@@ -359,11 +360,15 @@ def getspk(fn_mwk, fn_nev=None, override_elecs=None, \
         yield infoimg
 
         spikes, spk_last = xget_events_readahead(mf, c_spikes, \
-                (tb, te), readahead=readahead, peekend=True)
-        if br is not None:
-            readahead_br = (spk_last.value['foffset'] - \
-                    spikes[0].value['foffset']) / br._l_packet + 10
-            readahead_br = int(readahead_br)
+                (tb, te), readahead=readahead, peeklast=True)
+        try:
+            if br is not None:
+                readahead_br = (spk_last.value['foffset'] - \
+                        spikes[0].value['foffset']) / br._l_packet + 10
+                readahead_br = int(readahead_br)
+        except:
+            # sometimes "spk_last" becomes None
+            readahead_br = 1024  # some default value
 
         # -- yield actual spike info
         for i_spk, spk in enumerate(spikes):
