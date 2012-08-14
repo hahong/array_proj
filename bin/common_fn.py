@@ -480,6 +480,55 @@ def invalidate_artifacts(buf0, t_reject=T_REJECT, \
     return buf
 
 
+def set_new_threshold(wavform, thr, n_pre=N_PRE_PT, rng=SEARCH_RNG, i_chg=20):
+    """Set new threshold `thr`.
+    If the `waveform` cannot pass `thr` returns None.
+    The new waveform is re-aligned based on the steepest point.
+    The returned new waveform has `n_pre` points before the alignment point.
+    """
+    wav = np.array(wavform)
+    sgn = np.sign(thr)
+    if np.max(wav[rng[0]:rng[1]] * sgn) < np.abs(thr): return None   # reject
+
+    """ NOT USED -- GIVES IMPRECISE RESULT
+    # -- align: find the steepest point having the same sign as `sgn`
+    df = np.diff(wav)
+    si = np.argsort(-sgn * df)   # reverse sorted
+    for i in si:
+        if np.sign(wav[i]) == sgn: break
+    """
+    # -- align: find the point where waveform crosses `thr`
+    n = len(wav)
+    for i in range(n - 1):
+        if sgn * wav[i] <= sgn * thr and sgn * thr <= sgn * wav[i + 1]:
+            break
+    if i == n - 2:
+        # although i could be n - 2, it's highly likely an artifact
+        return None
+    n_shift = n_pre - i - 1    # > 0: right shift, < 0: left shift
+    if n_shift == 0:
+        return wav
+
+    wavnew = np.empty(wav.shape)
+    wavnew[n_shift:] = wav[:-n_shift]   # PBC shifting
+    wavnew[:n_shift] = wav[-n_shift:]
+
+    # -- done: but if the spike doesn't change its sign
+    #    within `i_chg`, reject.
+    if np.max(-sgn * wavnew[n_pre:i_chg]) < 0:
+        return None
+
+    """ DEBUG
+    if np.abs(n_shift) > 3:
+        print '!!!', n_shift, '/', i, '/', n
+        print '---',  np.max(-sgn * wavnew[n_pre:i_chg])
+        print list(wav)
+        print list(wavnew)
+    """
+
+    return wavnew
+
+
 # -----------------------------------------------------------------------------
 def parse_opts(opts0):
     """Parse the options in the command line.  This somewhat
@@ -545,55 +594,6 @@ def prepare_save_dir(sav_dir):
         # We just ignore if makedirs fails.
         except Exception:
             pass
-
-
-def set_new_threshold(wavform, thr, n_pre=N_PRE_PT, rng=SEARCH_RNG, i_chg=20):
-    """Set new threshold `thr`.
-    If the `waveform` cannot pass `thr` returns None.
-    The new waveform is re-aligned based on the steepest point.
-    The returned new waveform has `n_pre` points before the alignment point.
-    """
-    wav = np.array(wavform)
-    sgn = np.sign(thr)
-    if np.max(wav[rng[0]:rng[1]] * sgn) < np.abs(thr): return None   # reject
-
-    """ NOT USED -- GIVES IMPRECISE RESULT
-    # -- align: find the steepest point having the same sign as `sgn`
-    df = np.diff(wav)
-    si = np.argsort(-sgn * df)   # reverse sorted
-    for i in si:
-        if np.sign(wav[i]) == sgn: break
-    """
-    # -- align: find the point where waveform crosses `thr`
-    n = len(wav)
-    for i in range(n - 1):
-        if sgn * wav[i] <= sgn * thr and sgn * thr <= sgn * wav[i + 1]:
-            break
-    if i == n - 2:
-        # although i could be n - 2, it's highly likely an artifact
-        return None
-    n_shift = n_pre - i - 1    # > 0: right shift, < 0: left shift
-    if n_shift == 0:
-        return wav
-
-    wavnew = np.empty(wav.shape)
-    wavnew[n_shift:] = wav[:-n_shift]   # PBC shifting
-    wavnew[:n_shift] = wav[-n_shift:]
-
-    # -- done: but if the spike doesn't change its sign
-    #    within `i_chg`, reject.
-    if np.max(-sgn * wavnew[n_pre:i_chg]) < 0:
-        return None
-
-    """ DEBUG
-    if np.abs(n_shift) > 3:
-        print '!!!', n_shift, '/', i, '/', n
-        print '---',  np.max(-sgn * wavnew[n_pre:i_chg])
-        print list(wav)
-        print list(wavnew)
-    """
-
-    return wavnew
 
 
 # -----------------------------------------------------------------------------
