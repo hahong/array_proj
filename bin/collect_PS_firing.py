@@ -7,7 +7,7 @@ import sys
 import warnings
 sys.path.append('lib')
 from common_fn import getspk, C_SUCCESS, T_SUCCESS, \
-        T_START, T_STOP, REJECT_SLOPPY, makeavail, parse_opts
+        T_START, T_STOP, REJECT_SLOPPY, makeavail, parse_opts_adapter
 
 DEFAULT_ELECS = range(1, 97)
 DEFAULT_SAMPLES_PER_SPK = 48
@@ -342,36 +342,38 @@ def get_waveform(fn_mwk, fn_nev, fn_out, movie_begin_fname=None, \
 # ----------------------------------------------------------------------------
 def main():
     if len(sys.argv) < 3:
-        print 'collect_PS_firing.py <mwk> <output.pk> ' \
-                '[override delay in us] [number of electrodes] [opts]'
+        print 'collect_PS_firing.py [options] <mwk> <output.pk> ' \
+                '[override delay in us] [number of electrodes]'
         print 'Collects spike timing around visual stimuli'
         print
         print 'Options:'
-        print 'wav=<.nev file name>  - collects waveform for spike sorting ' \
-                'with the .nev file.'
-        print 'extinfo               - collects extra stimuli information ' \
-                'in addition to the names'
-        print 'c_success=<code name> - code name for "success" signal'
-        print 'proc_cluster          - process extra spike sorting information'
-        print 'max_cluster=#         - maximum number of clusters per channel'
+        print '   --wav=<.nev file name>  - collects waveform for spike' \
+                ' sorting with the .nev file.'
+        print '   --extinfo               - collects extra stimuli info' \
+                'rmation in addition to the names'
+        print '   --c_success=<code name> - code name for "success" signal'
+        print '   --proc_cluster          - process extra spike sorting info' \
+                'rmation'
+        print '   --max_cluster=#         - maximum number of clusters per' \
+                ' channel'
         return
 
-    fn_mwk = sys.argv[1]
-    fn_out = sys.argv[2]
+    args, opts = parse_opts_adapter(sys.argv[1:], 4)
+    fn_mwk = args[0]
+    fn_out = args[1]
     fn_nev = None
-    opts = parse_opts(sys.argv[5:])
 
-    # -- parsing extra arguments
-    if len(sys.argv) >= 4:
-        override_delay_us = long(sys.argv[3])
+    # -- parsing extra arguments (mainly for backward compatibility)
+    if len(args) >= 3:
+        override_delay_us = long(args[2])
         if override_delay_us < 0:
             override_delay_us = None
         print '* Delay override:', override_delay_us
     else:
         override_delay_us = None
 
-    if len(sys.argv) >= 5:
-        override_elecs = range(1, int(sys.argv[4]) + 1)
+    if len(args) >= 4:
+        override_elecs = range(1, int(args[3]) + 1)
         print '* Active electrodes override: [%d..%d]' % \
                 (min(override_elecs), max(override_elecs))
     else:

@@ -7,7 +7,7 @@ import sys
 sys.path.append('lib')
 from mergeutil import *
 from mworks.data import *
-from common_fn import parse_opts, T_START, T_STOP, get_stim_info, seq_search, sort_uniq, prep_files, set_new_threshold
+from common_fn import parse_opts_adapter, T_START, T_STOP, get_stim_info, seq_search, sort_uniq, prep_files, set_new_threshold
 from collections import defaultdict
 
 BAD_ISI = 3000   # spiking within 3ms is bad
@@ -179,20 +179,19 @@ def main():
     warnings.simplefilter('once')
 
     if len(sys.argv) < 3:
-        print 'mergy.py <mwk> <nev/plx> [options 1] [options 2] [...]'
+        print 'mergy.py [options] <mwk> <nev/plx>'
         print 'Aligns and merges mwk and nev/plx files.'
         print
         print 'Options:'
-        print 'nowav                       - do not include waveform data (recommended)'
-        print 'filter_inf=<.inf prefix>    - reject any spikes not in the inf files'
-        print 'cluster=<.inf/.clu prefix>  - apply clustering information'
-        print 'cluster_all=<.clu prefix 1,.clu prefix 2,...>'
-        print '                            - use other clustering info (in this superset)'
+        print '   --nowav                       - do not include waveform data (recommended)'
+        print '   --filter_inf=<.inf prefix>    - reject any spikes not in the inf files'
+        print '   --cluster=<.inf/.clu prefix>  - apply clustering information'
+        print '   --cluster_all=<.clu prefix 1,.clu prefix 2,...>'
+        print '                                 - use other clustering info (in this superset)'
         return
 
-    fn_mwk = sys.argv[1]
-    fn_nev = sys.argv[2]
-    opts = parse_opts(sys.argv[3:])
+    args, opts = parse_opts_adapter(sys.argv[1:], 2)
+    fn_mwk, fn_nev = args[:2]
 
     # -- parse options
     if 'nowav' in opts:

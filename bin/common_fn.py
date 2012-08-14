@@ -567,6 +567,18 @@ def parse_opts2(tokens, optpx='--', argparam=False):
     return args, opts
 
 
+def parse_opts_adapter(tokens, delim, optpx='--', argparam=False):
+    """Adapter to support both old- and new-style options"""
+    if any([t.startswith(optpx) for t in tokens]):
+        # new style
+        args, opts = parse_opts2(tokens, optpx=optpx, argparam=argparam)
+    else:
+        # old style
+        args = tokens[:delim]
+        opts = parse_opts(tokens[delim:])
+    return args, opts
+
+
 def makeavail(sth, sth2idx, idx2sth, query=None):
     if sth not in sth2idx:
         if query is not None and not query(sth):
