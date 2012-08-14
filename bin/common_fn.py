@@ -482,19 +482,40 @@ def invalidate_artifacts(buf0, t_reject=T_REJECT, \
 
 # -----------------------------------------------------------------------------
 def parse_opts(opts0):
-    """Parse the options in the command line."""
+    """Parse the options in the command line.  This somewhat
+    archaic function mainly exists for backward-compatability."""
     opts = {}
     # parse the stuff in "opts"
     for opt in opts0:
         parsed = opt.split('=')
         key = parsed[0].strip()
         if len(parsed) > 1:
-            cmd = parsed[1].strip()
+            # OLD: cmd = parsed[1].strip()
+            cmd = '='.join(parsed[1:]).strip()
         else:
             cmd = ''
         opts[key] = cmd
 
     return opts
+
+
+def parse_opts2(tokens, optpx='--', argparam=False):
+    """A newer option parser. (from perf102)"""
+    opts0 = []
+    args = []
+    n = len(optpx)
+
+    for token in tokens:
+        if token[:2] == optpx:
+            opts0.append(token[n:])
+        else:
+            if argparam:
+                token = token.split('=')
+            args.append(token)
+
+    opts = parse_opts(opts0)
+
+    return args, opts
 
 
 def makeavail(sth, sth2idx, idx2sth, query=None):

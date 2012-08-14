@@ -5,6 +5,7 @@ import cPickle as pk
 import numpy as np
 import time
 from joblib import Parallel, delayed
+from common_fn import parse_opts2
 
 BLANKS = 'blanks'
 RMAX = 0.1     # calculate d'-CV-max10%
@@ -178,27 +179,6 @@ def load_all(files):
 
 
 # ---------------------------------------------------------------------------------------
-def parse_opts(tokens, optpx='--'):
-    opts0 = []
-    args = []
-    opts = {}
-    n = len(optpx)
-
-    for token in tokens:
-        if token[:2] == optpx: opts0.append(token[n:])
-        else: args.append(token)
-
-    for opt in opts0:
-        parsed = opt.split('=')
-        key = parsed[0].strip()
-        if len(parsed) > 1:
-            cmd = parsed[1].strip()
-        else:
-            cmd = ''
-        opts[key] = cmd
-
-    return args, opts
-
 def main(rseed=RSEED):
     if len(sys.argv) < 2:
         print 'Prep Mode:'
@@ -217,7 +197,7 @@ def main(rseed=RSEED):
         return
 
     # parse options and arguments
-    args, opts = parse_opts(sys.argv[1:])
+    args, opts = parse_opts2(sys.argv[1:])
 
     mode = args[0]
     np.random.seed(rseed)    

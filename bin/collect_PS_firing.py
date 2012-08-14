@@ -7,7 +7,7 @@ import sys
 import warnings
 sys.path.append('lib')
 from common_fn import getspk, C_SUCCESS, T_SUCCESS, \
-        T_START, T_STOP, REJECT_SLOPPY, makeavail
+        T_START, T_STOP, REJECT_SLOPPY, makeavail, parse_opts
 
 DEFAULT_ELECS = range(1, 97)
 DEFAULT_SAMPLES_PER_SPK = 48
@@ -359,22 +359,9 @@ def main():
     fn_mwk = sys.argv[1]
     fn_out = sys.argv[2]
     fn_nev = None
-    opts0 = sys.argv[5:]
-    opts = {}
+    opts = parse_opts(sys.argv[5:])
 
-    # parse the stuff in "opts"
-    for opt in opts0:
-        parsed = opt.split('=')
-        key = parsed[0].strip()
-        if len(parsed) > 1:
-            cmd = parsed[1].strip()
-        else:
-            cmd = ''
-        opts[key] = cmd
-    extinfo = False
-    mode = 'firrate'
-
-    # parsing extra arguments
+    # -- parsing extra arguments
     if len(sys.argv) >= 4:
         override_delay_us = long(sys.argv[3])
         if override_delay_us < 0:
@@ -390,12 +377,15 @@ def main():
     else:
         override_elecs = DEFAULT_ELECS
 
-    # handle "opts"
+    # -- handle "opts"
+    mode = 'firrate'
+
     if 'wav' in opts:
         mode = 'wav'
         fn_nev = opts['wav']
         print '* Collecting waveforms for later spike sorting with', fn_nev
 
+    extinfo = False
     if 'extinfo' in opts:
         extinfo = True
         print '* Collecting extra information of the stimuli'
@@ -457,7 +447,7 @@ def main():
         ch_shift = opts['ch_shift']
         print '* Shifting based on this rule:', ch_shift
 
-    # go go go
+    # -- go go go
     kwargs = {'override_delay_us': override_delay_us,
             'override_elecs': override_elecs,
             'extinfo': extinfo, 'c_success': c_success,

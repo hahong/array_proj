@@ -6,6 +6,7 @@ import cPickle as pk
 from matplotlib import rc, use
 use('pdf')
 from matplotlib.backends.backend_pdf import PdfPages
+from common_fn import parse_opts
 import pylab as pl
 import csv
 
@@ -18,16 +19,19 @@ PROC_CLUSTER = False
 NCOLS = 16
 NROWS = 8
 
+
 # ---------------------------------------------------------------------------
-def get_one_ch(elec_id, all_spike, include=None, exclude=[], trial_by_trial=False, prange=None):
+def get_one_ch(elec_id, all_spike, include=None, exclude=[], \
+        trial_by_trial=False, prange=None):
     arr = []
     n_trial = 0
     if include is None:
         include = all_spike[elec_id]
     for iid in include:
-        if iid in exclude: continue
+        if iid in exclude:
+            continue
         if prange != None:
-            n = len(all_spike[elec_id][iid]) 
+            n = len(all_spike[elec_id][iid])
             i_begin = int(np.round(n * prange[0]))
             i_end = int(np.round(n * prange[1]))
             trials = all_spike[elec_id][iid][i_begin:i_end]
@@ -35,18 +39,22 @@ def get_one_ch(elec_id, all_spike, include=None, exclude=[], trial_by_trial=Fals
             trials = all_spike[elec_id][iid]
         for trial in trials:
             n_trial += 1
-            if trial_by_trial: arr.append(trial)
-            else: arr.extend(trial)
+            if trial_by_trial:
+                arr.append(trial)
+            else:
+                arr.extend(trial)
     return arr, n_trial
 
 
-def get_one_img(iid, all_spike, include=None, exclude=[], trial_by_trial=False):
+def get_one_img(iid, all_spike, include=None, exclude=[], \
+        trial_by_trial=False):
     arr = []
     n_trial = 0
     if include is None:
         include = all_spike  # this gives all electrodes
     for elec_id in include:
-        if elec_id in exclude: continue
+        if elec_id in exclude:
+            continue
         for trial in all_spike[elec_id][iid]:
             n_trial += 1
             if trial_by_trial: arr.append(trial)
@@ -66,7 +74,7 @@ def dprime_bootstrap(c_y, c_n, iter=200):
     c_n = np.array(c_n)
     for i in range(iter):
         # picking samples with replacement
-        i_y = np.random.randint(0, n_y, n_y) 
+        i_y = np.random.randint(0, n_y, n_y)
         i_n = np.random.randint(0, n_n, n_n)
         y = c_y[i_y]
         n = c_n[i_n]
@@ -85,7 +93,7 @@ def get_stats(trials, range):
     # get all indices in the "ON" window
     for trial in trials:
         arr = np.array(trial)
-        n_spikes = np.all([arr >= range[0], 
+        n_spikes = np.all([arr >= range[0],
                            arr <= range[1]], axis = 0).sum()
         cnt.append(n_spikes)
 
@@ -126,7 +134,7 @@ def init_rc(opts=None):
             'subplot.wspace'  : '0.1',
             'subplot.hspace'  : '0.1',
         })
-        pl.rcParams.update({ 
+        pl.rcParams.update({
             'axes.labelsize'  : 6,
             'text.fontsize'   : 6,
             'legend.fontsize' : 6,
@@ -143,7 +151,7 @@ def init_rc(opts=None):
             'subplot.wspace'  : '0.005',
             'subplot.hspace'  : '0.005',
         })
-        pl.rcParams.update({ 
+        pl.rcParams.update({
             'axes.labelsize'  : 6,
             'axes.linewidth'  : 0.5,
             'text.fontsize'   : 6,
@@ -163,7 +171,7 @@ def get_all_iids(all_spike, as_string=False):
     for elec_id in all_spike:
         iids.extend(all_spike[elec_id].keys())
     iids = list(set(iids) - get_all_iids.exclude)    # return unique image_ids
-    
+
     if type(iids[0]) is tuple:
         if get_all_iids.num_sort:
             t_iids = []
@@ -209,7 +217,7 @@ get_all_iids.exclude = set([])
 
 # ----------------------------------------------------------------------------
 # calc_drpime_ch: the super function -- calculates d' and firing rate.
-def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False, 
+def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
         on_range=DEF_ON_RANGE_US, off_range=DEF_OFF_RANGE_US):
     proc_cluster = PROC_CLUSTER
     if 'proc_cluster' in opts or 'proc_spksort' in opts:
@@ -240,7 +248,7 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
     if 'blanks_patt' in opts:
         patt = opts['blanks_patt']
         blanks = [iid for iid in all_iids if patt in iid]
-    if 'prange' in opts: 
+    if 'prange' in opts:
         p_begin = float(opts['prange'].split(',')[0])
         p_end = float(opts['prange'].split(',')[1])
         prange = (p_begin, p_end)
@@ -250,7 +258,7 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
         extbsinfo = True
         csvw = write_all_to_csv([['elec_id', 'img_id', 'dp_type'] + ['bstrp_%d' % (iv + 1) for iv in range(bsiter)]], fname=fn_pk)
         print '* extbsinfo:', fn_pk
-    if verbose != 0: 
+    if verbose != 0:
         print '* blanks:', blanks
         if prange != None: print '* %%range: [%1.2f, %1.2f)' % prange
 
@@ -260,7 +268,7 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
     s_blank = {}
     c_blank = {}
     for elec_id in actvelecs:
-        trials, _ = get_one_ch(elec_id, all_spike, 
+        trials, _ = get_one_ch(elec_id, all_spike,
                                include=blanks,
                                trial_by_trial=True,
                                prange=prange)
@@ -270,7 +278,7 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
         # DEBUG: print '**', elec_id, c_blank[elec_id]
 
     for elec_id in actvelecs:
-        trials, _ = get_one_ch(elec_id, all_spike, 
+        trials, _ = get_one_ch(elec_id, all_spike,
                                exclude=blanks,
                                trial_by_trial=True,
                                prange=prange)
@@ -291,12 +299,12 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
         else:
             dp_vs_off = dprime(m_on, s_on, m_off, s_off)
             dp_vs_blank = dprime(m_on, s_on, m_blank[elec_id], s_blank[elec_id])
-        
+
         # calculation of firing rate
         fir_on = m_on * nfac_on
         fir_off = m_off * nfac_off
         fir_blank = m_blank[elec_id] * nfac_on
-        
+
         # save all
         dp_all.append((elec_id, dp_vs_off, dp_vs_blank))
         fir_all.append((elec_id, fir_on, fir_off, fir_blank))
@@ -307,7 +315,7 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
         firs = [elec_id]
         fir_byimg_trials[elec_id] = {}
         for iid in all_iids:
-            trials, _ = get_one_ch(elec_id, all_spike, 
+            trials, _ = get_one_ch(elec_id, all_spike,
                                    include=[iid],
                                    trial_by_trial=True,
                                    prange=prange)
@@ -316,7 +324,7 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
             m_on, s_on, c_on = get_stats(trials, on_range)
             # get stats for the "off" window
             m_off, s_off, c_off = get_stats(trials, off_range)
-            
+
             # calculation of d'
             if bootstrap:
                 dp_vs_off, dps_off = dprime_bootstrap(c_on, c_off, iter=bsiter)
@@ -340,7 +348,7 @@ def calc_dprime_ch(data, verbose=0, opts={}, bootstrap=False, extbsinfo=False,
             fir_byimg_trials[elec_id][iid] = {}
             fir_byimg_trials[elec_id][iid]['on'] = np.array(c_on) * nfac_on
             fir_byimg_trials[elec_id][iid]['off'] = np.array(c_off) * nfac_off
-            
+
         fir_blank = m_blank[elec_id] * nfac_on
         fir_byimg_trials[elec_id]['blanks'] = np.array(c_blank[elec_id]) * nfac_on
         firs.append(fir_blank)
@@ -386,8 +394,8 @@ def plot_one_PSTH(arr, n_trial, ax, rng=DEF_PSTH_RANGE_MS, xrng=DEF_PSTH_RANGE_M
     # beutify axes
     pl.xlim(xrng)
     pl.ylim([0,ymax])
-    ax.xaxis.set_major_locator(pl.MaxNLocator(nticks)) 
-    ax.yaxis.set_major_locator(pl.MaxNLocator(nticks)) 
+    ax.xaxis.set_major_locator(pl.MaxNLocator(nticks))
+    ax.yaxis.set_major_locator(pl.MaxNLocator(nticks))
     if not visible:
         ax.set_xticklabels([''] * nticks)
         ax.set_yticklabels([''] * nticks)
@@ -395,7 +403,7 @@ def plot_one_PSTH(arr, n_trial, ax, rng=DEF_PSTH_RANGE_MS, xrng=DEF_PSTH_RANGE_M
     if txt != None:
         if nondraw:
             pl.text(xrng[1] - 20, ymax - 70, txt, size=6, va='top', ha='right')
-        else:    
+        else:
             pl.text(xrng[1] - 20, ymax - 20, txt, size=6, va='top', ha='right')
     return rtn
 
@@ -446,7 +454,7 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
         if i_plot == i_lbl_plot: visible = True
         else: visible = False
 
-        hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt) 
+        hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt)
         xarr = []; yarr = []
         for i, y in enumerate(hinfo[0]):
             yarr.append(y); yarr.append(y)
@@ -467,7 +475,7 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
         if i_plot == i_lbl_plot: visible = True
         else: visible = False
 
-        hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt) 
+        hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt)
         xarr = []; yarr = []
         for i, y in enumerate(hinfo[0]):
             yarr.append(y); yarr.append(y)
@@ -491,7 +499,7 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
             else: visible = False
             if evoked:
                 # XXX: FIXME: quick-and-dirty..
-                hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt, nondraw=True) 
+                hinfo = plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt, nondraw=True)
                 xarr = []; yarr = []
                 for i, y in enumerate(hinfo[0]):
                     yarr.append(y); yarr.append(y)
@@ -502,7 +510,7 @@ def plot_PSTH(data, outfn, opts={}, verbose=0, ymax=250, evoked=False, sel=None)
                 pl.xlim(DEF_PSTH_RANGE_MS)
                 pl.ylim([-50, ymax - 50])
             else:
-                plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt) 
+                plot_one_PSTH(arr, n_trial, ax, ymax=ymax, visible=visible, txt=txt)
                 pl.plot(avghist_x[elec_id], avghist_y[elec_id], color='b', lw=0.5, alpha=0.3)
                 pl.plot(blankhist_x[elec_id], blankhist_y[elec_id], color='g', lw=0.5, alpha=0.45)
         pp.savefig()
@@ -525,22 +533,13 @@ def main():
     fn_pk = sys.argv[2]
     fn_out = sys.argv[3]
     fn_out_suffix = ''
-    opts0 = sys.argv[4:]
-    opts = {}
     np.random.seed(DEF_RSEED)
 
     # parse options
-    for opt in opts0:
-        parsed = opt.split('=')
-        key = parsed[0].strip()
-        if len(parsed) > 1:
-            cmd = parsed[1].strip()
-        else:
-            cmd = ''
-        opts[key] = cmd
+    opts = parse_opts(sys.argv[4:])
 
     if 'suffix' in opts:
-        fn_out_suffix = opts['suffix'] 
+        fn_out_suffix = opts['suffix']
 
     if 'on_range' in opts:
         rng = opts['on_range'].split(',')

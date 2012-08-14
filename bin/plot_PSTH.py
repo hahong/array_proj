@@ -3,15 +3,15 @@
 import sys
 import numpy as np
 import cPickle as pk
-import sys
-import glob
 from matplotlib import rc, use
 use('pdf')
 from matplotlib.backends.backend_pdf import PdfPages
 import pylab as pl
+from common_fn import parse_opts2
 
 XLIM = [-100, 400]
 DEF_NBINS = 500
+
 
 # ------------------------------------------------------------
 # assume interval is (-100, 250)
@@ -26,7 +26,7 @@ def load_db(files, db, n_bins=DEF_NBINS, t_shift=100000, verbose=1):
             n_elec = len(dat['all_spike'])
             if verbose > 1: print 'At channel: %d/%d' % (el, n_elec)
             i_el = el - 1
-            
+
             for img in dat['all_spike'][el]:
                 trials = dat['all_spike'][el][img]
                 if img not in db:
@@ -42,7 +42,7 @@ def load_db(files, db, n_bins=DEF_NBINS, t_shift=100000, verbose=1):
                     for t0 in tr:
                         t = int(np.round((t0 + t_shift) / 1000.))
                         if t < 0 or t >= n_bins: continue
-                        
+
                         mat[i_el][t] += 1
 
 
@@ -65,9 +65,9 @@ def init():
 
 def SNR(wav0, chunk=15):
     wav = wav0[1:-1]
-    
+
     ibs = range(0, len(wav), chunk)
-    ies = ibs[1:] + [len(wav)] 
+    ies = ibs[1:] + [len(wav)]
 
     S = np.mean(wav)
     #D = np.max(wav) - np.min(wav)
@@ -199,24 +199,8 @@ def main():
         return
 
     # -- parse options and arguments
-    opts0 = []
-    args = []
-    opts = {}
+    args, opts = parse_opts2(sys.argv[1:])
 
-    for token in sys.argv[1:]:
-        if token[:2] == '--': opts0.append(token[2:])
-        else: args.append(token)
-
-    for opt in opts0:
-        parsed = opt.split('=')
-        key = parsed[0].strip()
-        if len(parsed) > 1:
-            cmd = parsed[1].strip()
-        else:
-            cmd = ''
-        opts[key] = cmd
-
-    # -- do the work
     of = args[0]
     files = args[1:]
     print 'OF =', of
