@@ -120,6 +120,9 @@ def par_comp(func, spks, n_jobs=NCPU, **kwargs):
 
 
 def KS_all(sig, full=False):
+    if sig.shape[0] == 0:
+        return np.ones(sig.shape[1]) / ATOL, sig
+
     dev = []
     ps = []
     sig = sig - sig.mean(axis=0)
@@ -147,15 +150,18 @@ def rethreshold_by_multiplier_core(Msnp, Msnp_ch, ch, \
         return_full = True
 
     i_ch = np.nonzero(Msnp_ch == ch)[0]
-    M = Msnp[i_ch]
-    thr = mult * np.median(np.abs(M) / 0.6745)
-
-    if thr < 0:
-        i_pass = np.min(M, axis=1) < thr
+    if len(i_ch) == 0:
+        thr = 0
     else:
-        i_pass = np.max(M, axis=1) > thr
+        M = Msnp[i_ch]
+        thr = mult * np.median(np.abs(M) / 0.6745)
 
-    selected[i_ch[i_pass]] = True
+        if thr < 0:
+            i_pass = np.min(M, axis=1) < thr
+        else:
+            i_pass = np.max(M, axis=1) > thr
+
+        selected[i_ch[i_pass]] = True
 
     if return_full:
         return selected, thr
@@ -270,15 +276,13 @@ def get_example_spikes(Msnp, Msnp_ch, ibie, target_chs, \
         Msnp_img = Msnp[idx]
         Msnp_ch_img = Msnp_ch[idx]
 
-        for ch in target_chs:
-            if len(res[ch]) >= nmax:
+        for i_ch, ch in enumerate(target_chs):
+            if np.sum([e.shape[0] for e in res[i_ch]]) >= nmax:
                 continue
-            res[ch].extend(Msnp_img[Msnp_ch_img == ch][:nperimg])
+            res[i_ch].append(Msnp_img[Msnp_ch_img == ch][:nperimg])
 
     for i_ch in xrange(len(target_chs)):
-        if len(res[i_ch]) > nmax:
-            res[i_ch] = res[i_ch][:nmax]
-        res[i_ch] = np.array(res[i_ch])
+        res[i_ch] = np.concatenate(res[i_ch])[:nmax]
 
     return res
 
@@ -286,6 +290,8 @@ def get_example_spikes(Msnp, Msnp_ch, ibie, target_chs, \
 def cluster_affinity_prop_core(feat, commonp=AFFINITYPRP_COMMONP):
     """Copied from the sklearn website"""
     X = np.array(feat)
+    if X.shape[0] == 0:
+        return np.zeros((0)), 0, np.zeros((0))
 
     # -- Compute similarities
     X_norms = np.sum(X ** 2, axis=1)
@@ -338,6 +344,8 @@ def find_clusters_par(Msnp_feat_train, feat_use, n_jobs=NCPU, \
 
 def quality_meas_core(X0, labels):
     sig_quality = {}
+    if X0.shape[0] == 0:
+        return sig_quality
 
     for cl in np.unique(labels):
         inds = labels == cl
@@ -376,7 +384,6 @@ def quality_meas_par2(Msnp, Msnp_ch, Msnp_cid, target_chs, \
 
     for ch in target_chs:
         i_ch = np.nonzero(Msnp_ch == ch)[0]
-        assert len(i_ch) > 0
 
         Msnp_all.append(Msnp[i_ch])
         labels_all.append(Msnp_cid[i_ch])
@@ -417,6 +424,9 @@ def quality_ctrl_par(sig_quality_all, labels_all, ulabels_all, \
             for S, lbl in zip(sig_quality_all, labels_all))
 
     for i_ch, (lbl_conv, some_unsorted) in enumerate(r):
+        if len(lbl_conv) == 0:
+            continue
+
         labels_all[i_ch] = np.array([lbl_conv[e] for e in labels_all[i_ch]])
         ulabels_all[i_ch] = np.unique(labels_all[i_ch])
         nclu_all[i_ch] = len(ulabels_all[i_ch])
@@ -464,14 +474,14 @@ def nearest_neighbor_par(Msnp_feat_train, Msnp_feat, Msnp_feat_use, Msnp_ch, \
 
     for ch in target_chs:
         i_ch = np.nonzero(Msnp_ch == ch)[0]
-        assert len(i_ch) > 0
 
         idx_all.append(i_ch)
-        if len(ulabels_all[ch]) == 1:
-            # if there's only one label, no need to do NN search
+        if len(ulabels_all[ch]) <= 1:
+            # if there's only one or zero label, no need to do NN search
             samples_all.append(None)
             feat_all.append(None)
-            fillwith_all.append(ulabels_all[ch][0])
+            fillwith_all.append(ulabels_all[ch][0] if len(i_ch) > 0
+                    else UNSORTED)
         else:
             use = Msnp_feat_use[ch]
             samples_all.append(np.array(Msnp_feat_train[ch])[:, use])
@@ -490,6 +500,8 @@ def nearest_neighbor_par(Msnp_feat_train, Msnp_feat, Msnp_feat_use, Msnp_ch, \
 
     i_r = 0
     for idx, fillwith in zip(idx_all, fillwith_all):
+        if len(idx) == 0:
+            continue
         if fillwith is None:
             fillwith = r[i_r]
             i_r += 1
