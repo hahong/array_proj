@@ -126,7 +126,9 @@ def KS_all(sig, full=False):
     dev = []
     ps = []
     sig = sig - sig.mean(axis=0)
-    sig /= sig.std(ddof=1, axis=0)
+    s = sig.std(ddof=1, axis=0)
+    s[np.abs(s) < ATOL] = 1. / ATOL
+    sig /= s
 
     for i in xrange(sig.shape[1]):
         w = sig[:, i]
@@ -364,7 +366,8 @@ def quality_meas_core(X0, labels):
         KSd = devs
 
         sig_quality[cl] = {'N': N, 'KSp': KSp, 'KSd': KSd, \
-                'SNR': SNR, 'SNRm': SNRm, 'SNRpt': SNRpt}
+                'SNR': SNR, 'SNRm': SNRm, 'SNRpt': SNRpt, \
+                'mean': m, 'var': v}
     return sig_quality
 
 
@@ -728,8 +731,8 @@ def cluster(fn_inp, fn_out, opts):
         Msnp_feat_use = [range(outdim)] * len(all_chs)
     Msnp_feat_use = np.array(Msnp_feat_use)
 
-    # -- DEBUG SUPPORT
-    __DBG__ = True
+    # -- XXX: DEBUG SUPPORT
+    __DBG__ = False
     if __DBG__:
         clu_feat_train = clu_feat_train[:4]
         clu_train = clu_train[:4]
@@ -752,6 +755,7 @@ def cluster(fn_inp, fn_out, opts):
                 **config['qc']['kwargs'])
 
     # -- NN search
+    print '-> Template matching...'
     Msnp_cid = nearest_neighbor_par(clu_feat_train, Msnp_feat, \
             Msnp_feat_use, Msnp_ch, clu_labels, clu_ulabels, \
             all_chs, n_jobs=n_jobs, **config['nn'])
