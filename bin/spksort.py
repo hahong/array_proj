@@ -9,6 +9,7 @@ from scipy import interpolate as ipl
 from scipy import stats as st
 from joblib import Parallel, delayed
 from sklearn.cluster import AffinityPropagation
+from sklearn.neighbors import NearestNeighbors
 from common_fn import parse_opts2, detect_cpus
 
 # -- defaults for feature computation
@@ -32,19 +33,22 @@ AFFINITYPRP_COMMONP = 'min'
 SKIMSPK_TB = 100000   # beginning relative time for collecting examplar spikes
 SKIMSPK_TE = 250000
 EXTRACT_NPERIMG = 3
-EXTRACT_NMAX = 2500
+EXTRACT_NMAX = 2200
 
 FEAT_KSSORT = True
 FEAT_OUTDIM = 10
 
 QC = True
-QC_MINSNR = 1.2       # minimum SNR to be qualified as a cluster
+QC_MINSNR = 3.5       # minimum SNR to be qualified as a cluster
 QC_KS_PLEVEL = .05    # a cluster should have "KS-test p" > QC_KS_PLEVEL
 QC_MINSIZE = 60
 
+NN_NNEIGH = 5         # the number of neighbors
+NN_RADIUS = 1.
+
 # -- other defaults
 NCPU = detect_cpus()  # all CPUs
-NCPU_HIGHMEM = 4      # for memory intensive tasks
+NCPU_LOWLOAD = 4      # for memory intensive tasks
 UNSORTED = 0
 BADIDX = -1
 ATOL = 1e-4
@@ -72,6 +76,7 @@ Options:
    --align_outdim=#
    --feat_metd=<str>     The method used to extract features.  Available:
                          wavelet
+   --njobs=#             The number of worker processes
 
 
 Clustering Mode
@@ -92,6 +97,7 @@ Options:
    --extract_nperimg=#   The max number of spikes collected for each stimulus
    --qc_minsnr=#         Minimum SNR to be qualified as a cluster
    --qc_ks_plevel=#      Desired significance level for the KS-test
+   --njobs=#             The number of worker processes
 
 
 Collation Mode
@@ -113,22 +119,22 @@ def par_comp(func, spks, n_jobs=NCPU, **kwargs):
     return np.concatenate(r)
 
 
-def KS_all(spks_wt, full=False):
+def KS_all(sig, full=False):
     dev = []
     ps = []
-    spks_wt = spks_wt - spks_wt.mean(axis=0)
-    spks_wt /= spks_wt.std(ddof=1, axis=0)
+    sig = sig - sig.mean(axis=0)
+    sig /= sig.std(ddof=1, axis=0)
 
-    for i in xrange(spks_wt.shape[1]):
-        w = spks_wt[:, i]
+    for i in xrange(sig.shape[1]):
+        w = sig[:, i]
         #w = (w - w.mean()) / w.std(ddof=1)
         D, p = st.kstest(w, 'norm')
         dev.append(D)
         ps.append(p)
 
     if full:
-        return np.array(dev), np.array(ps), spks_wt
-    return np.array(dev), spks_wt
+        return np.array(dev), np.array(ps), sig
+    return np.array(dev), sig
 
 
 # -- feature extraction related -----------------------------------------------
@@ -157,7 +163,7 @@ def rethreshold_by_multiplier_core(Msnp, Msnp_ch, ch, \
 
 
 def rethreshold_by_multiplier_par(Msnp, Msnp_ch, target_chs, \
-        mult=RETHRESHOLD_MULT, n_jobs=NCPU_HIGHMEM):
+        mult=RETHRESHOLD_MULT, n_jobs=NCPU_LOWLOAD):
     """Experimental parralelized version of rethreshold_by_multiplier()
     TODO: The performance is terrible.  Needs optimization."""
     core = rethreshold_by_multiplier_core
@@ -255,7 +261,7 @@ def get_example_spikes(Msnp, Msnp_ch, ibie, target_chs, \
 
     # not using defaultdict to save space
     res = []
-    for ch in target_chs:
+    for _ in target_chs:
         res.append([])
 
     # sweep over each image
@@ -269,10 +275,10 @@ def get_example_spikes(Msnp, Msnp_ch, ibie, target_chs, \
                 continue
             res[ch].extend(Msnp_img[Msnp_ch_img == ch][:nperimg])
 
-    for ch in target_chs:
-        if len(res[ch]) < nmax:
-            continue
-        res[ch] = res[ch][:nmax]
+    for i_ch in xrange(len(target_chs)):
+        if len(res[i_ch]) > nmax:
+            res[i_ch] = res[i_ch][:nmax]
+        res[i_ch] = np.array(res[i_ch])
 
     return res
 
@@ -310,11 +316,12 @@ def find_clusters_par(Msnp_feat_train, feat_use, n_jobs=NCPU, \
     else:
         raise ValueError('Not recognized clustering metd')
 
-    r = Parallel(n_jobs=n_jobs, verbose=0)(delayed(func)(np.array(\
-            Msnp_feat_train[i])[:, feat_use[i]], **clu_cfg) \
+    r = Parallel(n_jobs=n_jobs, verbose=0)(delayed(func)(\
+            Msnp_feat_train[i][:, feat_use[i]], **clu_cfg) \
             for i in xrange(feat_use.shape[0]))
 
     labels_all = []
+    ulabels_all = []
     nclu_all = []
     cluctr_all = []
 
@@ -322,62 +329,97 @@ def find_clusters_par(Msnp_feat_train, feat_use, n_jobs=NCPU, \
         labels, nclu, cluctr = r0
 
         labels_all.append(labels)
+        ulabels_all.append(np.unique(labels))
         nclu_all.append(nclu)
         cluctr_all.append(cluctr)
 
-    return labels_all, nclu_all, cluctr_all
+    return labels_all, ulabels_all, nclu_all, cluctr_all
 
 
-def quality_ctrl_core(X0, labels, ks_plevel=QC_KS_PLEVEL, \
+def quality_meas_core(X0, labels):
+    sig_quality = {}
+
+    for cl in np.unique(labels):
+        inds = labels == cl
+        N = inds.sum()
+
+        m = X0[inds].mean(0)
+        v = X0[inds].var(0, ddof=1)
+        v[np.abs(v) < ATOL] = 1. / ATOL / ATOL   # mute bad signals
+        s = np.sqrt(v)
+        devs, ps, _ = KS_all(X0[inds], full=True)
+
+        SNRpt = np.mean(np.abs(m) / s)
+        SNR = (np.max(m) - np.min(m)) / np.sqrt(np.mean(v))  # Nuo's def.
+        SNRm = (np.max(m) - np.min(m)) / np.mean(s)
+        KSp = ps
+        KSd = devs
+
+        sig_quality[cl] = {'N': N, 'KSp': KSp, 'KSd': KSd, \
+                'SNR': SNR, 'SNRm': SNRm, 'SNRpt': SNRpt}
+    return sig_quality
+
+
+def quality_meas_par(Msnp_train, labels_all, \
+        n_jobs=NCPU, **kwargs):
+    func = quality_meas_core
+    r = Parallel(n_jobs=n_jobs, verbose=0)(delayed(func)(\
+            X, lbl, **kwargs) \
+            for X, lbl in zip(Msnp_train, labels_all))
+    return r
+
+
+def quality_meas_par2(Msnp, Msnp_ch, Msnp_cid, target_chs, \
+        n_jobs=NCPU, **kwargs):
+    Msnp_all = []
+    labels_all = []
+
+    for ch in target_chs:
+        i_ch = np.nonzero(Msnp_ch == ch)[0]
+        assert len(i_ch) > 0
+
+        Msnp_all.append(Msnp[i_ch])
+        labels_all.append(Msnp_cid[i_ch])
+
+    return quality_meas_par(Msnp_all, labels_all, n_jobs=n_jobs, \
+            **kwargs)
+
+
+def quality_ctrl_core(sig_quality, labels, ks_plevel=QC_KS_PLEVEL, \
         min_snr=QC_MINSNR, min_size=QC_MINSIZE):
-
-    n_clu = len(np.unique(labels))
-    #if n_clu == 1:
-    #    return {0: UNSORTED}, True
-
-    X0 = np.array(X0)
     lbl_conv = {}
     some_unsorted = False
     new_cids = set([UNSORTED])
 
-    for i_cl in xrange(n_clu):
-        inds = labels == i_cl
-        N = inds.sum()
-
-        if N < min_size:   # apparantly, this is not a cluster
-            SNR = 0
-            KS_passed = False
-        else:
-            m = X0[inds].mean(0)
-            s = X0[inds].std(0, ddof=1)
-            s[np.abs(s) < ATOL] = 1. / ATOL   # mute bad signals
-            devs, ps, _ = KS_all(X0[inds], full=True)
-
-            SNR = np.mean(np.abs(m) / s)
-            KS_passed = np.all(ps > ks_plevel)
+    for cl in np.unique(labels):
+        N = sig_quality[cl]['N']
+        SNR = sig_quality[cl]['SNR']
+        KSp = sig_quality[cl]['KSp']
+        KS_passed = np.all(KSp > ks_plevel)
 
         if (N > min_size) and (SNR > min_snr) and KS_passed:
             # if passed the quality criteria...
             new_cid = len(new_cids)
-            lbl_conv[i_cl] = new_cid
+            lbl_conv[cl] = new_cid
             new_cids.add(new_cid)
         else:
             some_unsorted = True
-            lbl_conv[i_cl] = UNSORTED
+            lbl_conv[cl] = UNSORTED
     return lbl_conv, some_unsorted
 
 
-def quality_ctrl_par(Msnp_train, labels_all, nclu_all, cluctr_all, \
-        n_jobs=NCPU, **kwargs):
+def quality_ctrl_par(sig_quality_all, labels_all, ulabels_all, \
+        nclu_all, cluctr_all, n_jobs=NCPU, **kwargs):
 
     func = quality_ctrl_core
     r = Parallel(n_jobs=n_jobs, verbose=0)(delayed(func)(\
-            X, lbl, **kwargs) \
-            for X, lbl in zip(Msnp_train, labels_all))
+            S, lbl, **kwargs) \
+            for S, lbl in zip(sig_quality_all, labels_all))
 
     for i_ch, (lbl_conv, some_unsorted) in enumerate(r):
         labels_all[i_ch] = np.array([lbl_conv[e] for e in labels_all[i_ch]])
-        nclu_all[i_ch] = len(np.unique(labels_all[i_ch]))
+        ulabels_all[i_ch] = np.unique(labels_all[i_ch])
+        nclu_all[i_ch] = len(ulabels_all[i_ch])
 
         cluctr = cluctr_all[i_ch]
         old_cids = range(len(cluctr))
@@ -391,6 +433,71 @@ def quality_ctrl_par(Msnp_train, labels_all, nclu_all, cluctr_all, \
             base = 0
         assert len(new_cluctr) == nclu_all[i_ch] + base
         cluctr_all[i_ch] = new_cluctr
+
+
+def nearest_neighbor_core(samples, feat, labels, \
+        nneigh=NN_NNEIGH, radius=NN_RADIUS):
+    # samples = np.array(samples)
+    assert samples.shape[0] == len(labels)
+    assert samples.shape[1] == feat.shape[1]
+
+    neigh = NearestNeighbors(n_neighbors=nneigh, radius=radius, \
+            warn_on_equidistant=False)
+    neigh.fit(samples)
+    Y = neigh.kneighbors(feat, return_distance=False)
+    L = labels[Y]
+    lbl, cnt = st.mode(L, axis=1)
+    lbl = lbl.astype('int')
+    cnt = cnt.astype('int')
+    lbl[cnt == 1] = UNSORTED   # UNSORTED if no conclusive answers are given
+    return lbl
+
+
+def nearest_neighbor_par(Msnp_feat_train, Msnp_feat, Msnp_feat_use, Msnp_ch, \
+        labels_all, ulabels_all, target_chs, n_jobs=NCPU, **kwargs):
+
+    idx_all = []
+    feat_all = []
+    fillwith_all = []
+    samples_all = []
+    Msnp_cid = np.zeros(Msnp_ch.shape, dtype='int')
+
+    for ch in target_chs:
+        i_ch = np.nonzero(Msnp_ch == ch)[0]
+        assert len(i_ch) > 0
+
+        idx_all.append(i_ch)
+        if len(ulabels_all[ch]) == 1:
+            # if there's only one label, no need to do NN search
+            samples_all.append(None)
+            feat_all.append(None)
+            fillwith_all.append(ulabels_all[ch][0])
+        else:
+            use = Msnp_feat_use[ch]
+            samples_all.append(np.array(Msnp_feat_train[ch])[:, use])
+            feat_all.append(Msnp_feat[i_ch][:, use])
+            fillwith_all.append(None)
+
+    assert len(target_chs) == len(samples_all) == len(idx_all) \
+            == len(feat_all) == len(fillwith_all) == len(labels_all)
+
+    func = nearest_neighbor_core
+    r = Parallel(n_jobs=n_jobs, verbose=0)(delayed(func)(\
+            samples, feat, labels, **kwargs) \
+            for samples, feat, labels in \
+            zip(samples_all, feat_all, labels_all) \
+            if feat is not None)
+
+    i_r = 0
+    for idx, fillwith in zip(idx_all, fillwith_all):
+        if fillwith is None:
+            fillwith = r[i_r]
+            i_r += 1
+        Msnp_cid[idx] = fillwith
+    assert i_r == len(r)
+
+    Msnp_cid = Msnp_cid.astype('int16')
+    return Msnp_cid
 
 
 # ----------------------------------------------------------------------------
@@ -411,11 +518,16 @@ def get_features(fn_inp, fn_out, opts):
     config['feat']['metd'] = FEAT_METHOD
     config['feat']['kwargs'] = {'level': FEAT_WAVL_LEV}
 
+    n_jobs = NCPU
+
     # -- process opts
+    if 'njobs' in opts:
+        n_jobs = int(opts['njobs'])
+        print '* n_jobs =', n_jobs
     # TODO: implement!!!
 
     # -- preps
-    print '* Began feature computations...'
+    print '-> Began feature computations...'
     h5 = tbl.openFile(fn_inp)
     Msnp = h5.root.Msnp.read()
     Msnp_ch = h5.root.Msnp_ch.read()
@@ -435,7 +547,7 @@ def get_features(fn_inp, fn_out, opts):
     all_chs = range(len(idx2ch))
 
     # -- re-threshold
-    print '* Re-thresholding...'
+    print '-> Re-thresholding...'
     if type(config['rethreshold_mult']) is float or int:
         thr_sel, thrs = rethreshold_by_multiplier(Msnp, Msnp_ch, \
                 all_chs, config['rethreshold_mult'])
@@ -452,13 +564,13 @@ def get_features(fn_inp, fn_out, opts):
         Msnp_selected = None
 
     # -- align
-    print '* Aligning...'
-    Msnp = par_comp(align_core, Msnp, **config['align'])
+    print '-> Aligning...'
+    Msnp = par_comp(align_core, Msnp, n_jobs=n_jobs, **config['align'])
 
     # -- feature extraction
-    print '* Extracting features...'
+    print '-> Extracting features...'
     if config['feat']['metd'] == 'wavelet':
-        Msnp_feat = par_comp(wavelet_core, Msnp, \
+        Msnp_feat = par_comp(wavelet_core, Msnp, n_jobs=n_jobs, \
                 **config['feat']['kwargs'])
 
     elif config['feat']['metd'] != 'pca':
@@ -469,7 +581,7 @@ def get_features(fn_inp, fn_out, opts):
         raise ValueError('Not recognized "feat_metd"')
 
     # -- done! write everything...
-    print '* Writing results...'
+    print '-> Writing results...'
     filters = tbl.Filters(complevel=4, complib='blosc')
     t_int16 = tbl.Int16Atom()
     t_uint32 = tbl.UInt32Atom()
@@ -516,6 +628,7 @@ def get_features(fn_inp, fn_out, opts):
     h5o.createArray(meta, 'fn_inp', fn_inp)
 
     h5o.close()
+    h5.close()
 
 
 # ----------------------------------------------------------------------------
@@ -543,11 +656,20 @@ def cluster(fn_inp, fn_out, opts):
     config['qc']['kwargs']['ks_plevel'] = QC_KS_PLEVEL
     config['qc']['kwargs']['min_size'] = QC_MINSIZE
 
+    config['nn'] = {}
+    config['nn']['nneigh'] = NN_NNEIGH
+    config['nn']['radius'] = NN_RADIUS
+
+    n_jobs = NCPU
+
     # -- process opts
+    if 'njobs' in opts:
+        n_jobs = int(opts['njobs'])
+        print '* n_jobs =', n_jobs
     # TODO: implement!!!
 
     # -- preps
-    print '* Began clustering...'
+    print '-> Began clustering...'
     h5 = tbl.openFile(fn_inp)
     Msnp = h5.root.Msnp.read()
     Msnp_feat = h5.root.Msnp_feat.read()
@@ -569,7 +691,7 @@ def cluster(fn_inp, fn_out, opts):
     all_chs = range(len(idx2ch))
 
     # -- get training examples...
-    print '* Collecting snippet examples...'
+    print '-> Collecting snippet examples...'
     ibie, iuimg = skim_imgs(Mimg, Mimg_tabs, Msnp_tabs, \
             t_adjust, **config['skimspk'])
 
@@ -579,15 +701,14 @@ def cluster(fn_inp, fn_out, opts):
             **config['extract'])
 
     # -- get feature indices to use...
-    print '* Finding useful axes...'
+    print '-> Finding useful axes...'
     outdim = config['feat']['outdim']
     if config['feat']['kssort']:
         Msnp_feat_use = []
 
-        for ch in all_chs:
-            X = np.array(clu_feat_train[ch])
+        for i_ch in xrange(len(all_chs)):
             # get deviations from Gaussian
-            devs, _ = KS_all(X)
+            devs, _ = KS_all(clu_feat_train[i_ch])
             # got top-n deviations
             devs = np.argsort(-devs)[:outdim]
             Msnp_feat_use.append(devs)
@@ -595,25 +716,43 @@ def cluster(fn_inp, fn_out, opts):
         Msnp_feat_use = [range(outdim)] * len(all_chs)
     Msnp_feat_use = np.array(Msnp_feat_use)
 
+    # -- DEBUG SUPPORT
+    __DBG__ = True
+    if __DBG__:
+        clu_feat_train = clu_feat_train[:4]
+        clu_train = clu_train[:4]
+        Msnp_feat_use = Msnp_feat_use[:4]
+        all_chs = all_chs[:4]
+
     # -- get clusters...
-    print '* Clustering...'
-    # DBG
-    #clu_labels, clu_nclus, clu_centers = \
-    #        find_clusters_par(clu_feat_train[:4], \
-    #        Msnp_feat_use[:4], **config['cluster'])
-    clu_labels, clu_nclus, clu_centers = \
+    print '-> Clustering...'
+    clu_labels, clu_ulabels, clu_nclus, clu_centers = \
             find_clusters_par(clu_feat_train, \
-            Msnp_feat_use, **config['cluster'])
+            Msnp_feat_use, n_jobs=n_jobs, \
+            **config['cluster'])
 
     # -- quality control
     if config['qc']['qc']:
-        print '* Run quality-control screening...'
-        quality_ctrl_par(clu_train, clu_labels, clu_nclus, clu_centers, \
+        print '-> Run signal quality-based screening...'
+        clu_sig_q = quality_meas_par(clu_train, clu_labels)
+        quality_ctrl_par(clu_sig_q, clu_labels, clu_ulabels, \
+                clu_nclus, clu_centers, n_jobs=n_jobs, \
                 **config['qc']['kwargs'])
 
+    # -- NN search
+    Msnp_cid = nearest_neighbor_par(clu_feat_train, Msnp_feat, \
+            Msnp_feat_use, Msnp_ch, clu_labels, clu_ulabels, \
+            all_chs, n_jobs=n_jobs, **config['nn'])
+
+    # -- final quality report...
+    print '-> Computing the final signal quality report...'
+    clu_sig_q = quality_meas_par2(Msnp, Msnp_ch, Msnp_cid, \
+            all_chs, n_jobs=n_jobs)
+
     # -- done! write everything...
-    print '* Writing results...'
+    print '-> Writing results...'
     filters = tbl.Filters(complevel=4, complib='blosc')
+    t_int16 = tbl.Int16Atom()
     t_uint32 = tbl.UInt32Atom()
     t_uint64 = tbl.UInt64Atom()
 
@@ -622,6 +761,8 @@ def cluster(fn_inp, fn_out, opts):
             Msnp_tabs.shape, filters=filters)
     CMsnp_ch = h5o.createCArray(h5o.root, 'Msnp_ch', t_uint32, \
             Msnp_ch.shape, filters=filters)
+    CMsnp_cid = h5o.createCArray(h5o.root, 'Msnp_cid', t_int16, \
+            Msnp_cid.shape, filters=filters)
     CMsnp_pos = h5o.createCArray(h5o.root, 'Msnp_pos', t_uint64, \
             Msnp_pos.shape, filters=filters)
     CMsnp_feat_use = h5o.createCArray(h5o.root, 'Msnp_feat_use', t_uint64, \
@@ -631,6 +772,7 @@ def cluster(fn_inp, fn_out, opts):
 
     CMsnp_tabs[...] = Msnp_tabs
     CMsnp_ch[...] = Msnp_ch
+    CMsnp_cid[...] = Msnp_cid
     CMsnp_pos[...] = Msnp_pos
     CMsnp_feat_use[...] = Msnp_feat_use
     CMsnp_selected[...] = Msnp_selected
@@ -655,10 +797,13 @@ def cluster(fn_inp, fn_out, opts):
     h5o.createArray(clupk, 'clu_feat_train_pk', pk.dumps(clu_feat_train))
     h5o.createArray(clupk, 'clu_train_pk', pk.dumps(clu_train))
     h5o.createArray(clupk, 'clu_labels_pk', pk.dumps(clu_labels))
+    h5o.createArray(clupk, 'clu_ulabels_pk', pk.dumps(clu_ulabels))
     h5o.createArray(clupk, 'clu_nclus_pk', pk.dumps(clu_nclus))
     h5o.createArray(clupk, 'clu_centers_pk', pk.dumps(clu_centers))
+    h5o.createArray(clupk, 'clu_sig_q_pk', pk.dumps(clu_sig_q))
 
     h5o.close()
+    h5.close()
 
 
 # ----------------------------------------------------------------------------
