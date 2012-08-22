@@ -239,11 +239,15 @@ def wavelet_core(spks, level=FEAT_WAVL_LEV):
 
 # -- clustering related ------------------------------------------------------
 def skim_imgs(Mimg, Mimg_tabs, Msnp_tabs, t_adjust=0, tb0=SKIMSPK_TB,
-        te0=SKIMSPK_TE, n_blk=20000):
-    idx_eachimg = [np.nonzero(Mimg == i_img)[0][0] for i_img
-            in np.unique(Mimg)]
-    t_eachimg = Mimg_tabs[idx_eachimg]
-    i_eachimg = Mimg[idx_eachimg]
+        te0=SKIMSPK_TE, n_blk=20000, onlyonce=True):
+    if onlyonce:
+        idx_eachimg = [np.nonzero(Mimg == i_img)[0][0] for i_img
+                in np.unique(Mimg)]
+        t_eachimg = Mimg_tabs[idx_eachimg]
+        i_eachimg = Mimg[idx_eachimg]
+    else:
+        t_eachimg = Mimg_tabs
+        i_eachimg = Mimg
 
     ibie = []
     ib = 0
@@ -855,6 +859,172 @@ def cluster(fn_inp, fn_out, opts):
 
 
 # ----------------------------------------------------------------------------
+def _get_good_clu(clu_sig_q):
+    """EXPERIMENTAL!!! EXPECT BUGS!!
+    from https://mh17:19999/932fdc93-1a2b-4d00-a520-96ebd44ee450
+    """
+    kind = 'N'
+    xN = np.array([clu_sig_q_ch[cl][kind] for clu_sig_q_ch in
+        clu_sig_q for cl in clu_sig_q_ch])
+    kind = 'SNR'
+    xSNR = np.array([clu_sig_q_ch[cl][kind] for clu_sig_q_ch in
+        clu_sig_q for cl in clu_sig_q_ch])
+    kind = 'mean'
+    xmean = np.array([clu_sig_q_ch[cl][kind] for clu_sig_q_ch in
+        clu_sig_q for cl in clu_sig_q_ch])
+    kind = 'var'
+    xvar = np.array([clu_sig_q_ch[cl][kind] for clu_sig_q_ch in
+        clu_sig_q for cl in clu_sig_q_ch])
+    kind = 'KSp'
+    xKSp = np.array([clu_sig_q_ch[cl][kind] for clu_sig_q_ch in
+        clu_sig_q for cl in clu_sig_q_ch])
+    xch = np.array([i_ch for i_ch, clu_sig_q_ch in
+        enumerate(clu_sig_q) for cl in clu_sig_q_ch])
+    xcl = np.array([cl for clu_sig_q_ch in clu_sig_q for cl in
+        clu_sig_q_ch])
+
+    # count the number of sign changes
+    xchg = np.sum(np.abs(np.diff(np.sign(np.diff(xmean, axis=1)),
+        axis=1)), axis=1) / 2
+
+    Nmin = np.sum(xN) / len(clu_sig_q) * 0.01
+    # first pass
+    idxx0 = (xSNR > 5) & (xN > Nmin) & (np.sum(xKSp > 0.01, axis=1)
+            >= 16) & (xchg < 8)
+
+    xmax = np.max(xmean[idxx0], axis=1)
+    xmin = np.min(xmean[idxx0], axis=1)
+    xvarvar = np.var(xvar[idxx0], axis=1)
+    npass = len(xmin)
+
+    minlowthr = sorted(xmin)[int(round(npass * 0.05))]
+    maxlowthr = sorted(xmax)[int(round(npass * 0.025))]
+    maxhighthr = sorted(xmax)[int(round(npass * 0.975))]
+    varvarhighthr = sorted(xvarvar)[int(round(npass * 0.95))]
+
+    idxx1 = (xmax > maxlowthr) & (xmax < maxhighthr) & (xmin >
+            minlowthr) & (xvarvar < varvarhighthr)
+    idxx = np.nonzero(idxx0)[0][idxx1]
+    chxx = xch[idxx]
+    clxx = xcl[idxx]
+
+    res1 = sorted(zip(chxx, clxx))
+    assert len(res1) == len(set(res1))  # unique!!
+
+    from collections import defaultdict as dd
+    res2 = dd(list)
+    #res2 = []
+    #for _ in xrange(len(clu_sig_q)):
+    #    res2.append([])
+    for ch, cid in res1:
+        res2[ch].append(cid)
+
+    # XXX: has to be 1-based
+    res3 = dict([(e, i + 1) for i, e in enumerate(res1)])
+
+    return res1, res2, res3
+
+
+def collate(fn_inp, fn_out, opts):
+    """EXPERIMENTAL!!!!  EXPECT BUGS!!!"""
+
+    reference = None
+    # -- process opts
+    if 'ref' in opts:
+        reference = opts['ref']
+        print '* Using the reference file:', reference
+    # TODO: implement others!!
+
+    # -- preps
+    print '-> Initializing...'
+    h5 = tbl.openFile(fn_inp)
+
+    Msnp_ch = h5.root.Msnp_ch.read()
+    Msnp_cid = h5.root.Msnp_cid.read()
+    Msnp_tabs = h5.root.Msnp_tabs.read()
+    Mimg = h5.root.Mimg.read()
+    Mimg_tabs = h5.root.Mimg_tabs.read()
+
+    t_adjust = h5.root.meta.t_adjust.read()
+    t_start0 = h5.root.meta.t_start0.read()
+    t_stop0 = h5.root.meta.t_stop0.read()
+    print '   DBG:', t_adjust, t_start0, t_stop0
+
+    idx2iid = h5.root.meta.idx2iid.read()
+    idx2ch = h5.root.meta.idx2ch.read()
+    assert idx2ch == range(1, len(idx2ch) + 1), idx2ch
+
+    # -- get good clusters
+    print '-> Get useful clusters...'
+    if reference is None:
+        clu_sig_q = pk.loads(h5.root.clu_pk.clu_sig_q_pk.read())
+    else:
+        h5r = tbl.openFile(reference)
+        clu_sig_q = pk.loads(h5r.root.clu_pk.clu_sig_q_pk.read())
+        h5r.close()
+    idx2gcid, cid_sel, gcid2idx = _get_good_clu(clu_sig_q)
+    ###
+    print '   DBG: #passed =', len(idx2gcid)
+
+    # -- sweep images
+    print '-> Sweep images...'
+    ibie, iuimg = skim_imgs(Mimg, Mimg_tabs, Msnp_tabs,
+            t_adjust, tb0=t_start0, te0=t_stop0, onlyonce=False)
+    assert len(ibie) == len(iuimg) == len(Mimg_tabs)
+
+    # XXX: has to be 1-based
+    all_spike = {}
+    actvelecs = range(1, len(idx2gcid) + 1)
+    for el in actvelecs:
+        all_spike[el] = {}
+
+    for i0 in xrange(len(ibie)):
+        ###
+        print '   DBG: At: %d/%d         \r' % (i0 + 1, len(ibie)),
+        sys.stdout.flush()
+        ###
+        ib, ie = ibie[i0]
+        ii = iuimg[i0]
+        iid = idx2iid[ii]
+        t0 = Mimg_tabs[i0]
+
+        idx = range(ib, ie)
+        Xch = Msnp_ch[idx]
+        Xcid = Msnp_cid[idx]
+        Xt = Msnp_tabs[idx]
+
+        if iid not in all_spike[actvelecs[0]]:
+            for el in actvelecs:
+                all_spike[el][iid] = []
+
+        for ch in cid_sel:
+            idxch = (Xch == ch)
+            for cl in cid_sel[ch]:
+                idxcl = idxch & (Xcid == cl)
+                t_abs = Xt[idxcl]
+                t_rel = (t_abs + t_adjust - t0).astype('int')
+                # Not needed: t_rel = list(t_rel)
+                el = gcid2idx[(ch, cl)]  # global cid (or channel)
+                all_spike[el][iid].append(t_rel)
+
+    # -- done
+    h5.close()
+
+    f = open(fn_out, 'w')
+    out = {'all_spike': all_spike,
+           't_start': t_start0,
+           't_stop': t_stop0,
+           't_adjust': t_adjust,
+           'actvelecs': actvelecs,
+           'idx2gcid': idx2gcid,
+           'cid_sel': cid_sel,
+           'gcid2idx': gcid2idx
+           }
+    pk.dump(out, f)
+    f.close()
+
+
+# ----------------------------------------------------------------------------
 def main():
     if len(sys.argv) < 3:
         print USAGE
@@ -868,6 +1038,8 @@ def main():
         get_features(args[1], args[2], opts)
     elif mode == 'cluster':
         cluster(args[1], args[2], opts)
+    elif mode == 'collate':
+        collate(args[1], args[2], opts)
     else:
         raise ValueError('Invalid mode')
 
