@@ -342,7 +342,7 @@ def get_waveform(fn_mwk, fn_nev, fn_out, movie_begin_fname=None, \
 # ----------------------------------------------------------------------------
 def main():
     if len(sys.argv) < 3:
-        print 'collect_PS_firing.py [options] <mwk> <output.pk> ' \
+        print 'collect_PS_firing.py [options] <mwk> <output> ' \
                 '[override delay in us] [number of electrodes]'
         print 'Collects spike timing around visual stimuli'
         print

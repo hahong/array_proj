@@ -896,11 +896,12 @@ def _get_good_clu(clu_sig_q):
     xmin = np.min(xmean[idxx0], axis=1)
     xvarvar = np.var(xvar[idxx0], axis=1)
     npass = len(xmin)
+    npass0 = npass - 1
 
     minlowthr = sorted(xmin)[int(round(npass * 0.05))]
     maxlowthr = sorted(xmax)[int(round(npass * 0.025))]
-    maxhighthr = sorted(xmax)[int(round(npass * 0.975))]
-    varvarhighthr = sorted(xvarvar)[int(round(npass * 0.95))]
+    maxhighthr = sorted(xmax)[min(int(round(npass * 0.975)), npass0)]
+    varvarhighthr = sorted(xvarvar)[min(int(round(npass * 0.95)), npass0)]
 
     idxx1 = (xmax > maxlowthr) & (xmax < maxhighthr) & (xmin >
             minlowthr) & (xvarvar < varvarhighthr)
