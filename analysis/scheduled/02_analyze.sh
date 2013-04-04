@@ -23,13 +23,13 @@ touch $LOCK   # create a lock file so that no data transfer occurs from mh17
 # -- 1. Tito
 # Merge and collect
 ./04_par_merge+collect_PS_firing.py > $JOBNAME
-dirnev=data/d003_Tito/neudat_NSP2/ ./04_par_merge+collect_PS_firing.py --merge_opts='multinsp NSP2' >> $JOBNAME
+dirnev=data/d004_Tito/neudat_NSP2/ ./04_par_merge+collect_PS_firing.py --merge_opts='multinsp NSP' >> $JOBNAME
 NJOBS=5 parrun.py $JOBNAME 2>&1 | tee -a $LOGNAME
 
 # Plot PSTHs
 ./10_plot_PSTH.sh > $JOBNAMEPSTH
 NJOBS=5 parrun.py $JOBNAMEPSTH 2>&1 | tee -a $LOGNAME 
-rsync -a $PROJROOT/data/d003_Tito/subproj/100_PSTH/*.pdf $HTMLPSTH
+rsync -a $PROJROOT/data/d004_Tito/subproj/100_PSTH/*.pdf $HTMLPSTH
 
 # -- END
 rm -f $LOCK

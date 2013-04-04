@@ -61,7 +61,8 @@ for index in "${!files[@]}"; do
 		fi
 		# removes $nsp and the first preceeding suffix
 		# e.g., Tito_20110809_RSVPVar03a_S110720A_NSP2_P_001 -> Tito_20110809_RSVPVar03a_S110720A_001
-		mwksrc=`python -c "s0 = '${mwksrc}'; s1 = s0.split('_${nsp}_'); s1a = s1[0]; s1b = '_'.join(s1[1].split('_')[1:]); print s1a + '_' + s1b"`
+		## mwksrc=`python -c "s0 = '${mwksrc}'; s1 = s0.split('_${nsp}_'); s1a = s1[0]; s1b = '_'.join(s1[1].split('_')[1:]); print s1a + '_' + s1b"`
+		mwksrc=`python -c "s0 = '${mwksrc}'; s1 = s0.split('_${nsp}'); s1a = s1[0]; s1b = '_'.join(s1[1].split('_')[2:]); print s1a + '_' + s1b"`
 		mwksrcb=`basename ${mwksrc}`
 		mwkdstbhost=$mwksrcb
 	fi
