@@ -1,0 +1,15 @@
+(edif scard  (edifVersion 2 0 0)
+    (edifLevel 0)
+    (keywordMap (keywordLevel 0))
+    (library SCARD
+        (edifLevel 0)
+        (cell SCARD (cellType generic)
+            (view schematic (viewType netlist)
+                (contents
+
+                )
+            )
+        )
+    )
+) 
+

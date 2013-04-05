@@ -1,0 +1,13 @@
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_P+A_NSP2_A_003.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_P+A_NSP2_A_003 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_P+A_NSP1_P_004.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_P+A_NSP1_P_004 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_P+A_NSP1_P_003.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_P+A_NSP1_P_003 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP2_P_007.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP2_P_007 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP2_P_006.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP2_P_006 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP2_P_002.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP2_P_002 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP1_M_007.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP1_M_007 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP1_M_006.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP1_M_006 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP1_M_002.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_M+P_NSP1_M_002 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP2_M_005.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP2_M_005 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP2_M_001.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP2_M_001 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP1_A_005.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP1_A_005 blanks=300,306 extfirinfo
+bin/expr_anal.py dp data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP1_A_001.psf.pk data/d004_Tito/data_postproc/Tito_20130402_RSVPNicole305_8deg_A+M_NSP1_A_001 blanks=300,306 extfirinfo

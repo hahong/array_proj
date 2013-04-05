@@ -1,0 +1,2 @@
+bin/summarizedp_cv.py res --prndp data/d004_Tito/data_postproc/Tito_20130404_A_cvdp.pk data/d004_Tito/data_postproc/Tito_20130404_M_cvdp.pk data/d004_Tito/data_postproc/Tito_20130404_P_cvdp.pk > ../log/swcard_20130404/summary_AMP_top128.unused.txt
+bin/summarizedp_cv.py res --prndp --topn=222 data/d004_Tito/data_postproc/Tito_20130404_A_cvdp.pk data/d004_Tito/data_postproc/Tito_20130404_M_cvdp.pk data/d004_Tito/data_postproc/Tito_20130404_P_cvdp.pk > ../log/swcard_20130404/summary_AP_top128.txt
