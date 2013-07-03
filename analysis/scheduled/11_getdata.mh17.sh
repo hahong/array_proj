@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script is meant to be called by cronjobmaster.sh
-test "$PROJROOT" || PROJROOT=/mindhive/dicarlolab/proj/array_data/
+test "$PROJROOT" || PROJROOT=/mindhive/dicarlolab/proj/array_data/array/
 test "$LOGDIR" || LOGDIR=$PROJROOT/analysis/scheduled/log/
 LCLBIN=$PROJROOT/analysis/scheduled/
 REMOTEFILER=dicarlo2
