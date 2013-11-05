@@ -1,0 +1,3 @@
+bin/merge.py data/d005_Tito/mwk_merged/Tito_20130802_001_RSVPNicole305_S130404+M_NSP2_M.mwk data/d005_Tito/neudat_NSP2/Tito_20130802_001_RSVPNicole305_S130404+M_NSP2_M.nev nowav
+bin/merge.py data/d005_Tito/mwk_merged/Tito_20130806_001_RSVPNicole305_S130404+M_NSP2_M.mwk data/d005_Tito/neudat_NSP2/Tito_20130806_001_RSVPNicole305_S130404+M_NSP2_M.nev nowav
+bin/merge.py data/d005_Tito/mwk_merged/Tito_20130808_001_RSVPNicole305_S130404+M_NSP2_M.mwk data/d005_Tito/neudat_NSP2/Tito_20130808_001_RSVPNicole305_S130404+M_NSP2_M.nev nowav

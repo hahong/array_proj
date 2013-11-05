@@ -1,0 +1,6 @@
+./collect_PS_tinfo.py --n_maxtrial=20 ../data/d005_Tito/data_postproc/Tito_20130802_001_RSVPNicole305_S130404+M_NSP1_S130404.psf ../data/d005_Tito/data_postproc/Tito_20130802_001_RSVPNicole305_S130404+M_NSP1_S130404.psf.pk
+./collect_PS_tinfo.py --n_maxtrial=20 ../data/d005_Tito/data_postproc/Tito_20130802_001_RSVPNicole305_S130404+M_NSP2_M.psf ../data/d005_Tito/data_postproc/Tito_20130802_001_RSVPNicole305_S130404+M_NSP2_M.psf.pk
+./collect_PS_tinfo.py --n_maxtrial=20 ../data/d005_Tito/data_postproc/Tito_20130806_001_RSVPNicole305_S130404+M_NSP1_S130404.psf ../data/d005_Tito/data_postproc/Tito_20130806_001_RSVPNicole305_S130404+M_NSP1_S130404.psf.pk
+./collect_PS_tinfo.py --n_maxtrial=20 ../data/d005_Tito/data_postproc/Tito_20130806_001_RSVPNicole305_S130404+M_NSP2_M.psf ../data/d005_Tito/data_postproc/Tito_20130806_001_RSVPNicole305_S130404+M_NSP2_M.psf.pk
+./collect_PS_tinfo.py --n_maxtrial=20 ../data/d005_Tito/data_postproc/Tito_20130808_001_RSVPNicole305_S130404+M_NSP1_S130404.psf ../data/d005_Tito/data_postproc/Tito_20130808_001_RSVPNicole305_S130404+M_NSP1_S130404.psf.pk
+./collect_PS_tinfo.py --n_maxtrial=20 ../data/d005_Tito/data_postproc/Tito_20130808_001_RSVPNicole305_S130404+M_NSP2_M.psf ../data/d005_Tito/data_postproc/Tito_20130808_001_RSVPNicole305_S130404+M_NSP2_M.psf.pk

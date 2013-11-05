@@ -4,3 +4,17 @@
 *.DS_Store
 .snapshot
 .*
+*.o
+*.so
+analysis/scheduled/log/
+analysis/z_runres/
+bin/joblist
+bin/lib
+bin/z_runres
+bin/z_unused/
+data/
+lib/mergeutil/z_backups/
+lib/mworks
+lib/mworks.old/
+log/z_stat/
+support/hahong/
