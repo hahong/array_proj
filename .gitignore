@@ -6,6 +6,7 @@
 .*
 *.o
 *.so
+*.a
 analysis/scheduled/log/
 analysis/z_runres/
 bin/joblist
@@ -18,3 +19,4 @@ lib/mworks
 lib/mworks.old/
 log/z_stat/
 support/hahong/
+data
